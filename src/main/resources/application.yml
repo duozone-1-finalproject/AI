@@ -1,12 +1,15 @@
-ai:
-  openai:
-    api-key: ${GROQ_API_KEY}
-    base-url: https://api.groq.com/openai/
-    chat:
-      options:
-        model: gemma2-9b-it
-        temperature: 0.7 # 모델의 답변 다양성 조절 대부분 0.7
-        max-tokens: 8,192
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai/
+      chat:
+        options:
+          model: gemma2-9b-it
+          temperature: 0.7 # 모델의 답변 다양성 조절 대부분 0.7
+          max-tokens: 8,192
 
 serpapi: # 사용하는 엔진 정보 작성 - google news, google search, naver 학술정보에서 보고서 가져오기
   api-key: ${SERP_API_KEY}
