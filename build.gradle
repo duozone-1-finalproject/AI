@@ -54,4 +54,3 @@ tasks.named('test') {
 tasks.named('bootRun') {
 	jvmArgs '--enable-preview' // 애플리케이션 실행 시에도 프리뷰 기능 활성화
 }
-
