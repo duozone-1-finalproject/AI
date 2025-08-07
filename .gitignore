@@ -32,6 +32,8 @@ build/
 .idea/
 *.yml
 *.properties
+application.yml
+application.properties
 
 # OS별 캐시파일
 .DS_Store
@@ -40,4 +42,7 @@ Thumbs.db
 # 환경 변수
 .env
 .gradle/
+
+# 기사로 JSON 결과물이 git에 올라가지 않도록 추가
+/src/main/resources/static/json/
 

@@ -1,9 +1,9 @@
 package com.example.demo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -12,10 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 public class SerpApiSearchResponse {
 
-    // 만약 뉴스 검색 결과가 'news_results' 필드로 온다면 아래 필드를 추가하고 사용해야 합니다.
+    // 뉴스 검색 결과를 받기 위한 필드
     @JsonProperty("news_results")
     private List<SerpApiResult> newsResults;
 
+    // 일반 검색(google, naver) 결과를 받기 위한 필드
+    @JsonProperty("organic_results")
+    private List<SerpApiResult> organicResults;
+
+    // DTO 내부에 정적 중첩 클래스로 두는 것이 일반적입니다.
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -26,6 +31,6 @@ public class SerpApiSearchResponse {
         private String apiKey;
         private String num;
         private String hl;
-        private String tbm = "nws";
+        private String tbm;
     }
 }

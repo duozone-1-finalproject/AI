@@ -1,20 +1,22 @@
-// Gradle 빌드 설정 파일
-
 plugins {
-	id 'java' // 자바 프로젝트임을 명시
-	id 'org.springframework.boot' version '3.3.1' // Spring Boot 버전 (현재 최신 안정 버전)
+	id 'java'
+	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
-	id 'org.jetbrains.kotlin.jvm' // 의존성 관리 플러그인
 }
 
-group = 'com.example' // 프로젝트 그룹 ID (원하는 대로 변경 가능)
-version = '0.0.1-SNAPSHOT' // 프로젝트 버전
-sourceCompatibility = '21' // 자바 소스 코드 호환성 버전 (JDK 21 사용)
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '21'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21) // JDK 21 사용 명시
+		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+// ✅ 최신 Spring AI 버전 권장
+ext {
+	set('springAiVersion', "1.0.0") // 안정 버전으로 수정
 }
 
 configurations {
@@ -24,34 +26,34 @@ configurations {
 }
 
 repositories {
-	mavenCentral() // 라이브러리를 다운로드할 중앙 저장소
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' } // 최신 Spring AI용
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
 }
 
 dependencies {
-	// Spring Boot 웹 애플리케이션 개발에 필요한 기본 의존성
+	// ✅ Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// ✅ Spring AI
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+
+	// ✅ Jsoup
 	implementation 'org.jsoup:jsoup:1.17.2'
 
-	// Lombok 라이브러리: Getter, Setter 등을 자동으로 생성 (개발 편의성)
+	// ✅ Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// 테스트 관련 의존성
+	// ✅ 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
-tasks.named('compileJava') {
-	options.compilerArgs.add('--enable-preview') // Java 21 프리뷰 기능 활성화 (컴파일 시)
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-	jvmArgs '--enable-preview' // 테스트 시에도 프리뷰 기능 활성화
-}
-
-tasks.named('bootRun') {
-	jvmArgs '--enable-preview' // 애플리케이션 실행 시에도 프리뷰 기능 활성화
-}
 
