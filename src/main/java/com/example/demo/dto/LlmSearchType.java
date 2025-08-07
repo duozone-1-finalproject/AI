@@ -1,21 +1,13 @@
 package com.example.demo.dto;
 
-/**
- * LLM의 구조화된 응답(JSON)을 파싱하기 위한 DTO입니다.
- * LLM이 다른 말을 하더라도 이 구조에 맞는 JSON만 추출하여 안정성을 보장합니다.
- */
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+
 public class LlmSearchType {
-    private String category;
 
-    // Jackson 라이브러리가 JSON을 파싱할 때 기본 생성자가 필요합니다.
-    public LlmSearchType() {
-    }
+    @JsonPropertyDescription("사용자 질문의 의도에 가장 적합한 검색 엔진 타입. 'google_news', 'google', 'naver' 중 하나여야 합니다.")
+    private String engine;
 
-    public String getCategory() {
-        return category;
-    }
+    public String getEngine() { return engine; }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    public void setEngine(String engine) { this.engine = engine; }
 }

@@ -14,20 +14,20 @@ java {
 	}
 }
 
-// ✅ 최신 Spring AI 버전 권장
-ext {
-	set('springAiVersion', "1.0.0") // 안정 버전으로 수정
-}
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
 
+ext {
+	set('springAiVersion', "0.8.1") // ✅ 존재하는 Milestone 버전
+}
+
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' } // 최신 Spring AI용
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://jitpack.io' } // ✅ SerpAPI를 위해 꼭 필요!
 }
 
 dependencyManagement {
@@ -36,10 +36,12 @@ dependencyManagement {
 	}
 }
 
+
 dependencies {
 	// ✅ Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.github.serpapi:google-search-results-java:2.0.2'
 
 	// ✅ Spring AI
 	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
@@ -55,5 +57,3 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-

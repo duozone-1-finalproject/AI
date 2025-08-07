@@ -1,6 +1,7 @@
+//검색 결과를 JSON 파일로 저장
+//
 package com.example.demo.util;
 
-import com.example.demo.dto.SerpApiResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public final class JsonWriter {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static void writeArticlesToFile(List<SerpApiResult> articles, String query) throws IOException {
+    public static void writeDataToFile(List<Map<String, String>> dataList, String query) throws IOException {
         log.info("JSON 파일 저장 프로세스를 시작합니다.");
 
         ObjectMapper mapper = new ObjectMapper();
@@ -47,10 +48,10 @@ public final class JsonWriter {
 
         Map<String, Object> data = new HashMap<>();
         data.put("query", query);
-        data.put("article_count", articles.size());
-        data.put("articles", articles);
+        data.put("article_count", dataList.size());
+        data.put("articles", dataList);
 
-        log.info("총 {}개의 기사를 다음 경로에 저장합니다: {}", articles.size(), file.getAbsolutePath());
+        log.info("총 {}개의 기사를 다음 경로에 저장합니다: {}", dataList.size(), file.getAbsolutePath());
 
         mapper.writeValue(file, data);
         log.info("JSON 파일 저장을 완료했습니다.");
