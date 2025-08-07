@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import serpapi.GoogleSearch;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import serpapi.SerpApiSearchException;
 
 import java.util.Map;
 
@@ -18,11 +20,15 @@ public class SerpApiService {
                 "q", query,
                 "engine", engine,
                 "api_key", apiKey,
-                "num", "5" // 뉴스 기사 5개 제한
+                "num", "5"
         );
 
         GoogleSearch search = new GoogleSearch(params);
-        return search.getJson();getJson
+        try {
+            return search.getJson();
+        } catch (SerpApiSearchException e) {
+            throw new RuntimeException("SerpAPI 호출 실패", e);
+        }
     }
 }
 
