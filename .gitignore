@@ -30,10 +30,6 @@ build/
 # IDE 관련 파일
 *.iml
 .idea/
-*.yml
-*.properties
-application.yml
-application.properties
 
 # OS별 캐시파일
 .DS_Store
