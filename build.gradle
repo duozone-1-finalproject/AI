@@ -28,6 +28,7 @@ repositories {
 	mavenCentral()
     maven { url 'https://jitpack.io' } // ✅ SerpAPI를 위해 꼭 필요!
 	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencyManagement {
@@ -42,12 +43,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.github.serpapi:google-search-results-java:2.0.0'
-
-	// ✅ Spring AI
-	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+	// spring AI 사용을 위해 필요한 빌드
+	implementation 'org.springframework.ai:spring-ai-openai'
+	implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
+	//implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'//
 
 	// ✅ Jsoup
 	implementation 'org.jsoup:jsoup:1.17.2'
+
 
 	// ✅ Lombok
 	compileOnly 'org.projectlombok:lombok'

@@ -50,4 +50,24 @@ public class LlmService {
             return "google"; // 실패 시 안전한 기본값 반환
         }
     }
+
+    // ✅ 툴로 등록할 메서드
+    @Tool(name = "search_news")
+    public String searchNews(String query) {
+        try {
+            GoogleSearch search = new GoogleSearch(Map.of(
+                    "q", query,
+                    "api_key", "너의_실제_API_KEY",  // 🔥 application.yml에서 불러오도록 리팩토링 가능
+                    "hl", "ko",
+                    "gl", "kr",
+                    "num", "10",
+                    "sort_by", "date"
+            ));
+            Map<String, Object> result = search.getJson();
+            return result.toString(); // LLM이 사용 가능한 문자열로 반환
+        } catch (Exception e) {
+            log.error("SerpAPI 검색 실패: {}", e.getMessage());
+            return "검색 중 오류가 발생했습니다.";
+        }
+    }
 }
