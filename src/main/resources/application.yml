@@ -1,15 +1,27 @@
+server:
+  port: 8080
+
 spring:
   config:
     import: optional:file:.env[.properties]
   ai:
+    model:
+      chat: openai   # OpenAI 호환을 사용해 Groq로 연결 (기본값)
     openai:
+      base-url: https://api.groq.com/openai     # Groq OpenAI 호환 엔드포인트
       api-key: ${GROQ_API_KEY}
-      base-url: https://api.groq.com/openai/
       chat:
         options:
-          model: gemma2-9b-it
-          temperature: 0.7 # 모델의 답변 다양성 조절 대부분 0.7
-          max-tokens: 8,192
+          model: gemma2-9b-it                   # 문서에 기재된 Groq 모델 중 하나
+          temperature: 0.2
+          topP: 0.9
 
-serpapi: # 사용하는 엔진 정보 작성 - google news, google search, naver 학술정보에서 보고서 가져오기
-  api-key: ${SERP_API_KEY}
+serpapi:
+  api-key: ${SERPAPI_KEY}
+  base-url: https://serpapi.com/search.json     # Search API 엔드포인트
+  default:
+    hl: ko
+    gl: kr
+
+elasticsearch:
+  url: ${ES_URL}

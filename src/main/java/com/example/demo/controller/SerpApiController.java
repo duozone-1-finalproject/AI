@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.SerpApiResult;
 import com.example.demo.dto.SerpApiSearchResponse;
-import com.example.demo.service.SerpApiService;
+import com.example.demo.service.SerpApiServiceBackUp;
 import com.example.demo.util.JsonWriter;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;  // ✅ ① 추가
 @RequiredArgsConstructor
 public class SerpApiController {
 
-    private final SerpApiService serpApiService;
+    private final SerpApiServiceBackUp serpApiServiceBackUp;
 
     @GetMapping("/AIString")
     public SerpApiSearchResponse searchWeb() {
@@ -31,7 +31,7 @@ public class SerpApiController {
         System.out.println("검색어: \"" + query + "\"");
         System.out.println("------------------------------------");
 
-        SerpApiSearchResponse response = serpApiService.search(query);
+        SerpApiSearchResponse response = serpApiServiceBackUp.search(query);
 
         if (response != null && response.getNewsResults() != null && !response.getNewsResults().isEmpty()) {
 

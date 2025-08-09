@@ -1,19 +1,15 @@
 // Gradle 빌드 설정 파일
 
 plugins {
-	id 'java' // 자바 프로젝트임을 명시
-	id 'org.springframework.boot' version '3.3.1' // Spring Boot 버전 (현재 최신 안정 버전)
+	id 'java'
+	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.5'
 }
 
-group = 'com.example' // 프로젝트 그룹 ID (원하는 대로 변경 가능)
-version = '0.0.1-SNAPSHOT' // 프로젝트 버전
-sourceCompatibility = '21' // 자바 소스 코드 호환성 버전 (JDK 21 사용)
-
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21) // JDK 21 사용 명시
-	}
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
 }
 
 configurations {
@@ -23,13 +19,34 @@ configurations {
 }
 
 repositories {
-	mavenCentral() // 라이브러리를 다운로드할 중앙 저장소
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }  // Spring AI 문서 권장
+    maven { url 'https://repo.spring.io/snapshot' }   // 스냅샷 필요시
+}
+
+ext {
+    springAiVersion = '1.0.1'          // Spring AI 1.0.1 (안정판)
+    langgraph4jVersion = '1.6.0-rc4'   // 최신 릴리스 후보 (Java17+)
+    elasticJavaVersion = '7.17.15'      // 공식 문서 예시 버전
 }
 
 dependencies {
 	// Spring Boot 웹 애플리케이션 개발에 필요한 기본 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.jsoup:jsoup:1.17.2'
+
+    // Spring AI (Groq는 OpenAI 호환 엔드포인트로 구성)
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'  // Groq 연동에 사용
+
+    // LangGraph4j (그래프 오케스트레이션)
+    implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"
+
+    // Elasticsearch Java API Client
+    implementation "co.elastic.clients:elasticsearch-java:${elasticJavaVersion}"
+    implementation "org.elasticsearch.client:elasticsearch-rest-client:7.17.15"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'          // ES 문서 예시와 동일
 
 	// Lombok 라이브러리: Getter, Setter 등을 자동으로 생성 (개발 편의성)
 	compileOnly 'org.projectlombok:lombok'
