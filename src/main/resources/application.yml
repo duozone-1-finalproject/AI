@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  ai:
+    model:
+      chat: openai
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: gemma2-9b-it
+          temperature: 0.3
