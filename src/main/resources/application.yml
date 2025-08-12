@@ -6,22 +6,11 @@ spring:
     import: optional:file:.env[.properties]
   ai:
     model:
-      chat: openai   # OpenAI 호환을 사용해 Groq로 연결 (기본값)
+      chat: openai
     openai:
-      base-url: https://api.groq.com/openai     # Groq OpenAI 호환 엔드포인트
       api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
       chat:
         options:
-          model: gemma2-9b-it                   # 문서에 기재된 Groq 모델 중 하나
-          temperature: 0.2
-          topP: 0.9
-
-serpapi:
-  api-key: ${SERPAPI_KEY}
-  base-url: https://serpapi.com/search.json     # Search API 엔드포인트
-  default:
-    hl: ko
-    gl: kr
-
-elasticsearch:
-  url: ${ES_URL}
+          model: gemma2-9b-it
+          temperature: 0.3
