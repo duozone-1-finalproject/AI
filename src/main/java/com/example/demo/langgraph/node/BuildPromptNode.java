@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.nodes;
+package com.example.demo.langgraph.node;
 
 import com.example.demo.service.PromptTemplateService;
 import org.bsc.langgraph4j.action.NodeAction;

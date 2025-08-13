@@ -43,6 +43,10 @@ dependencies {
 
     // 환경변수 관련 의존성
     implementation 'io.github.cdimascio:java-dotenv:5.1.1'
+
+    // OpenSearch
+    implementation "org.opensearch.client:opensearch-java:2.19.0"
+    implementation "org.apache.httpcomponents.client5:httpclient5:5.2.1"
 }
 
 tasks.named('test') {

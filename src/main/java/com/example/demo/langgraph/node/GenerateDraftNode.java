@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.nodes;
+package com.example.demo.langgraph.node;
 
 import com.example.demo.langgraph.state.RiskState;
 import org.bsc.langgraph4j.action.AsyncNodeAction;

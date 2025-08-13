@@ -1,14 +1,11 @@
-package com.example.demo.langgraph.nodes;
+package com.example.demo.langgraph.node;
 
-import com.example.demo.dto.SerpNewsItem;
 import com.example.demo.service.ElasticsearchService;
 import com.example.demo.service.SerpApiService;
-import org.bsc.langgraph4j.action.AsyncNodeAction;
 import com.example.demo.langgraph.state.RiskState;
 import reactor.core.publisher.Mono;
 import org.bsc.langgraph4j.action.NodeAction;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
