@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.nodee;
+package com.example.demo.langgraph.nodes;
 
 import com.example.demo.dto.LangGraphDto;
 import com.example.demo.service.LlmService;
