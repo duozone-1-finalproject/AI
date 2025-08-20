@@ -1,6 +1,5 @@
 package com.example.demo.langgraph;
 
-import com.example.demo.langgraph.nodes.LlmNode;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.StateGraph;
