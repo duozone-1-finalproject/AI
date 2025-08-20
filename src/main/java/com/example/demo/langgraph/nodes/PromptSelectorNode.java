@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.example.demo.langgraph.state.DraftState.*;
 
+// 프롬프트 선택 노드
 @Component("prompt")
 @RequiredArgsConstructor
 public class PromptSelectorNode implements AsyncNodeAction<DraftState> {

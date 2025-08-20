@@ -6,15 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
 import org.bsc.langgraph4j.StateGraph;
-import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
+import static org.bsc.langgraph4j.action.AsyncEdgeAction.*;
 import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 
 
@@ -50,26 +50,37 @@ public class DraftGraphConfig {
                 graph.addEdge("prompt", "source_select");
                 // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
                 graph.addConditionalEdges("source_select",
-                                edge_async(s -> completedFuture(s.value(DraftState.SOURCES)
-                                        .orElse(List.of()).contains("web") ? "web" : "skip_web")),
-                                Map.of("web","web_branch","skip_web","aggregate"));
+                        edge_async(s -> {
+                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+                                    .orElse(Collections.emptyList());
+                            return selected.contains("web") ? "web" : "skip_web"; // ← String 반환
+                        }),
+                        Map.of("web","web_branch","skip_web","aggregate"));
                 graph.addConditionalEdges("source_select",
-                                edge_async(s -> completedFuture(s.value(DraftState.SOURCES)
-                                        .orElse(List.of()).contains("news") ? "news" : "skip_news")),
-                                Map.of("news","news_branch","skip_news","aggregate"));
+                        edge_async(s -> {
+                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+                                    .orElse(Collections.emptyList());
+                            return selected.contains("news") ? "news" : "skip_news"; // ← String 반환
+                        }),
+                        Map.of("news","news_branch","skip_news","aggregate"));
                 graph.addConditionalEdges("source_select",
-                                edge_async(s -> completedFuture(s.value(DraftState.SOURCES)
-                                        .orElse(List.of()).contains("db") ? "db" : "skip_db")),
-                                Map.of("db","db_branch","skip_db","aggregate"));
+                        edge_async(s -> {
+                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+                                    .orElse(Collections.emptyList());
+                            return selected.contains("db") ? "db" : "skip_db"; // ← String 반환
+                        }),
+                        Map.of("db","db_branch","skip_db","aggregate"));
                 graph.addEdge("web_branch","aggregate");
                 graph.addEdge("news_branch","aggregate");
                 graph.addEdge("db_branch","aggregate");
                 graph.addEdge("aggregate","generate");
                 graph.addEdge("generate","validate");
                 graph.addConditionalEdges("validate",
-                                edge_async(s -> completedFuture(
-                                        s.value(DraftState.IS_VALID).orElse(false) ? "END" : "retry_adjust")),
-                                Map.of("END", StateGraph.END, "retry_adjust", "retry_adjust"));
+                        edge_async(s -> {
+                            boolean ok = s.<Boolean>value(DraftState.IS_VALID).orElse(false);
+                            return ok ? "END" : "retry_adjust";        // ← String 반환 (동기 EdgeAction)
+                        }),
+                        Map.of("END", StateGraph.END, "retry_adjust", "retry_adjust"));
                 graph.addEdge("retry_adjust","generate");
 
         return graph.compile(); // 실행용 그래프 생성

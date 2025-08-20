@@ -20,17 +20,17 @@ ai:
     # 사업위험
     risk_industry:
       prompt: "classpath:prompts/risk_industry.st"
-      sources: [NEWS, DB]
+      sources: [news, db]
 
     # 회사위험
     risk_company:
       prompt: "classpath:prompts/risk_company.st"
-      sources: [WEB, DB]
+      sources: [web, db]
 
     # 기타위험
     risk_etc:
       prompt: "classpath:prompts/risk_etc.st"
-      sources: [WEB, DB]
+      sources: [web, db]
 
   # 컨트롤러/오케스트레이터가 돌릴 기본 처리 순서(선택)
   default-order: [risk_industry, risk_company, risk_etc]

@@ -15,6 +15,6 @@ public class SourcePolicyService {
     }
 
     public List<String> sourcesFor(String sectionKey) {
-        return sections.get(sectionKey).getSources(); // ["NEWS","DB"] 등
+        return sections.get(sectionKey).getSources(); // ["news","db"] 등
     }
 }

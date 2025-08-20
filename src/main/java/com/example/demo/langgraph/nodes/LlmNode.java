@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+// 기존에 사용했던 LLM 노드 삭제예정 (예시 참고용으로 임시로 냅두는 중)
 @Component("llm")
 @RequiredArgsConstructor
 public class LlmNode implements AsyncNodeAction<AgentState> {

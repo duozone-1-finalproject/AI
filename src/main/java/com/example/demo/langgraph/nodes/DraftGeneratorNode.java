@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+// 초안생성 노드
 @Component("generate")
 @Service
 @RequiredArgsConstructor
