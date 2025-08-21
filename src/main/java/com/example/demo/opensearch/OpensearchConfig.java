@@ -1,7 +1,7 @@
 package com.example.demo.opensearch;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.hc.core5.http.HttpHost;
@@ -23,36 +23,30 @@ public class OpensearchConfig {
 
     private final OpensearchProperties props;
 
-    // Config 1: cm Bean 분리 (스프링이 소유)
-    @Bean(destroyMethod = "close")
-    public PoolingAsyncClientConnectionManager osConnectionManager(OpensearchProperties props) {
-        ConnectionConfig connConfig = ConnectionConfig.custom()
-                .setConnectTimeout(toTimeout(props.getConnectionTimeout()))
-                .setSocketTimeout(toTimeout(props.getSocketTimeout()))
-                .build();
-
-        return PoolingAsyncClientConnectionManagerBuilder.create()
-                .setMaxConnTotal(props.getMaxConnTotal())
-                .setMaxConnPerRoute(props.getMaxConnPerRoute())
-                .setDefaultConnectionConfig(connConfig)
-                .build();
+    private HttpHost toHost(String uriStr) {
+        URI u = URI.create(uriStr);
+        String scheme = (u.getScheme() != null) ? u.getScheme() : "http";
+        int port = (u.getPort() != -1) ? u.getPort() : 9200;
+        return new HttpHost(scheme, u.getHost(), port);
     }
 
     @Bean(destroyMethod = "close")
-    public OpenSearchTransport openSearchTransport(PoolingAsyncClientConnectionManager cm) {
-        HttpHost[] hosts = props.getUris().stream().map(this::toHttpHost).toArray(HttpHost[]::new);
+    public OpenSearchTransport openSearchTransport() {
+        HttpHost[] hosts = props.getUris().stream().map(this::toHost).toArray(HttpHost[]::new);
 
-        ApacheHttpClient5TransportBuilder builder =
-                ApacheHttpClient5TransportBuilder.builder(hosts)
-                        .setRequestConfigCallback(req -> req
-                                // connectTimeout은 deprecated → ConnectionConfig로 옮겼고,
-                                // 여긴 responseTimeout만 유지
-                                .setResponseTimeout(toTimeout(props.getSocketTimeout())))
-                        .setHttpClientConfigCallback(http -> {
-                            http.setConnectionManager(cm);
-                            http.setConnectionManagerShared(true); // ← 클라이언트가 cm를 닫지 않음
-                            return http;
-                        });
+        var builder = ApacheHttpClient5TransportBuilder.builder(hosts);
+
+        var cm = PoolingAsyncClientConnectionManagerBuilder.create()
+                .setMaxConnTotal(props.getMaxConnTotal())
+                .setMaxConnPerRoute(props.getMaxConnPerRoute())
+                .build();
+
+        builder.setHttpClientConfigCallback(http -> http
+                .setConnectionManager(cm)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(Timeout.ofMilliseconds(props.getConnectionTimeout().toMillis()))
+                        .setResponseTimeout(Timeout.ofMilliseconds(props.getSocketTimeout().toMillis()))
+                        .build()));
 
         return builder.build();
     }
@@ -60,17 +54,5 @@ public class OpensearchConfig {
     @Bean
     public OpenSearchClient openSearchClient(OpenSearchTransport transport) {
         return new OpenSearchClient(transport);
-    }
-
-    // ===== Helpers =====
-    private HttpHost toHttpHost(URI uri) {
-        int port = (uri.getPort() == -1)
-                ? ("https".equalsIgnoreCase(uri.getScheme()) ? 443 : 9200)
-                : uri.getPort();
-        return new HttpHost(uri.getScheme(), uri.getHost(), port);
-    }
-
-    private Timeout toTimeout(Duration d) {
-        return Timeout.ofMilliseconds(d.toMillis());
     }
 }

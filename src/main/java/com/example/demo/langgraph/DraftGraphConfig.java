@@ -25,27 +25,26 @@ public class DraftGraphConfig {
     private final StateGraph<DraftState> graph;
     private final PromptSelectorNode promptSelector;
     private final SourceSelectorNode sourceSelector;
-    private final WebSubgraphInvoker webSubgraphInvoker;
-    private final NewsSubgraphInvoker newsSubgraphInvoker;
-    private final DbSubgraphInvoker dbSubgraphInvoker;
+//    private final WebSubgraphInvoker webSubgraphInvoker;
+//    private final NewsSubgraphInvoker newsSubgraphInvoker;
+//    private final DbSubgraphInvoker dbSubgraphInvoker;
     private final ContextAggregatorNode contextAggregator;
     private final DraftGeneratorNode draftGenerator;
     private final GlobalValidatorNode globalValidator;
     private final RetryAdjustNode retryAdjust;
-    private final LlmNode llmNode;
 
 
     @Bean
-    public CompiledGraph<DraftState> compiledDraftGraph() throws GraphStateException {
+    public CompiledGraph<DraftState> draftGraph() throws GraphStateException {
                 graph.addNode("prompt",        promptSelector);
                 graph.addNode("source_select", sourceSelector);
-                graph.addNode("web_branch",    node_async(webSubgraphInvoker));
-                graph.addNode("news_branch",   node_async(newsSubgraphInvoker));
-                graph.addNode("db_branch",     node_async(dbSubgraphInvoker));
-                graph.addNode("aggregate",     contextAggregator);
+//                graph.addNode("web_branch",    node_async(webSubgraphInvoker));
+//                graph.addNode("news_branch",   node_async(newsSubgraphInvoker));
+//                graph.addNode("db_branch",     node_async(dbSubgraphInvoker));
+//                graph.addNode("aggregate",     contextAggregator);
                 graph.addNode("generate",      draftGenerator);
-                graph.addNode("validate",      globalValidator);
-                graph.addNode("retry_adjust",  retryAdjust);
+//                graph.addNode("validate",      globalValidator);
+//                graph.addNode("retry_adjust",  retryAdjust);
                 graph.addEdge(StateGraph.START, "prompt");
                 graph.addEdge("prompt", "source_select");
                 // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
