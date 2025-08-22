@@ -26,8 +26,8 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
         String section = state.<String>value(DraftState.SECTION).orElseThrow();
 
         Map<String, Object> vars = new HashMap<>();
-        vars.put("corp_name",  state.<String>value(DraftState.CORP_NAME).orElse(""));
-        vars.put("induty_name",state.<String>value(DraftState.IND_NAME ).orElse(""));
+        vars.put("corpName",  state.<String>value(DraftState.CORP_NAME).orElse(""));
+        vars.put("indutyName",state.<String>value(DraftState.IND_NAME ).orElse(""));
 
         // 시스템 프롬프트로 호출(필요 시 createPrompt로 변경)
         Prompt prompt = catalog.createSystemPrompt(section, vars);

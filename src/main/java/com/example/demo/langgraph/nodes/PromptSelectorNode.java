@@ -23,10 +23,10 @@ public class PromptSelectorNode implements AsyncNodeAction<DraftState> {
         String section = state.<String>value(DraftState.SECTION).orElseThrow();
 
         Map<String,Object> vars = Map.of(
-                "corp_code",  state.<String>value(DraftState.CORP_CODE).orElse(""),
-                "corp_name",  state.<String>value(DraftState.CORP_NAME).orElse(""),
-                "induty_code",state.<String>value(DraftState.IND_CODE).orElse(""),
-                "induty_name",state.<String>value(DraftState.IND_NAME).orElse("")
+                "corpCode",  state.<String>value(DraftState.CORP_CODE).orElse(""),
+                "corpName",  state.<String>value(DraftState.CORP_NAME).orElse(""),
+                "indutyCode",state.<String>value(DraftState.IND_CODE).orElse(""),
+                "indutyName",state.<String>value(DraftState.IND_NAME).orElse("")
         );
 
         // 3) 템플릿 로드 + 치환 → prompt 문자열 생성

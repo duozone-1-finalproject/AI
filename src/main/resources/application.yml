@@ -4,6 +4,8 @@ server:
 spring:
   config:
     import: optional:file:.env[.properties]
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   ai:
     model:
       chat: openai

@@ -48,6 +48,7 @@ public class DraftGraphConfig {
                 graph.addEdge(StateGraph.START, "prompt");
                 graph.addEdge("prompt", "source_select");
                 graph.addEdge("source_select", "generate");
+                // 임시 end포인트 연결
                 graph.addEdge("generate", StateGraph.END);
                 // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
 //                graph.addConditionalEdges("source_select",
