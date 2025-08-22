@@ -4,6 +4,8 @@ server:
 spring:
   config:
     import: optional:file:.env[.properties]
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   ai:
     model:
       chat: openai
@@ -14,3 +16,50 @@ spring:
         options:
           model: gemma2-9b-it
           temperature: 0.3
+
+ai:
+  sections:
+    # 사업위험
+    risk_industry:
+      prompt: "classpath:prompts/risk_industry.st"
+      sources: [news, db]
+
+    # 회사위험
+    risk_company:
+      prompt: "classpath:prompts/risk_company.st"
+      sources: [web, db]
+
+    # 기타위험
+    risk_etc:
+      prompt: "classpath:prompts/risk_etc.st"
+      sources: [web, db]
+
+  # 컨트롤러/오케스트레이터가 돌릴 기본 처리 순서(선택)
+  default-order: [risk_industry, risk_company, risk_etc]
+
+# 로컬/개인 운영(HTTP, 기본 인증 없음)
+opensearch:
+  uris: ${OPENSEARCH_URIS}
+  connection-timeout: 5s     # connect timeout
+  socket-timeout: 60s        # read timeout
+  max-conn-total: 100
+  max-conn-per-route: 100
+  sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
+
+# AWS OpenSearch Service(도메인 엔드포인트, SigV4 서명)
+#opensearch:
+#  uris:
+#    - https://search-your-domain-id.ap-northeast-2.es.amazonaws.com
+#  connection-timeout: 5s
+#  socket-timeout: 60s
+#  max-conn-total: 200
+#  max-conn-per-route: 100
+#  sniff-enabled: false          # ★ AWS에서는 반드시 false
+#  aws:
+#    sigv4-enabled: true
+#    region: ap-northeast-2
+#    service: es                 # OpenSearch Service=es, Serverless는 aoss
+#    credentials:
+#      access-key: ${AWS_ACCESS_KEY_ID:}
+#      secret-key: ${AWS_SECRET_ACCESS_KEY:}
+#      session-token: ${AWS_SESSION_TOKEN:}   # (옵션) 임시자격증명 사용 시
