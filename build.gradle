@@ -1,57 +1,59 @@
-// Gradle 빌드 설정 파일
-
 plugins {
-	id 'java' // 자바 프로젝트임을 명시
-	id 'org.springframework.boot' version '3.3.1' // Spring Boot 버전 (현재 최신 안정 버전)
-	id 'io.spring.dependency-management' version '1.1.5'
-	id 'org.jetbrains.kotlin.jvm' // 의존성 관리 플러그인
+    id 'java'
+    id 'org.springframework.boot' version '3.5.4'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example' // 프로젝트 그룹 ID (원하는 대로 변경 가능)
-version = '0.0.1-SNAPSHOT' // 프로젝트 버전
-sourceCompatibility = '21' // 자바 소스 코드 호환성 버전 (JDK 21 사용)
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21) // JDK 21 사용 명시
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral() // 라이브러리를 다운로드할 중앙 저장소
+    mavenCentral()
+}
+
+ext {
+    springAiVersion = '1.0.1'
+    langgraph4jVersion = '1.6.0-rc4'
+    opensearchVersion = '2.19.0'
 }
 
 dependencies {
-	// Spring Boot 웹 애플리케이션 개발에 필요한 기본 의존성
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	// Lombok 라이브러리: Getter, Setter 등을 자동으로 생성 (개발 편의성)
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    // Lombok 추가
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	// 테스트 관련 의존성
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
+    // Spring AI (OpenAI starter; Groq 등 OpenAI 호환 엔드포인트도 가능)
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
-tasks.named('compileJava') {
-	options.compilerArgs.add('--enable-preview') // Java 21 프리뷰 기능 활성화 (컴파일 시)
+    // LangGraph4j
+    implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"
+    implementation "org.bsc.langgraph4j:langgraph4j-spring-ai:${langgraph4jVersion}"
+
+    // 환경변수 관련 의존성
+    implementation 'io.github.cdimascio:java-dotenv:5.1.1'
+
+    // OpenSearch
+    implementation "org.opensearch.client:opensearch-java:${opensearchVersion}"
+    implementation "org.opensearch.client:opensearch-rest-client:${opensearchVersion}" // 최초 인덱스 생성에만 사용 (raw JSON PUT)
+
+    // Apache HttpClient5
+    implementation("org.apache.httpcomponents.client5:httpclient5")
+    implementation("org.apache.httpcomponents.core5:httpcore5")
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-	jvmArgs '--enable-preview' // 테스트 시에도 프리뷰 기능 활성화
+    useJUnitPlatform()
 }
-
-tasks.named('bootRun') {
-	jvmArgs '--enable-preview' // 애플리케이션 실행 시에도 프리뷰 기능 활성화
-}
-
