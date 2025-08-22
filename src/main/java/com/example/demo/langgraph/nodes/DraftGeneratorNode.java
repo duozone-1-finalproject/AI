@@ -5,6 +5,7 @@ import com.example.demo.service.PromptCatalogService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 
 // 초안생성 노드
 @Component("generate")
-@Service
 @RequiredArgsConstructor
 public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
 
@@ -30,7 +30,7 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
         vars.put("induty_name",state.<String>value(DraftState.IND_NAME ).orElse(""));
 
         // 시스템 프롬프트로 호출(필요 시 createPrompt로 변경)
-        var prompt = catalog.createSystemPrompt(section, vars);
+        Prompt prompt = catalog.createSystemPrompt(section, vars);
 
         // 동기 호출(스트리밍/리액티브도 가능)
         String text = chatClient.prompt(prompt).call().content();  // 결과 텍스트 추출

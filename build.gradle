@@ -47,9 +47,11 @@ dependencies {
 
     // OpenSearch
     implementation "org.opensearch.client:opensearch-java:${opensearchVersion}"
-    implementation "org.apache.httpcomponents.client5:httpclient5:5.2.1"
-    // 최초 인덱스 생성에만 사용 (raw JSON PUT)
-    implementation "org.opensearch.client:opensearch-rest-client:${opensearchVersion}"
+    implementation "org.opensearch.client:opensearch-rest-client:${opensearchVersion}" // 최초 인덱스 생성에만 사용 (raw JSON PUT)
+
+    // Apache HttpClient5
+    implementation("org.apache.httpcomponents.client5:httpclient5")
+    implementation("org.apache.httpcomponents.core5:httpcore5")
 }
 
 tasks.named('test') {

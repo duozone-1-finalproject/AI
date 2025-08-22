@@ -28,10 +28,10 @@ public class DraftGraphConfig {
 //    private final WebSubgraphInvoker webSubgraphInvoker;
 //    private final NewsSubgraphInvoker newsSubgraphInvoker;
 //    private final DbSubgraphInvoker dbSubgraphInvoker;
-    private final ContextAggregatorNode contextAggregator;
+//    private final ContextAggregatorNode contextAggregator;
     private final DraftGeneratorNode draftGenerator;
-    private final GlobalValidatorNode globalValidator;
-    private final RetryAdjustNode retryAdjust;
+//    private final GlobalValidatorNode globalValidator;
+//    private final RetryAdjustNode retryAdjust;
 
 
     @Bean
@@ -47,40 +47,42 @@ public class DraftGraphConfig {
 //                graph.addNode("retry_adjust",  retryAdjust);
                 graph.addEdge(StateGraph.START, "prompt");
                 graph.addEdge("prompt", "source_select");
+                graph.addEdge("source_select", "generate");
+                graph.addEdge("generate", StateGraph.END);
                 // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
-                graph.addConditionalEdges("source_select",
-                        edge_async(s -> {
-                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
-                                    .orElse(Collections.emptyList());
-                            return selected.contains("web") ? "web" : "skip_web"; // ← String 반환
-                        }),
-                        Map.of("web","web_branch","skip_web","aggregate"));
-                graph.addConditionalEdges("source_select",
-                        edge_async(s -> {
-                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
-                                    .orElse(Collections.emptyList());
-                            return selected.contains("news") ? "news" : "skip_news"; // ← String 반환
-                        }),
-                        Map.of("news","news_branch","skip_news","aggregate"));
-                graph.addConditionalEdges("source_select",
-                        edge_async(s -> {
-                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
-                                    .orElse(Collections.emptyList());
-                            return selected.contains("db") ? "db" : "skip_db"; // ← String 반환
-                        }),
-                        Map.of("db","db_branch","skip_db","aggregate"));
-                graph.addEdge("web_branch","aggregate");
-                graph.addEdge("news_branch","aggregate");
-                graph.addEdge("db_branch","aggregate");
-                graph.addEdge("aggregate","generate");
-                graph.addEdge("generate","validate");
-                graph.addConditionalEdges("validate",
-                        edge_async(s -> {
-                            boolean ok = s.<Boolean>value(DraftState.IS_VALID).orElse(false);
-                            return ok ? "END" : "retry_adjust";        // ← String 반환 (동기 EdgeAction)
-                        }),
-                        Map.of("END", StateGraph.END, "retry_adjust", "retry_adjust"));
-                graph.addEdge("retry_adjust","generate");
+//                graph.addConditionalEdges("source_select",
+//                        edge_async(s -> {
+//                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+//                                    .orElse(Collections.emptyList());
+//                            return selected.contains("web") ? "web" : "skip_web"; // ← String 반환
+//                        }),
+//                        Map.of("web","web_branch","skip_web","aggregate"));
+//                graph.addConditionalEdges("source_select",
+//                        edge_async(s -> {
+//                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+//                                    .orElse(Collections.emptyList());
+//                            return selected.contains("news") ? "news" : "skip_news"; // ← String 반환
+//                        }),
+//                        Map.of("news","news_branch","skip_news","aggregate"));
+//                graph.addConditionalEdges("source_select",
+//                        edge_async(s -> {
+//                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)
+//                                    .orElse(Collections.emptyList());
+//                            return selected.contains("db") ? "db" : "skip_db"; // ← String 반환
+//                        }),
+//                        Map.of("db","db_branch","skip_db","aggregate"));
+//                graph.addEdge("web_branch","aggregate");
+//                graph.addEdge("news_branch","aggregate");
+//                graph.addEdge("db_branch","aggregate");
+//                graph.addEdge("aggregate","generate");
+//                graph.addEdge("generate","validate");
+//                graph.addConditionalEdges("validate",
+//                        edge_async(s -> {
+//                            boolean ok = s.<Boolean>value(DraftState.IS_VALID).orElse(false);
+//                            return ok ? "END" : "retry_adjust";        // ← String 반환 (동기 EdgeAction)
+//                        }),
+//                        Map.of("END", StateGraph.END, "retry_adjust", "retry_adjust"));
+//                graph.addEdge("retry_adjust","generate");
 
         return graph.compile(); // 실행용 그래프 생성
     }

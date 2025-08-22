@@ -1,0 +1,18 @@
+package com.example.demo.config;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AiClientConfig {
+
+    /**
+     * Spring AI가 오토컨피그로 제공하는 ChatClient.Builder를 주입받아
+     * 애플리케이션 전역에서 재사용할 ChatClient 빈을 생성합니다.
+     */
+    @Bean
+    public ChatClient chatClient(ChatClient.Builder builder) {
+        return builder.build();
+    }
+}
