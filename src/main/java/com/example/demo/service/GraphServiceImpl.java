@@ -19,14 +19,6 @@ public class GraphServiceImpl implements GraphService {
         this.graph = graph;
     }
 
-//    @Override
-//    public LangGraphDto.GraphResult run(LangGraphDto.PromptRequest promptRequest) {
-//        var resultState = graph.invoke(Map.of("input", promptRequest)).orElse(new AgentState(Map.of()));
-//        return resultState.value("output")
-//                .map(LangGraphDto.GraphResult.class::cast)
-//                .orElse(new LangGraphDto.GraphResult(""));
-//    }
-
     @Override
     public DraftResponseDto run(DraftRequestDto req) {
         DraftResponseDto dto = new DraftResponseDto();

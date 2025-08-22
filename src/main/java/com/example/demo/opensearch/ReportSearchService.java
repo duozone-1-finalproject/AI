@@ -109,19 +109,4 @@ public class ReportSearchService {
                 .build();
         return client.search(req, ObjectNode.class);
     }
-
-    // --- (참고) 하이브리드 쿼리 ---
-    // OpenSearch 3.x + opensearch-java 3.x 이상에서만 HybridQuery/NeuralQuery를 쓸 수 있어.
-    // 2.19.0에선 하이브리드가 미지원/제약 이슈가 있었음. 필요하면 3.x로 업그레이드해 아래 패턴으로 사용 권장.
-    /*
-    public SearchResponse<ObjectNode> searchHybrid3x(String index, String text, String kw, String modelId) throws IOException {
-        Query hybrid = Query.of(h -> h.hybrid(q -> q.queries(List.of(
-                MatchQuery.of(m -> m.field("text").query(FieldValue.of(text)))._toQuery(),
-                TermQuery.of(t -> t.field("passage_text").value(FieldValue.of(kw)))._toQuery(),
-                NeuralQuery.of(n -> n.field("passage_embedding").queryText(text).modelId(modelId).k(100))._toQuery()
-        ))));
-        SearchRequest req = new SearchRequest.Builder().index(index).query(hybrid).build();
-        return client.search(req, ObjectNode.class);
-    }
-    */
 }

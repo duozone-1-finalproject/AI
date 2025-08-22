@@ -18,9 +18,7 @@ public class GraphController {
 
     @PostMapping
     public DraftResponseDto draft(@Valid @RequestBody DraftRequestDto req) {
-        // 2. 로그 출력 코드 추가
-        log.info("Received draft request: {}", req);
-        // 또는 디버그 레벨로 출력
+        // 디버그 출력
         log.debug("DraftRequestDto: {}", req);
         return graphService.run(req);
     }
