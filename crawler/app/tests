@@ -1,0 +1,58 @@
+pip install Groq
+pip install python-dotenv
+pip install trafilatura
+
+import os
+import json
+import requests
+from typing import List, Dict
+from groq import Groq
+from datetime import datetime
+import time
+from dotenv import load_dotenv
+import trafilatura
+
+load_dotenv(dotenv_path=".env")  # .env 파일 로드
+
+SERP_API_KEY = os.getenv("SERP_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+serp_api_key = os.getenv("SERP_API_KEY")
+
+print("API Key:", serp_api_key)
+
+# (3) 본문 크롤링
+def crawl_articles(articles: List[Dict]) -> List[Dict]:
+    crawled = []
+    
+    for i, article in enumerate(articles, 1):
+        print(f"📰 크롤링 중 ({i}/{len(articles)}): {article['title'][:50]}...")
+        
+        try:
+            # 요청 간격 조절 (서버 부하 방지)
+            time.sleep(1)
+            
+            downloaded = trafilatura.fetch_url(article["link"])
+            if downloaded:
+                text = trafilatura.extract(downloaded)
+                if text and len(text.strip()) > 100:  # 최소 길이 체크
+                    crawled.append({
+                        "title": article["title"],
+                        "link": article["link"],
+                        "source": article["source"],
+                        "date": article["date"],
+                        "content": text
+                    })
+                    print("✅ 크롤링 성공")
+                else:
+                    print("⚠️  본문 추출 실패 (내용 부족)")
+                    print(f"링크: {article['link']}")
+            else:
+                print("⚠️  페이지 다운로드 실패")
+                
+        except Exception as e:
+            print(f"❌ 크롤링 에러: {e}")
+            continue
+    
+    print(f"\n📊 총 {len(crawled)}개 기사 크롤링 완료")
+    return crawled
