@@ -1,9 +1,20 @@
 package com.example.demo.langgraph.nodes;
 
-public class Sub_NewsSearchNode { "engine": "google_news",
-        "q": "<위에서 만든 단일 쿼리 문자열>",
-        "hl": "ko",
-        "gl": "kr",
-        "sort_by": "date",
-        "num": 5
+import java.util.Map;
+
+public class Sub_NewsSearchNode {
+    Map<String, String> query = Map.of(
+            "engine", "google_news",
+            "q", "<위에서 만든 단일 쿼리 문자열>",
+            "hl", "ko",
+            "gl", "kr",
+            "sort_by", "date",
+            "num", "5"
+            );
+//    "engine": "google_news",
+//        "q": "<위에서 만든 단일 쿼리 문자열>",
+//        "hl": "ko",
+//        "gl": "kr",
+//        "sort_by": "date",
+//        "num": 5
 }
