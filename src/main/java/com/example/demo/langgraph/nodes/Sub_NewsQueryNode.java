@@ -1,4 +1,4 @@
 package com.example.demo.langgraph.nodes;
 
-public class NewsQueryNode {
+public class Sub_NewsQueryNode {
 }

@@ -9,7 +9,7 @@ import org.bsc.langgraph4j.state.AgentState;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NewsAggregateNode implements NodeAction<AgentState> {
+public class Sub_NewsAggregateNode implements NodeAction<AgentState> {
 
     private static final Map<String, List<String>> THEME_KEYWORDS = Map.of(
             "투자/증설", List.of("투자", "증설", "합작", "M&A", "CAPEX"),

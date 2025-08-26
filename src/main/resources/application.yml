@@ -63,3 +63,6 @@ opensearch:
 #      access-key: ${AWS_ACCESS_KEY_ID:}
 #      secret-key: ${AWS_SECRET_ACCESS_KEY:}
 #      session-token: ${AWS_SESSION_TOKEN:}   # (옵션) 임시자격증명 사용 시
+
+fast api:
+  url: http://localhost:5601
