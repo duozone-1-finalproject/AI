@@ -53,7 +53,7 @@ public class DraftState extends AgentState {
             Map.entry(CONTEXT,   Channels.base(() -> new ArrayList<ContextDoc>())),
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
-            Map.entry(DRAFT,     Channels.base(() -> "")),
+            Map.entry(DRAFT,     Channels.appender(ArrayList::new)),
             Map.entry(IS_VALID,  Channels.base(() -> Boolean.FALSE)),
             Map.entry(VAL_SCORE, Channels.base(() -> 0.0)),
             Map.entry(VAL_FB,    Channels.appender(ArrayList::new)),
