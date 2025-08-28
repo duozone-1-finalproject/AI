@@ -50,11 +50,6 @@
       "art_id": {
         "type": "keyword"
       },
-      "art_name": {
-        "type": "text",
-        "analyzer": "ko_nori",
-        "search_analyzer": "ko_nori"
-      },
       "content": {
         "type": "text",
         "analyzer": "ko_nori",

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import static com.example.demo.langgraph.state.DraftState.DRAFT;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -48,6 +49,6 @@ public class GraphServiceImpl implements GraphService {
 
         // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
         DraftState finalState = graph.invoke(init).orElse(new DraftState(Map.of()));  // compile()된 그래프는 invoke/stream 가능
-        return finalState.<String>value(DraftState.DRAFT).orElse("");
+        return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getFirst();
     }
 }
