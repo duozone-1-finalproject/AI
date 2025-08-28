@@ -28,6 +28,8 @@ public class DraftState extends AgentState {
 
     // 생성/검증/루프
     public static final String DRAFT = "draftText";
+    public static final String GUIDE_INDEX = "guideIndex";
+    public static final String GUIDE_HITS = "guideHits"; // List<Map>
     public static final String IS_VALID = "isValid";
     public static final String VAL_SCORE = "validationScore";
     public static final String VAL_FB = "validationFeedback"; // List<String>
@@ -56,12 +58,15 @@ public class DraftState extends AgentState {
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
+            Map.entry(GUIDE_INDEX, Channels.base(() -> "")),
+            Map.entry(GUIDE_HITS, Channels.appender(ArrayList::new)),
             Map.entry(IS_VALID, Channels.base(() -> Boolean.FALSE)),
             Map.entry(VAL_SCORE, Channels.base(() -> 0.0)),
             Map.entry(VAL_FB, Channels.appender(ArrayList::new)),
             Map.entry(ATTEMPTS, Channels.base(() -> 0)),
             Map.entry(ERRORS, Channels.appender(ArrayList::new))
     );
+
 
     public DraftState(Map<String, Object> init) {
         super(init);
@@ -78,5 +83,8 @@ public class DraftState extends AgentState {
 
     public List<String> dbDocs() {
         return this.<List<String>>value(DB_DOCS).orElse(List.of());
+    }
+
+    public void put(String sectionLabel, String 사업위험) {
     }
 }

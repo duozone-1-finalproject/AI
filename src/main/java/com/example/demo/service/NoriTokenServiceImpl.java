@@ -6,11 +6,13 @@ import org.opensearch.client.opensearch.indices.AnalyzeRequest;
 import org.opensearch.client.opensearch.indices.analyze.AnalyzeToken;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class NoriTokenServiceImpl implements NoriTokenService{
+public class NoriTokenServiceImpl implements NoriTokenService {
     private final OpenSearchClient client;
 
     @Override
@@ -21,7 +23,11 @@ public class NoriTokenServiceImpl implements NoriTokenService{
                 .analyzer(analyzer)    // "ko_nori"
                 .text(text)
                 .build();
-        var res = client.indices().analyze(req);
-        return res.tokens().stream().map(AnalyzeToken::token).collect(Collectors.joining(" "));
+        try {                                                                                                                                              │
+            var res = client.indices().analyze(req);                                                                                                       │
+            return res.tokens().stream().map(AnalyzeToken::token).collect(Collectors.joining(" "));                                                        │
+        } catch (IOException | RuntimeException e) { // 예기치 않은 토큰
+            throw new RuntimeException("OpenSearch를 사용하여 텍스트를 분석하는 데 실패했습니다: " + e.getMessage(), e);
+        }
     }
 }
