@@ -13,7 +13,6 @@ import org.opensearch.client.opensearch._types.query_dsl.MultiMatchQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Operator;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch._types.query_dsl.TermsQuery;
-import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.springframework.stereotype.Component;
@@ -28,30 +27,27 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
 
     private final OpenSearchClient client;
 
-    // DraftState에 동일 상수가 있다면 그걸 사용. 없다면 아래 키 문자열을 그대로 사용해도 됨.
-    private static final String KEY_GUIDE_INDEX    = DraftState.GUIDE_INDEX;     // "guideIndex"
-    private static final String KEY_GUIDE_CHAP_IDS = DraftState.GUIDE_CHAP_IDS;  // "guideChapIds"
-    private static final String KEY_GUIDE_HITS     = DraftState.GUIDE_HITS;      // "guideHits"
-    private static final String KEY_GUIDE_QUERY    = "guideQueryString";
+    private static final String KEY_GUIDE_INDEX = DraftState.GUIDE_INDEX;   // "guideIndex"
+    private static final String KEY_GUIDE_HITS  = DraftState.GUIDE_HITS;    // "guideHits"
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         try {
             final String sectionLabel = state.<String>value(DraftState.SECTION_LABEL).orElse("");
             final String index        = pickIndex(sectionLabel);
-            final List<String> chapIds= pickChapIds(sectionLabel);
+            final List<String> chapIds= pickChapIds(sectionLabel); // 로컬에서만 사용
 
-            // 1) 전처리 없이: sectionLabel + 공백 + tokens 공백 join
+            // 전처리 없이: sectionLabel + 공백 + tokens 공백 join
             List<String> tokens = readTokens(state);
             final String queryString = buildQueryString(sectionLabel, tokens);
 
-            // 2) multi_match + (위험섹션이면) chap_id filter
-            Query multiMatch = Query.of(q -> q.multi_match(new MultiMatchQuery.Builder()
-                    .query(queryString)
-                    .fields(Arrays.asList("sec_name^2", "chap_name^1.5", "content"))
-                    .operator(Operator.Or)
-                    .type(TextQueryType.BestFields)
-                    .build()
+            // multiMatch + (위험 섹션이면) chap_id filter
+            Query multiMatch = Query.of(q -> q.multiMatch(
+                    new MultiMatchQuery.Builder()
+                            .query(queryString)
+                            .fields(Arrays.asList("sec_name^2", "chap_name^1.5", "content"))
+                            .operator(Operator.Or)
+                            .build()
             ));
 
             BoolQuery.Builder bool = new BoolQuery.Builder()
@@ -63,16 +59,13 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
                         .field("chap_id")
                         .terms(t -> t.value(chapIds.stream().map(FieldValue::of).toList()))
                         .build();
-                bool.filter(Query.of(q -> q.terms(tq))); // 스코어 영향 없음(정확 필터)
+                bool.filter(Query.of(q -> q.terms(tq)));
             }
 
-            // 3) _source 최소화
             List<String> includes = new ArrayList<>(List.of(
                     "chap_id","chap_name","sec_id","sec_name","art_id","content"
             ));
-            if ("standard".equals(index)) {
-                includes.add("art_name"); // 있으면 타이틀에 보강 용도
-            }
+            if ("standard".equals(index)) includes.add("art_name");
 
             SearchRequest req = new SearchRequest.Builder()
                     .index(index)
@@ -83,10 +76,8 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
 
             SearchResponse<Map> resp = client.search(req, Map.class);
 
-            // 4) 결과 정규화 -> guideHits
             List<Map<String, String>> guideHits = resp.hits().hits().stream().map(h -> {
                 Map<String, Object> src = (Map<String, Object>) h.source();
-
                 String chapId  = String.valueOf(src.getOrDefault("chap_id", ""));
                 String secId   = String.valueOf(src.getOrDefault("sec_id", ""));
                 String artId   = String.valueOf(src.getOrDefault("art_id", ""));
@@ -100,7 +91,7 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
                         + (artName.isBlank() ? "" : " - " + artName);
 
                 String content = String.valueOf(src.getOrDefault("content", ""));
-                String detail  = truncate(content, 400); // 프롬프트 길이 방지: 400자 정도만
+                String detail  = truncate(content, 400);
 
                 Map<String, String> m = new HashMap<>();
                 m.put("id", id);
@@ -110,10 +101,8 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
             }).collect(Collectors.toList());
 
             Map<String, Object> out = new HashMap<>();
-            out.put(KEY_GUIDE_INDEX,    index);
-            out.put(KEY_GUIDE_CHAP_IDS, chapIds);
-            out.put(KEY_GUIDE_HITS,     guideHits);
-            out.put(KEY_GUIDE_QUERY,    queryString);
+            out.put(KEY_GUIDE_INDEX, index);
+            out.put(KEY_GUIDE_HITS,  guideHits);
             return CompletableFuture.completedFuture(out);
 
         } catch (Exception e) {
@@ -145,12 +134,10 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
 
     @SuppressWarnings("unchecked")
     private List<String> readTokens(DraftState state) {
-        // 1) SEARCH_TERMS(List<String>) 우선 사용
         Optional<List<String>> fromSearchTerms = state.value(DraftState.SEARCH_TERMS);
         if (fromSearchTerms.isPresent() && !fromSearchTerms.get().isEmpty()) {
             return fromSearchTerms.get();
         }
-        // 2) draftTokens(List<String>) 또는 draftTokens.tokens[*].token 형태 지원
         Optional<Object> maybeTokens = state.value("draftTokens");
         if (maybeTokens.isPresent()) {
             Object o = maybeTokens.get();
@@ -170,7 +157,6 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
                 }
             }
         }
-        // 3) fallback: draft 전문에서 공백 split
         String draft = state.<String>value(DraftState.DRAFT).orElse("");
         if (!draft.isBlank()) {
             return Arrays.stream(draft.split("\\s+"))
@@ -183,12 +169,8 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
 
     private String buildQueryString(String sectionLabel, List<String> tokens) {
         StringBuilder sb = new StringBuilder();
-        if (sectionLabel != null && !sectionLabel.isBlank()) {
-            sb.append(sectionLabel).append(' ');
-        }
-        for (String t : tokens) {
-            if (t != null && !t.isBlank()) sb.append(t).append(' ');
-        }
+        if (sectionLabel != null && !sectionLabel.isBlank()) sb.append(sectionLabel).append(' ');
+        for (String t : tokens) if (t != null && !t.isBlank()) sb.append(t).append(' ');
         return sb.toString().trim();
     }
 
