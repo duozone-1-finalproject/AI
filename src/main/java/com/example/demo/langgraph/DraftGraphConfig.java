@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
 import org.bsc.langgraph4j.StateGraph;
+import org.bsc.langgraph4j.state.Channel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.bsc.langgraph4j.action.AsyncEdgeAction.*;
@@ -18,7 +20,6 @@ import static org.bsc.langgraph4j.action.AsyncEdgeAction.*;
 @RequiredArgsConstructor
 public class DraftGraphConfig {
 
-    private final StateGraph<DraftState> graph;
     private final PromptSelectorNode promptSelector;
     private final SourceSelectorNode sourceSelector;
     //    private final WebSubgraphInvoker webSubgraphInvoker;
@@ -33,6 +34,10 @@ public class DraftGraphConfig {
 
     @Bean
     public CompiledGraph<DraftState> draftGraph() throws GraphStateException {
+        // StateGraph 인스턴스를 직접 생성하여 그래프 구성을 시작합니다.
+        Map<String, Channel<?>> schema = new LinkedHashMap<>(DraftState.SCHEMA);
+        StateGraph<DraftState> graph = new StateGraph<>(schema, DraftState::new);
+
         graph.addNode("prompt", promptSelector);
         graph.addNode("source_select", sourceSelector);
 //                graph.addNode("web_branch",    node_async(webSubgraphInvoker));
