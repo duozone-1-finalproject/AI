@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.nodes.utils;
+package com.example.demo.util;
 
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.springframework.stereotype.Component;
@@ -14,20 +14,19 @@ public class StandardSearchHelper {
 
     private static final int MAX_DETAIL_LENGTH = 400;
 
-    public String pickIndex(String label) {
-        if (label == null) return "standard";
-        return switch (label) {
-            case "사업위험", "회사위험", "기타 투자위험" -> "risk_standard";
-            default -> "standard";
-        };
+    public String pickIndex(String sectionKey) {
+        if (sectionKey != null && sectionKey.startsWith("risk_")) {
+            return "risk_standard";
+        }
+        return "standard";
     }
 
-    public List<String> pickChapIds(String label) {
-        if (label == null) return List.of();
-        return switch (label) {
-            case "사업위험" -> List.of("5");
-            case "회사위험" -> List.of("6");
-            case "기타 투자위험" -> List.of("7");
+    public List<String> pickChapIds(String sectionKey) {
+        if (sectionKey == null) return List.of();
+        return switch (sectionKey) {
+            case "risk_industry" -> List.of("5");
+            case "risk_company" -> List.of("6");
+            case "risk_etc" -> List.of("7");
             default -> List.of();
         };
     }
@@ -50,7 +49,7 @@ public class StandardSearchHelper {
                 src.getOrDefault("art_id", "")
         );
 
-        String title = Stream.of("chap_name", "sec_name", "art_name")
+        String title = Stream.of("chap_name", "sec_name")
                 .map(key -> String.valueOf(src.getOrDefault(key, "")))
                 .filter(name -> !name.isBlank())
                 .collect(Collectors.joining(" - "));

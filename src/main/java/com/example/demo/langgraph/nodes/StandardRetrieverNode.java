@@ -5,7 +5,7 @@ package com.example.demo.langgraph.nodes;
 // 기본 Default지침 = 기업공시작성기준(standard 인덱스) / 투자위험요소 섹션들 = 투자위험요소 기재요령 안내서
 
 import com.example.demo.langgraph.state.DraftState;
-import com.example.demo.langgraph.nodes.utils.StandardSearchHelper;
+import com.example.demo.util.StandardSearchHelper;
 import com.example.demo.service.NoriTokenService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
@@ -34,11 +34,14 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         try {
+            String sectionKey = state.<String>value(DraftState.SECTION).orElse("");
             String sectionLabel = state.<String>value(DraftState.SECTION_LABEL).orElse("");
-            String index = standardSearchHelper.pickIndex(sectionLabel);       // standard | risk_standard
-            List<String> chapIds = standardSearchHelper.pickChapIds(sectionLabel);     // [5]/[6]/[7] or []
+            String index = standardSearchHelper.pickIndex(sectionKey);       // standard | risk_standard
+            List<String> chapIds = standardSearchHelper.pickChapIds(sectionKey);     // [5]/[6]/[7] or []
 
-            String draft = state.<String>value(DraftState.DRAFT).orElse("");
+            // DRAFT는 appender 채널이므로 List<String> 타입입니다. 가장 마지막 초안을 가져옵니다.
+            List<String> drafts = state.<List<String>>value(DraftState.DRAFT).orElse(List.of());
+            String draft = drafts.isEmpty() ? "" : drafts.getLast();
             String joined = noriTokenService.join(index, "ko_nori", draft);
             String queryString = sectionLabel.isBlank() ? joined : sectionLabel + " " + joined;
 
@@ -61,26 +64,34 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
     }
 
     private SearchRequest buildSearchRequest(String index, String queryString, List<String> chapIds) {
-        Query multiMatchQuery = Query.of(q -> q.multiMatch(new MultiMatchQuery.Builder()
-                .query(queryString)
-                .fields("sec_name^2", "chap_name^1.5", "content")
-                .operator(Operator.Or)
-                .build()));
+        final Query query;
 
-        BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
-                .should(multiMatchQuery)
-                .minimumShouldMatch("1");
+        // queryString이 비어있으면 MultiMatchQuery에서 예외가 발생하므로, match_none 쿼리를 사용합니다.
+        if (queryString == null || queryString.isBlank()) {
+            query = Query.of(q -> q.matchNone(mn -> mn));
+        } else {
+            Query multiMatchQuery = Query.of(q -> q.multiMatch(new MultiMatchQuery.Builder()
+                    .query(queryString)
+                    .fields("sec_name^2", "content")
+                    .operator(Operator.Or)
+                    .build()));
 
-        if (!chapIds.isEmpty()) {
-            TermsQuery termsQuery = new TermsQuery.Builder().field("chap_id")
-                    .terms(t -> t.value(chapIds.stream().map(FieldValue::of).toList())).build();
-            boolQueryBuilder.filter(Query.of(q -> q.terms(termsQuery)));
+            BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
+                    .should(multiMatchQuery)
+                    .minimumShouldMatch("1");
+
+            if (!chapIds.isEmpty()) {
+                TermsQuery termsQuery = new TermsQuery.Builder().field("chap_id")
+                        .terms(t -> t.value(chapIds.stream().map(FieldValue::of).toList())).build();
+                boolQueryBuilder.filter(Query.of(q -> q.terms(termsQuery)));
+            }
+            query = Query.of(q -> q.bool(boolQueryBuilder.build()));
         }
 
         return new SearchRequest.Builder()
+                .query(query)
                 .index(index).size(12)
-                .source(s -> s.filter(f -> f.includes("chap_id", "chap_name", "sec_id", "sec_name", "art_id", "content", "art_name")))
-                .query(Query.of(q -> q.bool(boolQueryBuilder.build())))
+                .source(s -> s.filter(f -> f.includes("chap_id", "chap_name", "sec_id", "sec_name", "art_id", "content")))
                 .build();
     }
 }
