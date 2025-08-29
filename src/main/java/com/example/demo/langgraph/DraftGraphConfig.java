@@ -25,32 +25,34 @@ public class DraftGraphConfig {
     private final StateGraph<DraftState> graph;
     private final PromptSelectorNode promptSelector;
     private final SourceSelectorNode sourceSelector;
-//    private final WebSubgraphInvoker webSubgraphInvoker;
+    //    private final WebSubgraphInvoker webSubgraphInvoker;
 //    private final NewsSubgraphInvoker newsSubgraphInvoker;
 //    private final DbSubgraphInvoker dbSubgraphInvoker;
 //    private final ContextAggregatorNode contextAggregator;
     private final DraftGeneratorNode draftGenerator;
+    private final StandardRetrieverNode standardRetriever;
 //    private final GlobalValidatorNode globalValidator;
 //    private final RetryAdjustNode retryAdjust;
 
 
     @Bean
     public CompiledGraph<DraftState> draftGraph() throws GraphStateException {
-                graph.addNode("prompt",        promptSelector);
-                graph.addNode("source_select", sourceSelector);
+        graph.addNode("prompt", promptSelector);
+        graph.addNode("source_select", sourceSelector);
 //                graph.addNode("web_branch",    node_async(webSubgraphInvoker));
 //                graph.addNode("news_branch",   node_async(newsSubgraphInvoker));
 //                graph.addNode("db_branch",     node_async(dbSubgraphInvoker));
 //                graph.addNode("aggregate",     contextAggregator);
-                graph.addNode("generate",      draftGenerator);
+        graph.addNode("generate", draftGenerator);
+        graph.addNode("guideline", standardRetriever);
 //                graph.addNode("validate",      globalValidator);
 //                graph.addNode("retry_adjust",  retryAdjust);
-                graph.addEdge(StateGraph.START, "prompt");
-                graph.addEdge("prompt", "source_select");
-                graph.addEdge("source_select", "generate");
-                // 임시 end포인트 연결
-                graph.addEdge("generate", StateGraph.END);
-                // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
+        graph.addEdge(StateGraph.START, "prompt");
+        graph.addEdge("prompt", "source_select");
+        graph.addEdge("source_select", "generate");
+        // 임시 end포인트 연결
+        graph.addEdge("generate", StateGraph.END);
+        // 조건부 병렬 fan-out(소스별 라우팅은 CompletableFuture<String> 반환 필요)
 //                graph.addConditionalEdges("source_select",
 //                        edge_async(s -> {
 //                            List<String> selected = s.<List<String>>value(DraftState.SOURCES)

@@ -13,12 +13,16 @@ public class AiSectionProperties {
     // key: "risk_industry" ...
     private Map<String, SectionConfig> sections;
     private List<String> defaultOrder;
+    private Map<String, String> prompts;
 
     public Map<String, SectionConfig> getSections() { return sections; }
     public void setSections(Map<String, SectionConfig> sections) { this.sections = sections; }
 
     public List<String> getDefaultOrder() { return defaultOrder; }
     public void setDefaultOrder(List<String> defaultOrder) { this.defaultOrder = defaultOrder; }
+
+    public Map<String, String> getPrompts() { return prompts; }
+    public void setPrompts(Map<String, String> prompts) { this.prompts = prompts; }
 
     @Setter
     @Getter

@@ -42,7 +42,7 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.SECTION_LABEL, sectionLabel);
 
         // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
-        DraftState finalState = graph.invoke(init).orElse(new DraftState(Map.of()));  // compile()된 그래프는 invoke/stream 가능
-        return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getFirst();
+        DraftState finalState = graph.invoke(init).orElse(new DraftState(Map.of()));
+        return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getLast();
     }
 }

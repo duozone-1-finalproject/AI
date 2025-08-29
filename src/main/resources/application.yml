@@ -18,6 +18,11 @@ spring:
           temperature: 0.3
 
 ai:
+  prompts:
+    validator_default: "classpath:prompts/validator_default.st"
+    validator_risk: "classpath:prompts/validator_risk.st"
+    validator_user: "classpath:prompts/validator_user.st"
+
   sections:
     # 사업위험
     risk_industry:
