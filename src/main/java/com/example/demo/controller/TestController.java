@@ -4,27 +4,20 @@ import com.example.demo.langgraph.nodes.StandardRetrieverNode;
 import com.example.demo.service.NoriTokenService;
 import com.example.demo.util.StandardSearchHelper;
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.json.stream.JsonGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.Data;
-import org.opensearch.client.json.JsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch.core.SearchRequest;
-import org.opensearch.client.opensearch.core.SearchResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/nori")
+@RequestMapping("/test")
 @RequiredArgsConstructor
-public class NoriController {
+public class TestController {
 
     private final NoriTokenService noriTokenService;
     private final StandardRetrieverNode standardRetrieverNode;
@@ -61,7 +54,7 @@ public class NoriController {
 //    ------------------------------------------------
 //    이쪽 사용하려면 private에서 public으로 변경해야 사용가능
 //    ------------------------------------------------
-//    @PostMapping("/test-search-response")
+//    @PostMapping("/search-response")
 //    public List<Map<String, String>> testSearchResponse(@RequestBody SearchRequestTestDto request) throws IOException {
 //        SearchRequest searchRequest = standardRetrieverNode.buildSearchRequest(
 //                request.getIndex(), request.getQueryString(), request.getChapIds());
@@ -72,7 +65,7 @@ public class NoriController {
 //        return resp.hits().hits().stream().map(standardSearchHelper::transformHit).toList();
 //    }
 //
-//    @PostMapping("/test-search-request")
+//    @PostMapping("/search-request")
 //    public String testSearchRequest(@RequestBody SearchRequestTestDto request) {
 //        SearchRequest searchRequest = standardRetrieverNode.buildSearchRequest(
 //                request.getIndex(), request.getQueryString(), request.getChapIds());

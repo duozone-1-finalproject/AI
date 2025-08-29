@@ -24,10 +24,10 @@ public class DraftState extends AgentState {
     public static final String WEB_DOCS = "webDocs";   // List<Doc>
     public static final String NEWS_DOCS = "newsDocs";  // List<Doc>
     public static final String DB_DOCS = "dbDocs";    // List<Doc>
-    public static final String CONTEXT = "contextDocs"; // fan-in 결과 (List<Doc>)
+    public static final String CONTEXT = "context"; // fan-in 결과 (List<Doc>)
 
     // 생성/검증/루프
-    public static final String DRAFT = "draftText";
+    public static final String DRAFT = "draft";
     public static final String GUIDE_INDEX = "guideIndex";
     public static final String GUIDE_HITS = "guideHits"; // List<Map>
     public static final String VALIDATION = "validation";
@@ -47,20 +47,19 @@ public class DraftState extends AgentState {
             Map.entry(SECTION_LABEL, Channels.base(() -> "")),
             Map.entry(PROMPT, Channels.base(() -> "")),
             // 선택 소스는 1회만 쓰면 base, 동적 누적이면 appender로 바꿔도 됨
-            Map.entry(SOURCES, Channels.base(ArrayList<String>::new)),
+            Map.entry(SOURCES, Channels.base(() -> new ArrayList<String>())),
 
             // 병렬 수집용 리스트 채널 (appender)
             Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(NEWS_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(DB_DOCS, Channels.appender(ArrayList::new)),
-//            Map.entry(CONTEXT, Channels.base(() -> new ArrayList<ContextDoc>())),
-            Map.entry(CONTEXT, Channels.base(ArrayList<ContextDoc>::new)),
+            Map.entry(CONTEXT, Channels.base(() -> new ArrayList<ContextDoc>())),
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
             Map.entry(GUIDE_INDEX, Channels.base(() -> "")),
             Map.entry(GUIDE_HITS, Channels.appender(ArrayList::new)),
-            Map.entry(VALIDATION, Channels.base(() -> null)),
+            Map.entry(VALIDATION, Channels.base(() -> new HashMap<>())),
             Map.entry(ADJUST_INPUT, Channels.appender(ArrayList::new)),
             Map.entry(DECISION, Channels.base(() -> "")),
             Map.entry(ERRORS, Channels.appender(ArrayList::new))

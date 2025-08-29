@@ -93,7 +93,7 @@ public class GlobalValidatorNode implements AsyncNodeAction<DraftState> {
             ));
         } catch (Exception e) {
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.ERRORS, ("[ValidatorNode] " + e.getMessage())
+                    DraftState.ERRORS, List.of("[ValidatorNode] " + e.getMessage())
             ));
         }
     }

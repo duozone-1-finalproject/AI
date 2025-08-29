@@ -58,7 +58,7 @@ public class StandardRetrieverNode implements AsyncNodeAction<DraftState> {
         } catch (Exception e) {
             // 에러 발생 시, 상태에 에러 메시지를 기록하고 계속 진행
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.ERRORS, "[StandardRetrieverNode] " + e.getMessage()
+                    DraftState.ERRORS, List.of("[StandardRetrieverNode] " + e.getMessage())
             ));
         }
     }
