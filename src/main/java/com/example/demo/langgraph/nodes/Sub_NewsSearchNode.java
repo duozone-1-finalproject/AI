@@ -18,3 +18,4 @@ public class Sub_NewsSearchNode {
 //        "sort_by": "date",
 //        "num": 5
 }
+// SerpAPI 검색 → 기사 제목/링크 추출 (newsResults)

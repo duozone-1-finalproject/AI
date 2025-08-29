@@ -1,4 +1,6 @@
 // 크롤링된 뉴스 fast api 통해서 연동해야함
+///crawl/news → Python FastAPI로 기사 크롤링 요청
+//내부적으로 PythonCrawlingService 호출
 
 @RestController
 @RequestMapping("/crawl")
@@ -23,6 +25,3 @@ public class SubCrawlingController {
         return ResponseEntity.ok(articles);
     }
 }
-
-
-
