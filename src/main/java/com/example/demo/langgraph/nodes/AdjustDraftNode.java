@@ -55,11 +55,11 @@ public class AdjustDraftNode implements AsyncNodeAction<DraftState> {
             String revised = chatClient.prompt(finalPrompt).call().content();
 
             // 결과 append
-            List<String> newDrafts = new ArrayList<>(drafts);
-            newDrafts.add(revised);
+//            List<String> newDrafts = new ArrayList<>(drafts);
+//            newDrafts.add(revised);
 
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.DRAFT, newDrafts
+                    DraftState.DRAFT, revised
             ));
 
         } catch (Exception e) {

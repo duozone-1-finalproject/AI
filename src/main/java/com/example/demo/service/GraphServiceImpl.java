@@ -5,12 +5,18 @@ import com.example.demo.dto.DraftRequestDto;
 import com.example.demo.dto.DraftResponseDto;
 import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
+import org.bsc.async.AsyncGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.CompiledGraph;
+import org.bsc.langgraph4j.NodeOutput;
 import org.springframework.stereotype.Service;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService {
@@ -28,10 +34,8 @@ public class GraphServiceImpl implements GraphService {
     }
 
     private String runOne(String sectionKey, DraftRequestDto req) {
-        // 설정에서 섹션 레이블(이름) 조회
         String sectionLabel = aiSectionProperties.getSections().get(sectionKey).getLabel();
 
-        // 그래프 초기 상태 구성
         Map<String, Object> init = new LinkedHashMap<>();
         init.put(DraftState.CORP_CODE, req.getCorpCode());
         init.put(DraftState.CORP_NAME, req.getCorpName());
@@ -41,8 +45,22 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.SECTION, sectionKey);
         init.put(DraftState.SECTION_LABEL, sectionLabel);
 
-        // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
-        DraftState finalState = graph.invoke(init).orElse(new DraftState(Map.of()));
+        AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
+
+        final AtomicReference<DraftState> finalStateRef = new AtomicReference<>();
+
+        stream.forEach(nodeOutput -> {
+            DraftState currentState = nodeOutput.state();
+            log.debug("Graph node processed. Current state: {}", currentState);
+            finalStateRef.set(currentState);
+        });
+
+        DraftState finalState = finalStateRef.get();
+        if (finalState == null) {
+            // 스트림이 비어있는 경우에 대한 처리
+            finalState = new DraftState(Map.of());
+        }
+
         return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getLast();
     }
 }
