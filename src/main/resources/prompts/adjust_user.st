@@ -3,9 +3,7 @@
 - section_label: <sectionLabel>
 
 [원본 초안]
-<<<DRAFT_START>>>
 <draft>
-<<<DRAFT_END>>>
 
 [수정 지시 목록]
 <issuesText>
