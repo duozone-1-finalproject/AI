@@ -122,3 +122,7 @@ src/main/java/com/example/demo
 
 -   **HtmlUtils.java**: HTML 처리를 위한 유틸리티 클래스입니다.
 -   **StandardSearchHelper.java**: Opensearch에서 표준 검색을 수행하기 위한 헬퍼 클래스입니다.
+
+## 라이선스
+
+이 프로젝트는 MIT 라이선스에 따라 배포됩니다. 자세한 내용은 `LICENSE` 파일을 참조하십시오.
