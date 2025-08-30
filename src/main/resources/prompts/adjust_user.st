@@ -1,14 +1,14 @@
 [작성 섹션]
-- section: {section}
-- section_label: {sectionLabel}
+- section: <section>
+- section_label: <sectionLabel>
 
 [원본 초안]
 <<<DRAFT_START>>>
-{draft}
+<draft>
 <<<DRAFT_END>>>
 
 [수정 지시 목록]
-{issuesText}
+<issuesText>
 
 지시:
 - 위 지시 목록의 각 항목에 대해 해당 span에만 수정 적용.

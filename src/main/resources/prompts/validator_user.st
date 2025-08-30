@@ -1,12 +1,12 @@
 [작성 섹션]
-- section: {section}
-- section_label: {sectionLabel}
+- section: <section>
+- section_label: <sectionLabel>
 
 [초안 원문]
-{draft}
+<draft>
 
 [지침/검색 컨텍스트 요약]
-{guideCtx}
+<guideCtx>
 
 [평가 과업]
 1) 아래 Quality를 0~5 점수로 평가
