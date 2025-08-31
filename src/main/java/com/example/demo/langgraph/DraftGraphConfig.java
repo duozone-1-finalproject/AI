@@ -22,10 +22,10 @@ public class DraftGraphConfig {
 
     private final PromptSelectorNode promptSelector;
     private final SourceSelectorNode sourceSelector;
-    //    private final WebSubgraphInvoker webSubgraphInvoker;
-//    private final NewsSubgraphInvoker newsSubgraphInvoker;
-//    private final DbSubgraphInvoker dbSubgraphInvoker;
-//    private final ContextAggregatorNode contextAggregator;
+    //    private final WebSubgraphInvoker webSubgraphInvoker; // 웹검색 RAG 서브 랭그래프
+//    private final NewsSubgraphInvoker newsSubgraphInvoker; // 뉴스검색 RAG 서브 랭그래프
+//    private final DbSubgraphInvoker dbSubgraphInvoker; // DB검색 RAG 서브 랭그래프
+//    private final ContextAggregatorNode contextAggregator; // RAG Context 병합 노드
     private final DraftGeneratorNode draftGenerator;
     private final StandardRetrieverNode standardRetriever;
     private final GlobalValidatorNode globalValidator;
@@ -47,7 +47,7 @@ public class DraftGraphConfig {
         graph.addNode("generate", draftGenerator);
         graph.addNode("guideline", standardRetriever);
         graph.addNode("validate", globalValidator);
-        graph.addNode("adjust",  adjustDraft);
+        graph.addNode("adjust", adjustDraft);
         graph.addEdge(StateGraph.START, "prompt");
         graph.addEdge("prompt", "source_select");
         graph.addEdge("source_select", "generate");

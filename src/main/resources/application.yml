@@ -16,7 +16,15 @@ spring:
         options:
           model: ${GROQ_MODEL}
           temperature: 0.3
+#    ollama:
+#      base-url: http://localhost:11434
+#      chat:
+#        options:
+#          model: qwen2.5:3b
+#      init:
+#        pull-model-strategy: never
 
+# prompt 경로 및 Section 매핑
 ai:
   prompts:
     validator_default: "classpath:prompts/validator_default.st"
@@ -44,7 +52,7 @@ ai:
       sources: [web, db]
       label: "기타 투자위험"
 
-  # 컨트롤러/오케스트레이터가 돌릴 기본 처리 순서(선택)
+  # main 랭그래프 실행 section 지정 리스트
   default-order: [risk_industry, risk_company, risk_etc]
 
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
