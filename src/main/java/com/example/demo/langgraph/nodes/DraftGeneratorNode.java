@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import java.util.concurrent.CompletableFuture;
 public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
 
     private final PromptCatalogService catalog;
+
+    @Qualifier("default")
     private final ChatClient chatClient;
 
     @Override

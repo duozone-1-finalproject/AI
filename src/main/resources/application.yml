@@ -1,6 +1,8 @@
 server:
   port: 8080
 
+
+
 spring:
   config:
     import: optional:file:.env[.properties]
@@ -16,13 +18,26 @@ spring:
         options:
           model: gemma2-9b-it
           temperature: 0.3
+    # --- MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행 ---
+    mcp:
+      client:
+        enabled: true
+        type: SYNC     # SYNC or ASYNC
+        stdio:
+          connections:
+            duck: # 연결 이름
+              command: "C:/Users/jyjj0/.mcpvenv/Scripts/duckduckgo-mcp-server.exe"  # ddg mcp path
+              args: [ ]
+              # env:
+              #   HTTP_PROXY: ${HTTP_PROXY:}
+              #   HTTPS_PROXY: ${HTTPS_PROXY:}
 
 ai:
   sections:
     # 사업위험
     risk_industry:
       prompt: "classpath:prompts/risk_industry.st"
-      sources: [news, db]
+      sources: [web, db]
 
     # 회사위험
     risk_company:
@@ -63,10 +78,6 @@ opensearch:
 #      access-key: ${AWS_ACCESS_KEY_ID:}
 #      secret-key: ${AWS_SECRET_ACCESS_KEY:}
 #      session-token: ${AWS_SESSION_TOKEN:}   # (옵션) 임시자격증명 사용 시
-
-fast api:
-  url: http://localhost:5601
-
 
 # mapping 띄어쓰기에 따라 달라지는 검색결과 때문에 만든 부분
 # 순서대로 사업 위험- 회사위험- 기타 위험요소
@@ -112,8 +123,6 @@ risk:
     자원 개발 리스크: "자원 개발 리스크,자원개발 리스크,자원개발리스크"
     기술특례 상장: "기술 특례 상장,기술특례 상장,기술특례상장"
     IP 분쟁: "IP 분쟁,IP분쟁"
-
-risk:
   company-keyword-map:
     재무 상태 악화: "재무 상태 악화,재무상태 악화,재무상태악화"
     유동성 위기: "유동성 위기,유동성위기"
@@ -153,3 +162,5 @@ risk:
     신주 발행 분쟁: "신주 발 행 분쟁,신주 발행 분쟁,신주발행 분쟁,신주발행분쟁"
     유상증자 분쟁: "유상 증자 분쟁,유상증자 분쟁,유상증자분쟁"
     신주발행 무효 소송: "신주 발행 무효 소송,신주발행 무효 소송,신주발행 무효소송,신주발행무효소송"
+
+
