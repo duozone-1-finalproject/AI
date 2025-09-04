@@ -28,13 +28,12 @@ public class ValidatorGraphInvokerNode implements AsyncNodeAction<DraftState> {
         String section = state.<String>value(DraftState.SECTION).orElse("");
         String indutyName = state.<String>value(DraftState.IND_NAME).orElse("");
 
-        Map<String, Object> req = Map.of(
-                "indutyName", indutyName,
-                "section", section,
-                "draft", draft
-        );
+        CheckRequestDto dto = new CheckRequestDto();
+        dto.setDraft(draft);
+        dto.setSection(section);
+        dto.setIndutyName(indutyName);
 
-        List<String> drafts = checkService.draftValidate((CheckRequestDto) req);
+        List<String> drafts = checkService.draftValidate(dto);
         return CompletableFuture.completedFuture(Map.of(DraftState.DRAFT, drafts));
     }
 }

@@ -27,6 +27,10 @@ spring:
 
 # prompt 경로 및 Section 매핑
 ai:
+  defaults:
+    maxItems: 5
+    webRagItems: [ ]      # 더미
+    dartRagItems: [ ]     # 더미
   prompts:
     draft_default: "classpath:prompts/draft_default.st"
     validator_default: "classpath:prompts/validator_default.st"
