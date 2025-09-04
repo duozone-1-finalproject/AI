@@ -28,24 +28,17 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         String section = state.<String>value(DraftState.SECTION).orElseThrow();
 
-//        Map<String, Object> vars = new HashMap<>();
-//        vars.put("corpName",  state.<String>value(DraftState.CORP_NAME).orElse(""));
-//        vars.put("indutyName",state.<String>value(DraftState.IND_NAME ).orElse(""));
-//        vars.put("webRagItems", "");
-//        vars.put("dartRagItems", "");
-//        vars.put("maxItems", "5");
-
         // 템플릿 변수
-        Map<String, Object> vars = Map.of(
-                "corpName", state.<String>value(DraftState.CORP_NAME).orElse(""),
-                "indutyName", state.<String>value(DraftState.IND_NAME ).orElse(""),
-                "webRagItems", "더미 RAG Context",
-                "dartRagItems", "더미 RAG Context",
-                "maxItems", 5
-        );
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("corpName",  state.<String>value(DraftState.CORP_NAME).orElse(""));
+        vars.put("indutyName",state.<String>value(DraftState.IND_NAME ).orElse(""));
+        vars.put("webRagItems", Map.of());
+        vars.put("dartRagItems", Map.of());
+        vars.put("maxItems", 5);
+
 
         // 프롬프트(시스템+유저) 조합
-        Prompt sys = catalog.createSystemPrompt("draft_default", vars);
+        Prompt sys = catalog.createSystemPrompt("draft_default", Map.of());
         Prompt user = catalog.createPrompt(section, vars);
 
         List<Message> messages = new ArrayList<>(sys.getInstructions());

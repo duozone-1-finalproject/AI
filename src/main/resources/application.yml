@@ -28,6 +28,7 @@ spring:
 # prompt 경로 및 Section 매핑
 ai:
   prompts:
+    draft_default: "classpath:prompts/draft_default.st"
     validator_default: "classpath:prompts/validator_default.st"
     validator_risk: "classpath:prompts/validator_risk.st"
     validator_user: "classpath:prompts/validator_user.st"
