@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   config:
@@ -8,16 +8,16 @@ spring:
     property-naming-strategy: SNAKE_CASE
   ai:
     model:
-      chat: ollama
+      chat: openai
     openai:
-      api-key: ${GROQ_API_KEY}
-      base-url: https://api.groq.com/openai
+      api-key: ${VLLM_API_KEY}
+      base-url: ${VLLM_BASE_URL}
       chat:
         options:
-          model: ${GROQ_MODEL}
+          model: ${VLLM_MODEL}
           temperature: 0.3
     ollama:
-      base-url: http://localhost:11434
+      base-url: ${OLLAMA_BASE_URL}
       chat:
         options:
           model: "qwen2.5:3b"
