@@ -87,7 +87,7 @@ public class OpenSearchRepository {
                         .index(indexName)
                         .query(q -> q
                                 .terms(t -> t
-                                        .field("account_nm.keyword")
+                                        .field("account_nm")
                                         .terms(tt -> tt.value(
                                                 FinancialAccountConstants.STANDARD_ACCOUNTS.stream()
                                                         .map(FieldValue::of)
