@@ -40,18 +40,21 @@ ai:
       prompt: "classpath:prompts/risk_industry.st"
       sources: [news, db]
       label: "사업위험"
+      filter: "industry"
 
     # 회사위험
     risk_company:
       prompt: "classpath:prompts/risk_company.st"
       sources: [web, db]
       label: "회사위험"
+      filter: "financial"
 
     # 기타위험
     risk_etc:
       prompt: "classpath:prompts/risk_etc.st"
       sources: [web, db]
       label: "기타 투자위험"
+      filter: "latest"
 
   # main 랭그래프 실행 section 지정 리스트
   default-order: [risk_industry, risk_company, risk_etc]
