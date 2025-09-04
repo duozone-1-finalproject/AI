@@ -2,20 +2,38 @@
 package com.example.demo.langgraph.web.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class DuckService {
+    public class DuckService {
 
-    @Qualifier("chatWithMcp")
-    private final ChatClient chatWithMcp;
+        // 뉴스 검색 전용
+        public Collection<? extends String> searchNews(String query, int limit, String sort) {
+            System.out.println("[DuckService] 뉴스 검색: query=" + query +
+                    ", limit=" + limit + ", sort=" + sort);
 
-    public String search(String query) {
-        return chatWithMcp.prompt(query).call().content();
+            // 실제 구현에서는 DuckDuckGo News API 호출
+            List<String> results = new ArrayList<>();
+            for (int i = 1; i <= limit; i++) {
+                results.add("[News] " + query + " 결과 " + i + " (정렬:" + sort + ")");
+            }
+            return Collections.singleton(results);
+        }
+
+        // 웹 검색 전용
+        public Collection<? extends String> searchWeb(String query, int limit, String sort) {
+            System.out.println("[DuckService] 웹 검색: query=" + query +
+                    ", limit=" + limit + ", sort=" + sort);
+
+            // 실제 구현에서는 DuckDuckGo Web API 호출
+            List<String> results = new ArrayList<>();
+            for (int i = 1; i <= limit; i++) {
+                results.add("[Web] " + query + " 결과 " + i + " (정렬:" + sort + ")");
+            }
+            return Collections.singleton(results);
+        }
     }
-}
-
-

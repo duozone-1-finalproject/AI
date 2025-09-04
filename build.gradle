@@ -35,6 +35,9 @@ dependencies {
     // Spring AI BOM (버전 관리)
     implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
 
+    //mcp
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
+
     // Spring AI starters
     implementation "org.springframework.ai:spring-ai-starter-mcp-server"
     implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
@@ -43,6 +46,7 @@ dependencies {
     // LangGraph4j
     implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"
     implementation "org.bsc.langgraph4j:langgraph4j-spring-ai:${langgraph4jVersion}"
+    implementation "org.bsc.langgraph4j:langgraph4j:${langgraph4jVersion}"
 
     // Lombok
     compileOnly "org.projectlombok:lombok"

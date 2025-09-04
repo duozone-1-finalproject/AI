@@ -1,3 +1,6 @@
+//LangGraph에서 사용하는 상태(State) 클래스
+//그래프 실행 중에 주고받는 데이터(회사명, 산업명, 기사 결과, 요약 등)를 담는 컨테이너** 역할
+
 package com.example.demo.langgraph.state;
 
 import com.example.demo.dto.ContextDoc;
@@ -6,6 +9,8 @@ import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
 
 import java.util.*;
+
+//LangGraph4j에서 제공하는 기본 State 관리 기능을 확장한 클래스
 
 public class DraftState extends AgentState {
 
@@ -34,6 +39,9 @@ public class DraftState extends AgentState {
     public static final String ERRORS    = "errors"; // List<String>
 
     // ---- SCHEMA: base vs appender 구분 ----
+    // 각 키와 채널(Channel)의 매핑 정의
+    // 이때 `Channels.appender(...)`: 리스트처럼 누적(append)할 때 사용.
+
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
             // 입력/메타 (덮어쓰기)
             Map.entry(CORP_CODE, Channels.base(() -> "")),
@@ -61,6 +69,7 @@ public class DraftState extends AgentState {
             Map.entry(ERRORS,    Channels.appender(ArrayList::new))
     );
 
+    //생성자: `init` 값을 초기 상태로 받아 부모 생성자에 전달.
     public DraftState(Map<String, Object> init) { super(init); }
 
     // (선택) 깔끔한 getter 몇 개만 노출
