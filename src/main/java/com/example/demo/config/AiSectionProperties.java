@@ -23,6 +23,6 @@ public class AiSectionProperties {
         private String prompt;         // ex) classpath:prompt/risk_industry.st
         private List<String> sources;  // ex) ["news","db"]
         private String label;          // ex) "사업위험"
-
+        private String filter;
     }
 }
