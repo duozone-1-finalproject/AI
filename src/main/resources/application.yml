@@ -10,12 +10,12 @@ spring:
     model:
       chat: openai
     openai:
-      api-key: ${VLLM_API_KEY}
-      base-url: ${VLLM_BASE_URL}
+      api-key: ${OPENAI_API_KEY}
+      base-url: ${OPENAI_BASE_URL}
       chat:
         options:
-          model: ${VLLM_MODEL}
-          temperature: 0.3
+          model: ${OPENAI_MODEL}
+          temperature: 1
     ollama:
       base-url: ${OLLAMA_BASE_URL}
       chat:
@@ -54,7 +54,8 @@ ai:
       label: "기타 투자위험"
 
   # main 랭그래프 실행 section 지정 리스트
-  default-order: [risk_industry, risk_company, risk_etc]
+#  default-order: [risk_industry, risk_company, risk_etc]
+  default-order: [risk_industry]
 
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
 opensearch:
