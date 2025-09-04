@@ -25,7 +25,7 @@ public class CheckServiceImpl implements CheckService {
     private final AiSectionProperties aiSectionProperties;
 
     @Override
-    public List<ValidationDto.Issue> check(CheckRequestDto req) {
+    public ValidationDto check(CheckRequestDto req) {
         String section = req.getSection();
         String sectionLabel = aiSectionProperties.getSections().get(section).getLabel();
 
@@ -54,7 +54,7 @@ public class CheckServiceImpl implements CheckService {
             finalState = new ValidatorState(Map.of());
         }
 
-        return finalState.<List<ValidationDto.Issue>>value(ValidatorState.VALIDATION).orElseThrow();
+        return finalState.<ValidationDto>value(ValidatorState.VALIDATION).orElseThrow();
     }
 
     @Override

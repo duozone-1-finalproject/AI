@@ -1,0 +1,32 @@
+package com.example.demo.controller;
+
+import com.example.demo.dto.CheckRequestDto;
+import com.example.demo.dto.ValidationDto;
+import com.example.demo.service.CheckService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@Slf4j
+@RestController
+@RequestMapping("/check")
+@RequiredArgsConstructor
+public class CheckController {
+
+    private final CheckService checkService;
+
+    @PostMapping
+    public ValidationDto check(@Valid @RequestBody CheckRequestDto req) {
+        // 2. 로그 출력 코드 추가
+        log.info("Received check request: {}", req);
+        // 또는 디버그 레벨로 출력
+//        log.debug("Received check request: {}", req);
+        return checkService.check(req);
+    }
+}

@@ -5,6 +5,6 @@ import com.example.demo.dto.ValidationDto;
 import java.util.List;
 
 public interface CheckService {
-    List<ValidationDto.Issue> check(CheckRequestDto requestDto);
+    ValidationDto check(CheckRequestDto requestDto);
     List<String> draftValidate(CheckRequestDto requestDto);
 }
