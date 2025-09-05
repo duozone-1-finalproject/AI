@@ -16,6 +16,7 @@ public class AiSectionProperties {
     private Map<String, SectionConfig> sections;
     private List<String> defaultOrder;
     private Map<String, String> prompts;
+    private Map<String, Object> defaults;        // ai.defaults.* 바인딩 (더미/공통값)
 
     @Setter
     @Getter

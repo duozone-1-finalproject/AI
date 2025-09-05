@@ -1,6 +1,5 @@
 [작성 섹션]
-- section: <section>
-- section_label: <sectionLabel>
+- section: <sectionLabel>
 
 [초안 원문]
 <draft>

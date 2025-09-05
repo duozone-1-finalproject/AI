@@ -31,6 +31,7 @@ public class ValidationDto implements Serializable {
 
     @Data
     public static class Issue implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private String span;        // 초안 내 수정대상 문장/문단 원문

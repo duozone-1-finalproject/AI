@@ -1,7 +1,7 @@
-package com.example.demo.langgraph.nodes;
+package com.example.demo.validatorgraph.nodes;
 
 import com.example.demo.dto.ValidationDto;
-import com.example.demo.langgraph.state.DraftState;
+import com.example.demo.validatorgraph.ValidatorState;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +21,28 @@ import java.util.stream.Collectors;
 // 기업공시작성기준 검증 노드
 @Component("globalValidator")
 @RequiredArgsConstructor
-public class GlobalValidatorNode implements AsyncNodeAction<DraftState> {
+public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
 
+    private static final long MAX_TRY = 2;
     private final ChatClient chatClient;
     private final PromptCatalogService catalog;
     private final ObjectMapper om;
 
 
     @Override
-    public CompletableFuture<Map<String, Object>> apply(DraftState state) {
+    public CompletableFuture<Map<String, Object>> apply(ValidatorState state) {
         try {
             // 라운드 제한
-            List<String> drafts = state.<List<String>>value(DraftState.DRAFT).orElse(List.of());
-            if (drafts.size() >= 4) return CompletableFuture.completedFuture(Map.of("decision","end"));
-
+            List<String> drafts = state.<List<String>>value(ValidatorState.DRAFT).orElse(List.of());
+            if (drafts.size() >= MAX_TRY) return CompletableFuture.completedFuture(Map.of("decision","end"));
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
-            String guideIndex = state.<String>value(DraftState.GUIDE_INDEX).orElse("standard");
-            @SuppressWarnings("unchecked")
-            List<Map<String,String>> hits = state.<List<Map<String,String>>>value(DraftState.GUIDE_HITS).orElse(List.of());
+            String guideIndex = state.<String>value(ValidatorState.GUIDE_INDEX).orElse("standard");
 
-            String section     = state.<String>value(DraftState.SECTION).orElse("");
-            String sectionLbl  = state.<String>value(DraftState.SECTION_LABEL).orElse("");
+            @SuppressWarnings("unchecked")
+            List<Map<String,String>> hits = state.<List<Map<String,String>>>value(ValidatorState.GUIDE_HITS).orElse(List.of());
+
+            String section     = state.<String>value(ValidatorState.SECTION).orElse("");
+            String sectionLbl  = state.<String>value(ValidatorState.SECTION_LABEL).orElse("");
 
             // 1) 시스템 템플릿 선택
             String sysKey = "standard".equals(guideIndex)
@@ -85,15 +86,25 @@ public class GlobalValidatorNode implements AsyncNodeAction<DraftState> {
                             "severity",    nvl(i.getSeverity())
                     )).toList();
 
-            String decision = "accept".equalsIgnoreCase(vr.getDecision()) ? "end" : "adjust";
+            String method = state.<String>value(ValidatorState.METHOD).orElse("");
+            String decision;
+
+            // "check" 메소드 요청일 경우, LLM의 수정 제안 여부와 관계없이 항상 그래프를 종료합니다.
+            if ("check".equals(method)) {
+                decision = "end";
+            } else {
+                // 그 외(draftValidate)의 경우, LLM의 decision에 따라 분기합니다.
+                decision = "accept".equalsIgnoreCase(vr.getDecision()) ? "end" : "adjust";
+            }
+
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.VALIDATION, vr,
-                    DraftState.ADJUST_INPUT, adjustInput,
-                    DraftState.DECISION, decision
+                    ValidatorState.VALIDATION, vr,
+                    ValidatorState.ADJUST_INPUT, adjustInput,
+                    ValidatorState.DECISION, decision
             ));
         } catch (Exception e) {
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.ERRORS, List.of("[ValidatorNode] " + e.getMessage())
+                    ValidatorState.ERRORS, List.of("[ValidatorNode] " + e.getMessage())
             ));
         }
     }

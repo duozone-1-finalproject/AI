@@ -28,11 +28,6 @@ public class DraftState extends AgentState {
 
     // 생성/검증/루프
     public static final String DRAFT = "draft";
-    public static final String GUIDE_INDEX = "guideIndex";
-    public static final String GUIDE_HITS = "guideHits"; // List<Map>
-    public static final String VALIDATION = "validation";
-    public static final String ADJUST_INPUT = "adjustInput";
-    public static final String DECISION = "decision";
     public static final String ERRORS = "errors"; // List<String>
 
     // ---- SCHEMA: base vs appender 구분 ----
@@ -57,11 +52,6 @@ public class DraftState extends AgentState {
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
-            Map.entry(GUIDE_INDEX, Channels.base(() -> "")),
-            Map.entry(GUIDE_HITS, Channels.appender(ArrayList::new)),
-            Map.entry(VALIDATION, Channels.base(() -> new HashMap<>())),
-            Map.entry(ADJUST_INPUT, Channels.appender(ArrayList::new)),
-            Map.entry(DECISION, Channels.base(() -> "")),
             Map.entry(ERRORS, Channels.appender(ArrayList::new))
     );
 
