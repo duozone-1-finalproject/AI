@@ -6,7 +6,7 @@ import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
+// 연동 필요함
 
 @Component
 public class DuckDuckClient {
