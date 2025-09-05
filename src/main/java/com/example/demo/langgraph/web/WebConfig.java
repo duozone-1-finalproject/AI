@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.web.state;
+package com.example.demo.langgraph.web;
 
 import com.example.demo.langgraph.web.nodes.*;
 import com.example.demo.langgraph.web.service.DuckService;

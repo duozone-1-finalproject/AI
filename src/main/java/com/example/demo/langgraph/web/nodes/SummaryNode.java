@@ -1,35 +1,46 @@
-// ✅ SummaryNode 뼈대
+//외부에서 가져온 데이터(webDocs, newsDocs) 만 요약 대상
+
 package com.example.demo.langgraph.web.nodes;
 
-import com.example.demo.langgraph.web.state.WebState;
+import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
-import org.bsc.langgraph4j.Node;
+import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class SummaryNode implements Node<WebState> {
+public class SummaryNode implements AsyncNodeAction<DraftState> {
 
     @Override
-    public CompletableFuture<WebState> apply(WebState state) {
-        // 기사 리스트 가져오기
-        List<String> articles = state.value(WebState.ARTICLES).orElse(List.of());
+    public CompletableFuture<Map<String, Object>> apply(DraftState state) {
+        // 외부 데이터만 요약 대상으로 사용 (web + news)
+        List<?> webDocs = state.webDocs();
+        List<?> newsDocs = state.newsDocs();
+
         List<String> summaries = new ArrayList<>();
 
-        // 간단한 더미 요약 로직 (실제 구현은 LLM 호출)
-        for (String article : articles) {
-            String summary = article.substring(0, Math.min(article.length(), 100));
+        // 간단한 더미 요약 로직 (실제 구현은 LLM 호출 예정)
+        for (Object doc : webDocs) {
+            String text = doc.toString();
+            String summary = text.substring(0, Math.min(text.length(), 100));
             summaries.add(summary);
-            System.out.println("[SummaryNode] 요약 생성: " + summary);
+        }
+        for (Object doc : newsDocs) {
+            String text = doc.toString();
+            String summary = text.substring(0, Math.min(text.length(), 100));
+            summaries.add(summary);
         }
 
-        // state에 요약 저장
-        state.set(WebState.SUMMARIES, summaries);
+        // state 업데이트
+        Map<String, Object> partial = Map.of(
+                DraftState.SUMMARIES, summaries
+        );
 
-        return CompletableFuture.completedFuture(state);
+        System.out.println("[SummaryNode] 생성된 요약 개수: " + summaries.size());
+
+        return CompletableFuture.completedFuture(partial);
     }
 }

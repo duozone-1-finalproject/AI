@@ -36,7 +36,7 @@ public class WebState extends AgentState {
 
 
             // 쿼리 및 처리 결과
-            Map.entry(QUERY, Channels.base(() -> "")),
+            Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES, Channels.base(ArrayList::new)),
             Map.entry(SUMMARIES, Channels.base(ArrayList::new)),
             Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE))
@@ -68,9 +68,13 @@ public class WebState extends AgentState {
 
     }
 
+    @Override
     public void update(Map<String, Object> partial, Map<String, Channel<?>> schema) {
+        super.update(partial, schema);
     }
 
-    public void set(String query, List<String> queries) {
+    @Override
+    public Map<String, Object> asMap() {
+        return super.asMap();
     }
 }

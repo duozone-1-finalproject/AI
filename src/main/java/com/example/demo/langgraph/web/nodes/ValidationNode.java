@@ -1,4 +1,4 @@
-package com.example.demo.langgraph.web.nodes;
+/*package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.web.state.WebState;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ public class ValidationNode implements Node<WebState> {
 
     @Override
     public CompletableFuture<WebState> apply(WebState state) {
-        List<String> summaries = state.value(WebState.SUMMARIES).orElse(List.of());
+        List<String> summaries = (List<String>) state.value(WebState.SUMMARIES).orElse(List.of());
 
         boolean validated = true;
         for (String summary : summaries) {
@@ -31,5 +31,5 @@ public class ValidationNode implements Node<WebState> {
         return CompletableFuture.completedFuture(state);
     }
 }
-
+*/
 

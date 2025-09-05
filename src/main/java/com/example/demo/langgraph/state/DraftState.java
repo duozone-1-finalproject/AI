@@ -23,6 +23,12 @@ public class DraftState extends AgentState {
     public static final String SECTION   = "sectionName";
     public static final String PROMPT    = "prompt";
     public static final String SOURCES   = "selectedSources"; // ex) ["web","news","db"]
+    public static final String SUMMARIES = "summaries";
+
+    // ---- 섹션 타입 상수 ----
+    public static final String SECTION_RISK_INDUSTRY = "산업 위험";   // 산업위험
+    public static final String SECTION_RISK_COMPANY  = "사업 위험";   // 회사위험
+    //public static final String SECTION_RISK_ETC      = "기타 위험";   // 기타위험 (확장 가능)
 
     // 소스별 컨텍스트 (병렬 수집 → 반드시 appender)
     public static final String WEB_DOCS  = "webDocs";   // List<Doc>
@@ -58,6 +64,7 @@ public class DraftState extends AgentState {
             Map.entry(WEB_DOCS,  Channels.appender(ArrayList::new)),
             Map.entry(NEWS_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(DB_DOCS,   Channels.appender(ArrayList::new)),
+            Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
             Map.entry(CONTEXT,   Channels.base(() -> new ArrayList<ContextDoc>())),
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)

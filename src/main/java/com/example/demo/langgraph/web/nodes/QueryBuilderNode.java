@@ -8,46 +8,50 @@ package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.web.state.WebState;
 import lombok.RequiredArgsConstructor;
-import org.bsc.langgraph4j.Node;
+import org.bsc.langgraph4j.action.AsyncNodeAction;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class QueryBuilderNode implements Node<WebState> {
+public class QueryBuilderNode implements AsyncNodeAction<WebState> {
+
+    @Value("#{${risk.business-keyword-map}}")
+    private Map<String, String> businessKeywordMap;
 
     @Override
-    public CompletableFuture<WebState> apply(WebState state) {
+    public CompletableFuture<Map<String, Object>> apply(WebState state) {
         String company = state.value(WebState.CORP_NAME).orElse("").toString();
         String industry = state.value(WebState.IND_NAME).orElse("").toString();
         String section = state.value(WebState.SECTION).orElse("").toString();
 
         List<String> queries = new ArrayList<>();
 
-        // 섹션별 조건 분기
         if ("사업 위험".equals(section)) {
-            queries.add(company + " " + industry + " 시장 전망");
-            queries.add(company + " " + industry + " 규제 변화");
-            queries.add(company + " " + industry + " 기술 혁신");
-            queries.add(company + " " + industry + " 연구개발 투자");
+            // 매핑에서 키워드 후보 가져오기
+            for (Map.Entry<String, String> entry : businessKeywordMap.entrySet()) {
+                List<String> candidates = Arrays.asList(entry.getValue().split(","));
+                Collections.shuffle(candidates);
+                // 최대 2~3개만 랜덤 샘플링
+                List<String> selected = candidates.subList(0, Math.min(2, candidates.size()));
+                for (String keyword : selected) {
+                    queries.add(company + " " + industry + " " + keyword.trim());
+                }
+            }
         } else if ("산업 위험".equals(section)) {
+            // 산업 위험은 고정 키워드 예시
             queries.add(company + " 재무 악화");
             queries.add(company + " 수익성 악화");
-            queries.add(company + " 자산 부실");
-            queries.add(company + " 투자 부담");
-        } else {
-            System.out.println("[QueryBuilderNode] 알 수 없는 섹션: " + section);
         }
 
-        // state에 쿼리 저장
         state.set(WebState.QUERY, queries);
-
         System.out.println("[QueryBuilderNode] 생성된 쿼리: " + queries);
 
-        return CompletableFuture.completedFuture(state);
+        return CompletableFuture.completedFuture((Map<String, Object>) state);
     }
 }
+
 
