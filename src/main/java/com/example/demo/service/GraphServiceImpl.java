@@ -1,53 +1,90 @@
 package com.example.demo.service;
 
+import com.example.demo.config.AiSectionProperties;
 import com.example.demo.dto.DraftRequestDto;
 import com.example.demo.dto.DraftResponseDto;
 import com.example.demo.langgraph.state.DraftState;
+import lombok.RequiredArgsConstructor;
+import org.bsc.async.AsyncGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.CompiledGraph;
+import org.bsc.langgraph4j.NodeOutput;
 import org.springframework.stereotype.Service;
 
-import static com.example.demo.langgraph.state.DraftState.DRAFT;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService {
 
+    private static final long TIMEOUT_SEC = 300; // 섹션별 타임아웃
+
     private final CompiledGraph<DraftState> graph;
-
-    public GraphServiceImpl(CompiledGraph<DraftState> graph) {
-        this.graph = graph;
-    }
-
-//    @Override
-//    public LangGraphDto.GraphResult run(LangGraphDto.PromptRequest promptRequest) {
-//        var resultState = graph.invoke(Map.of("input", promptRequest)).orElse(new AgentState(Map.of()));
-//        return resultState.value("output")
-//                .map(LangGraphDto.GraphResult.class::cast)
-//                .orElse(new LangGraphDto.GraphResult(""));
-//    }
+    private final AiSectionProperties aiSectionProperties;
 
     @Override
     public DraftResponseDto run(DraftRequestDto req) {
-        DraftResponseDto dto = new DraftResponseDto();
-        dto.setRiskIndustry(runOne("risk_industry", req));
-        dto.setRiskCompany(runOne("risk_company", req));
-        dto.setRiskEtc(runOne("risk_etc", req));
-        return dto;
+        // 동시에 돌릴 섹션 키 목록
+        List<String> sectionKeys =
+                Optional.ofNullable(aiSectionProperties.getDefaultOrder())
+                        .filter(list -> !list.isEmpty())
+                        .orElse(List.of("risk_industry", "risk_company", "risk_etc")); // List.of는 불변 리스트
+
+        try (ExecutorService es = Executors.newVirtualThreadPerTaskExecutor()) {
+            DraftResponseDto dto = new DraftResponseDto();
+
+            // 섹션별 병렬 실행 → 완료되면 DTO에 바로 set
+            List<CompletableFuture<Void>> tasks = sectionKeys.stream()
+                    .map(key -> CompletableFuture
+                            .supplyAsync(() -> runOne(key, req), es)
+                            .orTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                            // 부분 실패 허용: 예외를 메시지로 수렴(원하면 여기서 rethrow 가능)
+                            .exceptionally(ex -> "[ERROR] " + ex.getClass().getSimpleName() + ": " + ex.getMessage())
+                            .thenAccept(result -> dto.setBySectionKey(key, result))
+                    ).toList();
+
+            CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).join();
+            return dto;
+        }
     }
 
     private String runOne(String sectionKey, DraftRequestDto req) {
-        // 그래프 초기 상태 구성
-        Map<String, Object> init = new LinkedHashMap<>();
-        init.put(DraftState.CORP_CODE,  req.getCorpCode());
-        init.put(DraftState.CORP_NAME,  req.getCorpName());
-        init.put(DraftState.IND_CODE,   req.getIndutyCode());
-        init.put(DraftState.IND_NAME,   req.getIndutyName());
-        init.put(DraftState.RPT_EXIST,  Boolean.TRUE.equals(req.getRptExist()));
-        init.put(DraftState.SECTION,    sectionKey);
+        String sectionLabel = aiSectionProperties.getSections().get(sectionKey).getLabel();
 
-        // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
-        DraftState finalState = graph.invoke(init).orElse(new DraftState(Map.of()));  // compile()된 그래프는 invoke/stream 가능
-        return finalState.<String>value(DraftState.DRAFT).orElse("");
+        Map<String, Object> init = new LinkedHashMap<>();
+        init.put(DraftState.CORP_CODE, req.getCorpCode());
+        init.put(DraftState.CORP_NAME, req.getCorpName());
+        init.put(DraftState.IND_CODE, req.getIndutyCode());
+        init.put(DraftState.IND_NAME, req.getIndutyName());
+        init.put(DraftState.RPT_EXIST, Boolean.TRUE.equals(req.getRptExist()));
+        init.put(DraftState.SECTION, sectionKey);
+        init.put(DraftState.SECTION_LABEL, sectionLabel);
+
+        AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
+
+        final AtomicReference<DraftState> finalStateRef = new AtomicReference<>();
+
+        stream.forEach(nodeOutput -> {
+            DraftState currentState = nodeOutput.state();
+            // 디버깅용 로그처리(즉시 보고싶다면, info)
+            // log.info("Graph node processed. Current state: {}", currentState);
+            log.debug("Graph node processed. Current state: {}", currentState);
+            finalStateRef.set(currentState);
+        });
+
+        DraftState finalState = finalStateRef.get();
+        if (finalState == null) {
+            // 스트림이 비어있는 경우에 대한 처리
+            finalState = new DraftState(Map.of());
+        }
+
+        return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getLast();
     }
 }
