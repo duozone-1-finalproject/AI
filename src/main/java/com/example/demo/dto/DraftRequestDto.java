@@ -13,5 +13,4 @@ public class DraftRequestDto {
     @NotBlank private String corpName;
     @NotBlank private String indutyCode;
     @NotBlank private String indutyName;
-    @NotNull  private Boolean rptExist;
 }

@@ -48,6 +48,11 @@ public class DraftGraphConfig {
         // 엣지연결
         graph.addEdge(StateGraph.START, "prompt");
         graph.addEdge("prompt", "source_select");
+//        graph.addEdge("source_select", "web_branch");
+//        graph.addEdge("source_select", "db_branch");
+//        graph.addEdge("web_branch", "aggregate");
+//        graph.addEdge("db_branch", "aggregate");
+//        graph.addEdge("aggregate", "generate");
         graph.addEdge("source_select", "generate");
         graph.addEdge("generate", "validate");
         graph.addEdge("validate", StateGraph.END);

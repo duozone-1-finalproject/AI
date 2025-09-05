@@ -6,7 +6,7 @@ LANGUAGE
 INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
 - DRAFT       := <draft>        // previously generated Korean draft (paragraphs)
 - CORP_NAME   := <corpName>     // optional; for clarity in topic lines
-- RAG_SOURCES := <ragSources>   // OPTIONAL JSON[]: [{source,title,url,pubDate(YYYY-MM-DD)}] for repairing missing citations
+- RAG_SOURCES := <webRagItemsSources>   // OPTIONAL JSON[]: [{source,title,url,pubDate(YYYY-MM-DD)}] for repairing missing citations
 
 SCOPE
 - Validate DRAFT ONLY against the four rules below, then apply the smallest possible edits to make it compliant.

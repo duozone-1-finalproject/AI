@@ -14,7 +14,6 @@ public class DraftState extends AgentState {
     public static final String CORP_NAME = "corpName";
     public static final String IND_CODE = "indutyCode";
     public static final String IND_NAME = "indutyName";
-    public static final String RPT_EXIST = "rptExist";
     public static final String SECTION = "section";
     public static final String SECTION_LABEL = "sectionLabel";
     public static final String PROMPT = "prompt";
@@ -27,6 +26,7 @@ public class DraftState extends AgentState {
     public static final String CONTEXT = "context"; // fan-in 결과 (List<Doc>)
 
     // 생성/검증/루프
+    public static final String MAX_ITEMS = "maxItems";
     public static final String DRAFT = "draft";
     public static final String ERRORS = "errors"; // List<String>
 
@@ -37,7 +37,6 @@ public class DraftState extends AgentState {
             Map.entry(CORP_NAME, Channels.base(() -> "")),
             Map.entry(IND_CODE, Channels.base(() -> "")),
             Map.entry(IND_NAME, Channels.base(() -> "")),
-            Map.entry(RPT_EXIST, Channels.base(() -> false)),
             Map.entry(SECTION, Channels.base(() -> "")),
             Map.entry(SECTION_LABEL, Channels.base(() -> "")),
             Map.entry(PROMPT, Channels.base(() -> "")),
@@ -51,6 +50,7 @@ public class DraftState extends AgentState {
             Map.entry(CONTEXT, Channels.base(() -> new ArrayList<ContextDoc>())),
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
+            Map.entry(MAX_ITEMS, Channels.base(() -> "")),
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
             Map.entry(ERRORS, Channels.appender(ArrayList::new))
     );
