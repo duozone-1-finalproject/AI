@@ -15,6 +15,7 @@ java {
 
 repositories {
     mavenCentral()
+
 }
 
 ext {
@@ -27,36 +28,38 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Spring AI BOM (버전 관리)
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
+    implementation "org.springframework.ai:spring-ai-starter-model-openai"
 
     //KAFKA
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-    // Lombok 추가
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // Spring AI (OpenAI starter; Groq 등 OpenAI 호환 엔드포인트도 가능)
-    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
-    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
-    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
-
     // LangGraph4j
     implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"
     implementation "org.bsc.langgraph4j:langgraph4j-spring-ai:${langgraph4jVersion}"
+    implementation "org.bsc.langgraph4j:langgraph4j:${langgraph4jVersion}"
 
-    // 환경변수 관련 의존성
+    // Lombok
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    // 환경변수
     implementation 'io.github.cdimascio:java-dotenv:5.1.1'
 
     // OpenSearch
     implementation "org.opensearch.client:opensearch-java:${opensearchVersion}"
-    implementation "org.opensearch.client:opensearch-rest-client:${opensearchVersion}" // 최초 인덱스 생성에만 사용 (raw JSON PUT)
+    implementation "org.opensearch.client:opensearch-rest-client:${opensearchVersion}"
 
     // Apache HttpClient5
-    implementation("org.apache.httpcomponents.client5:httpclient5")
-    implementation("org.apache.httpcomponents.core5:httpcore5")
+    implementation "org.apache.httpcomponents.client5:httpclient5"
+    implementation "org.apache.httpcomponents.core5:httpcore5"
 }
 
 tasks.named('test') {
