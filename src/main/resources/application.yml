@@ -68,8 +68,42 @@ ai:
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
 opensearch:
   uris: ${OPENSEARCH_URIS}
+  #uris: ${OPENSEARCH_URI:http://localhost:9200}
   connection-timeout: 5s     # connect timeout
   socket-timeout: 60s        # read timeout
   max-conn-total: 100
   max-conn-per-route: 100
   sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:ai-backend-group}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
+
+# AWS OpenSearch Service(도메인 엔드포인트, SigV4 서명)
+#opensearch:
+#  uris:
+#    - https://search-your-domain-id.ap-northeast-2.es.amazonaws.com
+#  connection-timeout: 5s
+#  socket-timeout: 60s
+#  max-conn-total: 200
+#  max-conn-per-route: 100
+#  sniff-enabled: false          # ★ AWS에서는 반드시 false
+#  aws:
+#    sigv4-enabled: true
+#    region: ap-northeast-2
+#    service: es                 # OpenSearch Service=es, Serverless는 aoss
+#    credentials:
+#      access-key: ${AWS_ACCESS_KEY_ID:}
+#      secret-key: ${AWS_SECRET_ACCESS_KEY:}
+#      session-token: ${AWS_SESSION_TOKEN:}   # (옵션) 임시자격증명 사용 시
