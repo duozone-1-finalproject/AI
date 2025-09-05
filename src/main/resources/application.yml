@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   config:
@@ -39,12 +39,28 @@ ai:
 
 # 로컬/개인 운영(HTTP, 기본 인증 없음)
 opensearch:
-  uris: ${OPENSEARCH_URIS}
+  uris: ${OPENSEARCH_URI:http://192.168.0.77:9200}
+  #uris: ${OPENSEARCH_URI:http://localhost:9200}
   connection-timeout: 5s     # connect timeout
   socket-timeout: 60s        # read timeout
   max-conn-total: 100
   max-conn-per-route: 100
   sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:ai-backend-group}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
 
 # AWS OpenSearch Service(도메인 엔드포인트, SigV4 서명)
 #opensearch:
