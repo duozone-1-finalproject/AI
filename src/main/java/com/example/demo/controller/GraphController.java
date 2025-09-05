@@ -21,7 +21,7 @@ public class GraphController {
         // 2. 로그 출력 코드 추가
         log.info("Received draft request: {}", req);
         // 또는 디버그 레벨로 출력
-        log.debug("DraftRequestDto: {}", req);
+        log.debug("Received draft request: {}", req);
         return graphService.run(req);
     }
 }

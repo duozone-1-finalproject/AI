@@ -34,14 +34,12 @@ dependencies {
 
     // Spring AI BOM (버전 관리)
     implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
-
-    //mcp
-    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
-
-    // Spring AI starters
-    implementation "org.springframework.ai:spring-ai-starter-mcp-server"
     implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
     implementation "org.springframework.ai:spring-ai-starter-model-openai"
+
+    //KAFKA
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 
     // LangGraph4j
     implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"

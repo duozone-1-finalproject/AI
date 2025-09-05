@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ko_nori": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech",
+            "nori_readingform"
+          ]
+        },
+        "default": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech",
+            "nori_readingform"
+          ]
+        },
+        "default_search": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech",
+            "nori_readingform"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "chap_id": {
+        "type": "keyword"
+      },
+      "chap_name": {
+        "type": "text",
+        "analyzer": "ko_nori",
+        "search_analyzer": "ko_nori"
+      },
+      "sec_id": {
+        "type": "keyword"
+      },
+      "sec_name": {
+        "type": "text",
+        "analyzer": "ko_nori",
+        "search_analyzer": "ko_nori"
+      },
+      "art_id": {
+        "type": "keyword"
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "ko_nori",
+        "search_analyzer": "ko_nori"
+      }
+    }
+  }
+}
