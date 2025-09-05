@@ -64,7 +64,7 @@ public class DraftState extends AgentState {
             Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(NEWS_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(DB_DOCS,   Channels.appender(ArrayList::new)),
-            Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
+            //Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
             Map.entry(CONTEXT,   Channels.base(() -> new ArrayList<ContextDoc>())),
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)

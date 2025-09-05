@@ -1,19 +1,16 @@
 /*package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.web.state.WebState;
-import lombok.RequiredArgsConstructor;
-import org.bsc.langgraph4j.Node;
-import org.springframework.stereotype.Component;
+import org.bsc.langgraph4j.action.AsyncNodeAction;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-@Component
-@RequiredArgsConstructor
-public class ValidationNode implements Node<WebState> {
+public class ValidationNode implements AsyncNodeAction<WebState> {
 
     @Override
-    public CompletableFuture<WebState> apply(WebState state) {
+    public CompletableFuture<Map<String, Object> apply(WebState/* state) {
         List<String> summaries = (List<String>) state.value(WebState.SUMMARIES).orElse(List.of());
 
         boolean validated = true;
@@ -28,8 +25,8 @@ public class ValidationNode implements Node<WebState> {
         state.set(WebState.VALIDATED, validated);
         System.out.println("[ValidationNode] 검증 결과: " + validated);
 
-        return CompletableFuture.completedFuture(state);
+        return CompletableFuture.completedFuture((Map<String, Object>) state);
     }
 }
-*/
 
+*/

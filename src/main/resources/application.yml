@@ -62,7 +62,7 @@ ai:
     # 기타위험
     risk_etc:
       prompt: "classpath:prompts/risk_etc.st"
-      sources: [web, db]
+      sources: [db]
       label: "기타 투자위험"
       filter: "latest"
 
@@ -94,3 +94,5 @@ opensearch:
       enable-auto-commit: true
 
 
+  APP_KAFKA_ENABLED=false
+  APP_KAFKA_LOG_LEVEL=OFF

@@ -1,5 +1,6 @@
 // src/main/java/com/example/ai_server/kafka/KafkaReportConsumer.java
-package com.example.demo.kafka;
+/* package com.example.demo.kafka;
+
 
 import com.example.demo.dto.Ai_Server_RequestDto;
 import com.example.demo.dto.Ai_Server_ResponseDto;
@@ -200,3 +201,4 @@ public class KafkaReportConsumer {
         return summary.toString();
     }
 }
+*/

@@ -1,4 +1,4 @@
-package com.example.demo.config;
+/*package com.example.demo.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -21,6 +21,7 @@ public class KafkaConfig {
      * Producer Configuration - String 전용
      * Backend에서 JSON 문자열을 받아서, 다시 JSON 문자열로 응답
      */
+/*
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -81,3 +82,4 @@ public class KafkaConfig {
         return factory;
     }
 }
+*/

@@ -5,19 +5,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 // 연동 필요함
-
-@Component
-public class DuckDuckClient {
-
-
-    public String search(String query) {
-// MCP 호출 로직 구현 부분
-// 실제 MCP 통신 코드 작성
-        return "{result: ...}"; // 임시 예시
-    }
-}
 
 @Configuration
 class ChatClientsConfig {

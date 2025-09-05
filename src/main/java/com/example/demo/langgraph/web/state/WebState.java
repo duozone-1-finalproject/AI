@@ -11,10 +11,12 @@ import java.util.*;
 public class WebState extends AgentState {
 
     // ---- 키 상수 ----
+    public static final String CORP_CODE = "corpCode";
     public static final String CORP_NAME = "corpName";
     public static final String IND_NAME = "indutyName";
     public static final String IND_CODE = "indutyCode";
-    public static final String SECTION = "sectionName";
+    public static final String SECTION = "section";
+    public static final String SUMMARIES = "summaries";
 
     // 섹션 구분 상수 (하드코딩 대신 사용)
     public static final String SECTION_RISK_INDUSTRY = "산업위험";
@@ -23,7 +25,6 @@ public class WebState extends AgentState {
     // 새로 추가
     public static final String QUERY = "query"; // QueryBuilderNode 결과
     public static final String ARTICLES = "articles"; // SearchNode 결과
-    public static final String SUMMARIES = "summaries"; // SummaryNode 결과
     public static final String VALIDATED = "validated"; // ValidationNode 결과
 
     // ---- SCHEMA ----
@@ -33,6 +34,9 @@ public class WebState extends AgentState {
             Map.entry(IND_NAME, Channels.base(() -> "")),
             Map.entry(IND_CODE, Channels.base(() -> "")),
             Map.entry(SECTION, Channels.base(() -> "")),
+
+            // 병렬 수집용 리스트 채널 (appender)
+            Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
 
 
             // 쿼리 및 처리 결과
@@ -76,5 +80,8 @@ public class WebState extends AgentState {
     @Override
     public Map<String, Object> asMap() {
         return super.asMap();
+    }
+
+    public void set(String validated, boolean validated1) {
     }
 }
