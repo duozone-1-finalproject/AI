@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
 import com.example.demo.constants.DbSubGraphConstants;
-import com.example.demo.dto.dbsubgraph.RawDocDto;
-import com.example.demo.dto.dbsubgraph.TotalDocDto;
+import com.example.demo.dto.graphdb.RawDocDto;
+import com.example.demo.dto.graphdb.TotalDocDto;
 import lombok.RequiredArgsConstructor;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.example.demo.util.dbsubgraph.FinancialUtils.toDouble;
+import static com.example.demo.util.graphdb.FinancialUtils.toDouble;
 
 @Repository
 @RequiredArgsConstructor

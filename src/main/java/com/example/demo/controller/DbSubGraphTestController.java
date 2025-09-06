@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dbsubgraph.nodes.TestDbSubgraphinvoker;
-import com.example.demo.dto.DraftRequestDto;
-import com.example.demo.dto.dbsubgraph.DbDocDto;
+import com.example.demo.graphdb.nodes.TestDbSubgraphinvoker;
+import com.example.demo.dto.graphmain.DraftRequestDto;
+import com.example.demo.dto.graphdb.DbDocDto;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

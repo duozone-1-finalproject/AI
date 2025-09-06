@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.NoriTokenService;
+import com.example.demo.service.graphvalidator.NoriTokenService;
 import com.example.demo.util.StandardSearchHelper;
-import com.example.demo.validatorgraph.nodes.StandardRetrieverNode;
+import com.example.demo.graphvalidator.nodes.StandardRetrieverNode;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.RequiredArgsConstructor;
 import lombok.Data;

@@ -1,11 +1,11 @@
 // src/main/java/com/example/ai_server/kafka/KafkaReportConsumer.java
 package com.example.demo.kafka;
 
-import com.example.demo.dto.Ai_Server_RequestDto;
-import com.example.demo.dto.Ai_Server_ResponseDto;
-import com.example.demo.dto.DraftRequestDto;
-import com.example.demo.dto.DraftResponseDto;
-import com.example.demo.service.GraphService;
+import com.example.demo.dto.kafka.Ai_Server_RequestDto;
+import com.example.demo.dto.kafka.Ai_Server_ResponseDto;
+import com.example.demo.dto.graphmain.DraftRequestDto;
+import com.example.demo.dto.graphmain.DraftResponseDto;
+import com.example.demo.service.graphmain.GraphService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
