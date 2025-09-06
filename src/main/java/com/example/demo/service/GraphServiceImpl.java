@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.config.AiSectionProperties;
 import com.example.demo.dto.DraftRequestDto;
 import com.example.demo.dto.DraftResponseDto;
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.async.AsyncGenerator;
 import lombok.extern.slf4j.Slf4j;

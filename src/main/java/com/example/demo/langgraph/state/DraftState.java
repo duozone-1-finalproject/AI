@@ -1,4 +1,4 @@
-package com.example.demo.langgraph;
+package com.example.demo.langgraph.state;
 
 import com.example.demo.dto.ContextDoc;
 import org.bsc.langgraph4j.state.AgentState;

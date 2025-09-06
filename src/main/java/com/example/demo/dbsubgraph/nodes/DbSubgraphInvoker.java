@@ -2,7 +2,7 @@ package com.example.demo.dbsubgraph.nodes;
 
 import com.example.demo.dbsubgraph.state.DbSubGraphState;
 import com.example.demo.dto.dbsubgraph.DbDocDto;
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.action.AsyncNodeAction;

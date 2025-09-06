@@ -1,7 +1,7 @@
 package com.example.demo.langgraph.nodes;
 
 import com.example.demo.dto.CheckRequestDto;
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import com.example.demo.service.CheckService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;

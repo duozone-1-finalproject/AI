@@ -1,6 +1,7 @@
 package com.example.demo.langgraph;
 
 import com.example.demo.langgraph.nodes.*;
+import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;

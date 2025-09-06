@@ -1,6 +1,6 @@
 package com.example.demo.langgraph.nodes;
 
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import com.example.demo.service.PromptCatalogService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.example.demo.langgraph.DraftState.*;
+import static com.example.demo.langgraph.state.DraftState.*;
 
 // 프롬프트 선택 노드
 @Component("prompt")

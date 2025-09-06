@@ -1,6 +1,6 @@
 package com.example.demo.langgraph.nodes;
 
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import com.example.demo.service.PromptCatalogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

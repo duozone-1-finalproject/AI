@@ -1,7 +1,7 @@
 package com.example.demo.langgraph.nodes;
 
 // RAG 소스 선택 노드
-import com.example.demo.langgraph.DraftState;
+import com.example.demo.langgraph.state.DraftState;
 import com.example.demo.service.SourcePolicyService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.example.demo.langgraph.DraftState.SECTION;
-import static com.example.demo.langgraph.DraftState.SOURCES;
+import static com.example.demo.langgraph.state.DraftState.SECTION;
+import static com.example.demo.langgraph.state.DraftState.SOURCES;
 
 @Component("source_select")
 @RequiredArgsConstructor
