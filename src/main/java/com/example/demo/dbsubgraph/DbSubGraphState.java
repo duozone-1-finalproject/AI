@@ -1,4 +1,4 @@
-package com.example.demo.dbsubgraph.state;
+package com.example.demo.dbsubgraph;
 
 import com.example.demo.dto.dbsubgraph.DbDocDto;
 import org.bsc.langgraph4j.state.AgentState;
@@ -15,7 +15,6 @@ public class DbSubGraphState extends AgentState {
     public static final String SECTION   = "sectionName";
     public static final String CORP_CODE = "corpCode";
     public static final String IND_CODE = "indutyCode";
-    public static final String IND_NAME = "indutyName";
     public static final String FINANCIALS = "financials";
     public static final String FILTER_CRITERIA = "filterCriteria";
     public static final String LABEL = "label";
@@ -28,8 +27,7 @@ public class DbSubGraphState extends AgentState {
             Map.entry(SECTION, Channels.base(() -> "")),
             Map.entry(CORP_CODE, Channels.base(() -> "")),
             Map.entry(IND_CODE, Channels.base(() -> "")),
-            Map.entry(IND_NAME, Channels.base(() -> "")),
-//            Map.entry(FINANCIALS, Channels.base(() -> "")),
+            Map.entry(FINANCIALS, Channels.base(() -> "")),
             Map.entry(FILTER_CRITERIA, Channels.base(() -> "")),
             Map.entry(LABEL, Channels.base(() -> "")),
             Map.entry(PEER_CODES, Channels.base(ArrayList::new)),
@@ -42,11 +40,14 @@ public class DbSubGraphState extends AgentState {
         super(init);
     }
 
-    // Getter 메서드 (선택적)
-    public String sectionName() { return this.<String>value(SECTION).orElse(""); }
-    public String corpCode() { return this.<String>value(CORP_CODE).orElse(""); }
-    public String indCode() { return this.<String>value(IND_CODE).orElse(""); }
-    public String indName() { return this.<String>value(IND_NAME).orElse(""); }
-    //    public String financials() { return this.<String>value(FINANCIALS).orElse(""); }
-    public List<DbDocDto> dbDocs() { return this.<List<DbDocDto>>value(DB_DOCS).orElse(new ArrayList<>()); }
+    // ---- Getter 메서드 ----
+    public String getSectionName() { return this.<String>value(SECTION).orElse(""); }
+    public String getCorpCode() { return this.<String>value(CORP_CODE).orElse(""); }
+    public String getIndustryCode() { return this.<String>value(IND_CODE).orElse(""); }
+    public String getFinancials() { return this.<String>value(FINANCIALS).orElse(""); }
+    public String getFilterCriteria() { return this.<String>value(FILTER_CRITERIA).orElse(""); }
+    public String getLabel() { return this.<String>value(LABEL).orElse(""); }
+    public List<String> getPeerCodes() { return this.<List<String>>value(PEER_CODES).orElse(new ArrayList<>()); }
+    public List<String> getRawDocs() { return this.<List<String>>value(RAW_DOCS).orElse(new ArrayList<>()); }
+    public List<DbDocDto> getDbDocs() { return this.<List<DbDocDto>>value(DB_DOCS).orElse(new ArrayList<>()); }
 }

@@ -7,29 +7,30 @@ import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.example.demo.dbsubgraph.DbSubGraphState.RAW_DOCS;
+import static com.example.demo.dbsubgraph.DbSubGraphState.FINANCIALS;
+import static com.example.demo.util.dbsubgraph.FinancialUtils.convertToMarkdown;
 
-@Component("reportContentRetrieval")
+@Component("financialsProcessor")
 @RequiredArgsConstructor
-public class ReportContentRetrievalNode implements AsyncNodeAction<DbSubGraphState> {
+public class FinancialsProcessorNode implements AsyncNodeAction<DbSubGraphState> {
 
     private final DbSubGraphService dbSubGraphService;
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(DbSubGraphState state) {
-        List<String> peerCodes = state.getPeerCodes();
-        String sectionTitle = state.getLabel();
+        String mdString;
 
-        List<String> rawDocs;
         try {
-            rawDocs = dbSubGraphService.getReportSections(peerCodes, sectionTitle);
+            Map<String, Map<String, Double>> totalFinancials = dbSubGraphService.getAllFinancialAccounts(
+                    state.getCorpCode()
+            );
+            mdString = convertToMarkdown(totalFinancials);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return CompletableFuture.completedFuture(Map.of(RAW_DOCS, rawDocs));
+        return CompletableFuture.completedFuture(Map.of(FINANCIALS, mdString));
     }
 }

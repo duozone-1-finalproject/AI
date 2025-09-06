@@ -3,7 +3,7 @@
 
 package com.example.demo.langgraph.state;
 
-import com.example.demo.dto.ContextDoc;
+import com.example.demo.dto.dbsubgraph.DbDocDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
@@ -32,12 +32,18 @@ public class DraftState extends AgentState {
     public static final String SECTION_LABEL = "sectionLabel";
     public static final String PROMPT = "prompt";
     public static final String SOURCES = "sources"; // ex) ["web","news","db"]
+    public static final String FINANCIALS = "financials";
+
 
     // 소스별 컨텍스트 (병렬 수집 → 반드시 appender)
     public static final String WEB_DOCS = "webDocs";   // List<Doc>
     public static final String NEWS_DOCS = "newsDocs";  // List<Doc>
     public static final String DB_DOCS = "dbDocs";    // List<Doc>
-    public static final String CONTEXT = "context"; // fan-in 결과 (List<Doc>)
+
+    // 소스별 실행 완료 여부
+    public static final String DB_READY = "dbReady";
+    public static final String WEB_READY = "webReady";
+    public static final String NEWS_READY = "newsReady";
 
     // 생성/검증/루프
     public static final String DRAFT = "draft";
@@ -59,13 +65,20 @@ public class DraftState extends AgentState {
             Map.entry(PROMPT, Channels.base(() -> "")),
             // 선택 소스는 1회만 쓰면 base, 동적 누적이면 appender로 바꿔도 됨
             Map.entry(SOURCES, Channels.base(() -> new ArrayList<String>())),
+            Map.entry(FINANCIALS, Channels.base(() -> "")),
 
             // 병렬 수집용 리스트 채널 (appender)
             Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
             Map.entry(NEWS_DOCS, Channels.appender(ArrayList::new)),
-            Map.entry(DB_DOCS,   Channels.appender(ArrayList::new)),
+            Map.entry(DB_DOCS, Channels.appender(ArrayList<DbDocDto>::new)),
+
+            // 소스별 실행 완료 여부
+            Map.entry(DB_READY, Channels.base(() -> false)),
+            Map.entry(WEB_READY, Channels.base(() -> false)),
+            Map.entry(NEWS_READY, Channels.base(() -> false)),
+      
             Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
-            Map.entry(CONTEXT,   Channels.base(() -> new ArrayList<ContextDoc>())),
+
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
@@ -86,7 +99,5 @@ public class DraftState extends AgentState {
         return this.<List<String>>value(NEWS_DOCS).orElse(List.of());
     }
 
-    public List<String> dbDocs() {
-        return this.<List<String>>value(DB_DOCS).orElse(List.of());
-    }
+    public List<DbDocDto> dbDocs() { return this.<List<DbDocDto>>value(DB_DOCS).orElse(List.of()); }
 }
