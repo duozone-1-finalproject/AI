@@ -2,6 +2,7 @@
 
 package com.example.demo.langgraph.web.state;
 
+import org.apache.kafka.common.protocol.types.Field;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
@@ -10,12 +11,17 @@ import java.util.*;
 
 public class WebState extends AgentState {
 
-    // ---- 키 상수 ----
-    public static final String CORP_CODE = "corpCode";
+    /*
+    회사 위험, 산업 위험을 담아둔 키가
+      SECTION_LABEL(한글), SECTION(영어)
+     */
+
+    // ---- 키 상수 Init ----
     public static final String CORP_NAME = "corpName";
     public static final String IND_NAME = "indutyName";
-    public static final String IND_CODE = "indutyCode";
-    public static final String SECTION = "section";
+    public static final String SECTION_LABEL = "sectionLabel";
+    public static final String WEB_DOCS = "webDocs";
+    public static final String NEWS_DOCS = "newsDocs";
 
 
     // 결과 키
@@ -24,20 +30,12 @@ public class WebState extends AgentState {
     public static final String ARTICLES = "articles"; // SearchNode 결과
     public static final String VALIDATED = "validated"; // ValidationNode 결과
 
-
-    // 섹션 구분 상수 => main에서 정의한 section label
-    /*
-    public static final String SECTION_RISK_INDUSTRY = "산업위험";
-    public static final String SECTION_RISK_COMPANY = "회사위험";
-    */
-
     // ---- SCHEMA ----
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
             // 입력값
             Map.entry(CORP_NAME, Channels.base(() -> "")),
             Map.entry(IND_NAME, Channels.base(() -> "")),
-            Map.entry(IND_CODE, Channels.base(() -> "")),
-            Map.entry(SECTION, Channels.base(() -> "")),
+            Map.entry(SECTION_LABEL, Channels.base(() -> "")),
 
             // 결과값
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
@@ -62,17 +60,27 @@ public class WebState extends AgentState {
         return this.<List<String>>value(QUERY).orElse(List.of());
     }
 
-    public List<?> getArticles() {
-        return this.<List<?>>value(ARTICLES).orElse(List.of());
+    public List<String> getArticles() {
+        return this.<List<String>>value(ARTICLES).orElse(List.of());
     }
 
-    public List<?> getSummaries() {
-        return this.<List<?>>value(SUMMARIES).orElse(List.of());
+    public List<String> getSummaries() {
+        return this.<List<String>>value(SUMMARIES).orElse(List.of());
+    }
+
+    public List<String> getWebDocs() {
+        return this.<List<String>>value(WEB_DOCS).orElse(List.of());
+    }
+
+    public List<String> getNewsDocs() {
+        return this.<List<String>>value(NEWS_DOCS).orElse(List.of());
     }
 
     public boolean isValidated() {
         return this.<Boolean>value(VALIDATED).orElse(false);
-    }}
+    }
+
+}
 
 // memo
 /*

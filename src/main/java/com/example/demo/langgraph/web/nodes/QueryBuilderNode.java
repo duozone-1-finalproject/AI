@@ -26,7 +26,7 @@ public class QueryBuilderNode implements AsyncNodeAction<WebState> {
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         String company = state.value(WebState.CORP_NAME).orElse("").toString();
         String industry = state.value(WebState.IND_NAME).orElse("").toString();
-        String section = state.value(WebState.SECTION).orElse("").toString();
+        String section = state.value(WebState.SECTION_LABEL).orElse("").toString();
 
         List<String> queries = new ArrayList<>();
 

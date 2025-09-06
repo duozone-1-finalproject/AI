@@ -7,7 +7,7 @@
 package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.web.service.DuckService;
-import com.example.demo.langgraph.state.DraftState;
+import com.example.demo.langgraph.web.state.WebState;
 import com.example.demo.langgraph.web.service.WebService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class SearchNode implements AsyncNodeAction<DraftState> {
+public class SearchNode implements AsyncNodeAction<WebState> {
 
     private final DuckService duckService;
 
@@ -30,22 +30,21 @@ public class SearchNode implements AsyncNodeAction<DraftState> {
     public SearchNode(WebService webService) {
     }
 
-
     @Override
-    public CompletableFuture<Map<String, Object>> apply(DraftState state) {
-        String section = state.<String>value(DraftState.SECTION).orElse("");
-        List<String> queries = state.<List<String>>value(DraftState.PROMPT).orElse(List.of());
+    public CompletableFuture<Map<String, Object>> apply(WebState state) {
+        String section = state.<String>value(WebState.SECTION_LABEL).orElse("");
+        // List<String> queries = state.<List<String>>value(WebState.PROMPT).orElse(List.of());
 
         // 결과 컨테이너
         List<String> webDocs = new ArrayList<>();
         List<String> newsDocs = new ArrayList<>();
 
         for (String query : queries) {
-            if (DraftState.SECTION_RISK_INDUSTRY.equals(section)) {
+            if (WebState.SECTION_LABEL.equals(section)) {
                 // 산업위험 → 뉴스만
                 newsDocs.addAll(duckService.searchNews(query, 3, "date"));
-            } else if (DraftState.SECTION_RISK_COMPANY.equals(section)) {
-                // 사업위험 → 웹
+            } else if (WebState.SECTION_RISK_COMPANY.equals(section)) {
+                // 회사위험 → 웹
                 webDocs.addAll(duckService.searchWeb(query, 3, "date"));
             }
             // SECTION_RISK_ETC 등 다른 섹션에 대한 로직 추가 가능
@@ -53,12 +52,13 @@ public class SearchNode implements AsyncNodeAction<DraftState> {
 
         // state 업데이트
         Map<String, Object> partial = new HashMap<>();
-        partial.put(DraftState.WEB_DOCS, webDocs);
-        partial.put(DraftState.NEWS_DOCS, newsDocs);
+        partial.put(WebStatee.WEB_DOCS, webDocs);
+        partial.put(WebStatee.NEWS_DOCS, newsDocs);
 
         // chatclient 예제
         // String newsText = chatClient.prompt().call().content();
 
         return CompletableFuture.completedFuture(partial);
     }
+
 }

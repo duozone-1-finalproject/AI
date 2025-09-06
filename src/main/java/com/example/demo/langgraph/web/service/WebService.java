@@ -8,6 +8,7 @@ import org.bsc.langgraph4j.CompiledGraph;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,8 +23,7 @@ public class WebService {
         Map<String, Object> initData = new HashMap<>();
         initData.put(WebState.CORP_NAME, req.getCorpName());
         initData.put(WebState.IND_NAME, req.getIndutyName());
-        initData.put(WebState.IND_CODE, req.getIndutyCode());
-        initData.put(WebState.SECTION, req.getSection());
+        initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
 
         // 그래프 실행
         WebState state = new WebState(initData);
@@ -31,9 +31,9 @@ public class WebService {
 
         // 결과를 DTO로 변환
         WebResponseDto response = new WebResponseDto();
-        response.setQueries(state.value(WebState.QUERY).orElse(null));
-        response.setArticles(state.value(WebState.ARTICLES).orElse(null));
-        response.setSummaries(state.value(WebState.SUMMARIES).orElse(null));
+        response.setQueries((List<String>) state.value(WebState.QUERY).orElse(null));
+        response.setArticles((List<String>) state.value(WebState.ARTICLES).orElse(null));
+        response.setSummaries((List<String>) state.value(WebState.SUMMARIES).orElse(null));
 
         return response;
     }

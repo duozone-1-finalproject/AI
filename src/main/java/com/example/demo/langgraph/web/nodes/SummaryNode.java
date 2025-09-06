@@ -3,6 +3,7 @@
 package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.state.DraftState;
+import com.example.demo.langgraph.web.state.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
@@ -12,13 +13,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class SummaryNode implements AsyncNodeAction<DraftState> {
+public class SummaryNode implements AsyncNodeAction<WebState> {
 
     @Override
-    public CompletableFuture<Map<String, Object>> apply(DraftState state) {
+    public CompletableFuture<Map<String, Object>> apply(WebState state) {
         // 외부 데이터만 요약 대상으로 사용 (web + news)
-        List<?> webDocs = state.webDocs();
-        List<?> newsDocs = state.newsDocs();
+        List<String> webDocs = state.webDocs();
+        List<String> newsDocs = state.newsDocs();
 
         List<String> summaries = new ArrayList<>();
 

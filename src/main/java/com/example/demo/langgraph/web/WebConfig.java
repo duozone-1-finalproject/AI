@@ -1,66 +1,57 @@
 // 여기에 node와 state가 어떻게 연결되는지 만들기.
 package com.example.demo.langgraph.web;
 
-import com.example.demo.langgraph.web.nodes.*;
-import com.example.demo.langgraph.web.service.DuckService;
-import com.example.demo.langgraph.web.service.WebService;
+import com.example.demo.dbsubgraph.nodes.CorpCodeRetrievalNode;
+import com.example.demo.dbsubgraph.nodes.DataPreprocessorNode;
+import com.example.demo.dbsubgraph.nodes.FilterCriteriaNode;
+import com.example.demo.dbsubgraph.nodes.ReportContentRetrievalNode;
+import com.example.demo.langgraph.nodes.*;
+import com.example.demo.langgraph.web.nodes.QueryBuilderNode;
+import com.example.demo.langgraph.web.nodes.SearchNode;
+import com.example.demo.langgraph.web.nodes.SummaryNode;
 import com.example.demo.langgraph.web.state.WebState;
+import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
-import org.bsc.langgraph4j.Graph;
-import org.bsc.langgraph4j.builder.GraphBuilder;
+import org.bsc.langgraph4j.GraphStateException;
+import org.bsc.langgraph4j.StateGraph;
+import org.bsc.langgraph4j.action.AsyncNodeActionWithConfig;
+import org.bsc.langgraph4j.state.Channel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig {
 
-    /*@Bean
-    public DuckService duckService() {
-        return new DuckService();
-    }
-
-    @Bean
-    public WebService webService(DuckService duckService) {
-        return new WebService(duckService);
-    }
-
-    @Bean
-    public QueryBuilderNode queryBuilderNode() {
-        return new QueryBuilderNode();
-    }
-
-    @Bean
-    public SearchNode searchNode(WebService webService) {
-        return new SearchNode(webService);
-    }
-    */
+    private final QueryBuilderNode queryBuilderNode;
+    private final SearchNode searchNode;
+    private final SummaryNode summaryNode;
 
     @Bean(name = "webSubGraph")
-    public CompiledGraph<WebState> webSubGraph(QueryBuilderNode queryBuilderNode,
-                                               SearchNode searchNode,
-                                               SummaryNode summaryNode) {
-// WebState 기반으로 StateGraph 생성
-        StateGraph.Builder<WebState> builder = StateGraph.builder(WebState.SCHEMA);
+    public CompiledGraph<WebState> webSubGraph() throws GraphStateException {
 
 
-// 노드 등록
-        builder.addNode("query", queryBuilderNode);
-        builder.addNode("search", searchNode);
-        builder.addNode("summary", summaryNode);
 
+        // ✅ WebState 기반으로 StateGraph 생성
+        Map<String, Channel<?>> schema = new LinkedHashMap<>(WebState.SCHEMA);
+        StateGraph<WebState> graph = new StateGraph<>(schema, WebState::new);
 
-// 실행 순서: query → search → summary
-        builder.addEdge("query", "search");
-        builder.addEdge("search", "summary");
+        // ✅ 노드 정의
+        graph.addNode("query", queryBuilderNode);
+        graph.addNode("search", searchNode);
+        graph.addNode("summary", summaryNode);
 
+        // ✅ 엣지 연결 (실행 순서: query → search → summary)
+        graph.addEdge(StateGraph.START, "query");
+        graph.addEdge("query", "search");
+        graph.addEdge("search", "summary");
+        graph.addEdge("summary", StateGraph.END);
 
-// 시작/종료 지점
-        builder.setEntryPoint("query");
-        builder.setExitPoint("summary");
-
-
-// 컴파일 후 반환
-        return builder.build().compile();
+        // ✅ 실행용 그래프 컴파일 후 반환
+        return graph.compile();
     }
 }
 

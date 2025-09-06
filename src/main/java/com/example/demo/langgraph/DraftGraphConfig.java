@@ -1,5 +1,4 @@
 //service는 congig가 없어도 작동 가능하지만, config는 service없이 실행이 안됨
-// 이 파일은
 
 package com.example.demo.langgraph;
 
