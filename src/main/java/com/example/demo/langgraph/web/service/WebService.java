@@ -7,41 +7,38 @@ import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class WebService {
 
-    private final CompiledGraph<WebState> graph;
-
-// @bean은 초반에 @data, @service등 여러 어노테이션으로 설정해둔 객체들이 한 박스에 들어갔다고 생각
-    // 이때, 알맞은 객체를 자동으로 불러오는 것임. new로 새로운 객체를 만들지 않아도 됨
-    // 참고로 public은 전역 변수이고 private는 다른거 못불러오게 그 안에서만 쓸 수 있는 것.
+    private final DuckService duckService;
+    private final CompiledGraph<WebState> webGraph;
 
     public WebResponseDto run(WebRequestDto req) {
-        // 초기 state 구성
-        Map<String, Object> init = new LinkedHashMap<>();
-        init.put(WebState.CORP_NAME, req.getCorpName());
-        init.put(WebState.IND_NAME, req.getIndustryName());
-        init.put(WebState.IND_CODE, req.getIndustryCode());
+        // 초기 상태 데이터 준비
+        Map<String, Object> initData = new HashMap<>();
+        initData.put(WebState.CORP_NAME, req.getCorpName());
+        initData.put(WebState.IND_NAME, req.getIndutyName());
+        initData.put(WebState.IND_CODE, req.getIndutyCode());
+        initData.put(WebState.SECTION, req.getSection());
 
         // 그래프 실행
-        WebState finalState = graph.invoke(init)
-                .orElse(new WebState(Map.of()));
+        WebState state = new WebState(initData);
+        state = webGraph.run(state);
 
         // 결과를 DTO로 변환
-        WebResponseDto dto = new WebResponseDto();
-        dto.setSummaries(finalState.value(WebState.SUMMARIES).orElse(null));
-        dto.setValidated(finalState.value(WebState.VALIDATED).orElse(null));
+        WebResponseDto response = new WebResponseDto();
+        response.setQueries(state.value(WebState.QUERY).orElse(null));
+        response.setArticles(state.value(WebState.ARTICLES).orElse(null));
+        response.setSummaries(state.value(WebState.SUMMARIES).orElse(null));
 
-        return dto;
-    }
-
-    public String search(String q) {
+        return response;
     }
 }
+
 
 
 

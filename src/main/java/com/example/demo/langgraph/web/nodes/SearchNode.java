@@ -1,15 +1,18 @@
 //SearchNode에서 DuckService를 주입받아 사용하도록 코드 만들어야함
 // querynode에서 정의된 키워드 가지고 ....
 //QueryBuilderNode에서 만든 쿼리를 받아서 DuckDuckGo API 호출
-// → 기사 스니펫/링크를 가져와 state에 저장.
+// → 기사 본문/링크를 가져와 state에 저장.
 // 실제 검색
 
 package com.example.demo.langgraph.web.nodes;
 
 import com.example.demo.langgraph.web.service.DuckService;
 import com.example.demo.langgraph.state.DraftState;
+import com.example.demo.langgraph.web.service.WebService;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,6 +23,13 @@ import java.util.concurrent.CompletableFuture;
 public class SearchNode implements AsyncNodeAction<DraftState> {
 
     private final DuckService duckService;
+
+    @Qualifier("chatWithMcp")
+    private final ChatClient chatClient;
+
+    public SearchNode(WebService webService) {
+    }
+
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
@@ -45,6 +55,9 @@ public class SearchNode implements AsyncNodeAction<DraftState> {
         Map<String, Object> partial = new HashMap<>();
         partial.put(DraftState.WEB_DOCS, webDocs);
         partial.put(DraftState.NEWS_DOCS, newsDocs);
+
+        // chatclient 예제
+        // String newsText = chatClient.prompt().call().content();
 
         return CompletableFuture.completedFuture(partial);
     }
