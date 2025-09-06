@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.DraftRequestDto;
-import com.example.demo.dto.DraftResponseDto;
-import com.example.demo.service.GraphService;
+import com.example.demo.dto.graphmain.DraftRequestDto;
+import com.example.demo.dto.graphmain.DraftResponseDto;
+import com.example.demo.service.graphmain.GraphService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

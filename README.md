@@ -84,11 +84,11 @@ src/main/java/com/example/demo
 -   **DraftRequestDto.java**: 초안 생성 요청을 위한 DTO입니다.
 -   **DraftResponseDto.java**: 초안 생성 응답을 위한 DTO입니다.
 
-### `com.example.demo.langgraph`
+### `com.example.demo.graphmain`
 
 -   **DraftGraphConfig.java**: 노드와 엣지를 포함한 LangGraph 그래프의 구조를 정의합니다.
 
-#### `com.example.demo.langgraph.nodes`
+#### `com.example.demo.graphmain.nodes`
 
 -   **AdjustDraftNode.java**: 유효성 검사 결과에 따라 생성된 초안을 조정하는 노드입니다.
 -   **DraftGeneratorNode.java**: 초기 초안을 생성하는 노드입니다.
@@ -98,7 +98,7 @@ src/main/java/com/example/demo
 -   **ContextAggregatorNode.java**: 여러 소스에서 컨텍스트를 집계하는 노드입니다.
 -   **StandardRetrieverNode.java**: 표준 정보나 가이드라인을 검색하는 노드입니다.
 
-#### `com.example.demo.langgraph.state`
+#### `com.example.demo.graphmain.state`
 
 -   **DraftState.java**: 노드 간에 전달되는 모든 데이터를 보유하는 그래프의 상태를 나타냅니다.
 

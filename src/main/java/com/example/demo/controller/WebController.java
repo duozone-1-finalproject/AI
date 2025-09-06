@@ -2,9 +2,9 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.dto.WebRequestDto;
-import com.example.demo.dto.WebResponseDto;
-import com.example.demo.langgraph.web.service.WebService;
+import com.example.demo.dto.graphweb.WebRequestDto;
+import com.example.demo.dto.graphweb.WebResponseDto;
+import com.example.demo.graphweb.service.WebService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

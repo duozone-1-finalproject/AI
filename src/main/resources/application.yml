@@ -65,52 +65,6 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: true
 
-
-# prompt 경로 및 Section 매핑
-ai:
-  defaults:
-    maxItems: 5
-    webRagItems: [ ]      # 더미
-    dartRagItems: [ ]     # 더미
-    financialData: ""
-  prompts:
-    draft_default: "classpath:prompts/draft_default.st"
-    check_default: "classpath:prompts/check_default.st"
-    risk_industry_checklist: "classpath:prompts/risk_industry_checklist.st"
-    risk_company_checklist: "classpath:prompts/risk_company_checklist.st"
-    risk_etc_checklist: "classpath:prompts/risk_etc_checklist.st"
-    validator_default: "classpath:prompts/validator_default.st"
-    validator_risk: "classpath:prompts/validator_risk.st"
-    validator_user: "classpath:prompts/validator_user.st"
-    adjust_default: "classpath:prompts/adjust_default.st"
-    adjust_user: "classpath:prompts/adjust_user.st"
-
-  sections:
-    # 사업위험
-    risk_industry:
-      prompt: "classpath:prompts/risk_industry.st"
-      sources: [web, db]
-      label: "사업위험"
-      filter: "industry"
-
-    # 회사위험
-    risk_company:
-      prompt: "classpath:prompts/risk_company.st"
-      sources: [news, db]
-      label: "회사위험"
-      filter: "financial"
-
-    # 기타위험
-    risk_etc:
-      prompt: "classpath:prompts/risk_etc.st"
-      sources: [web, db]
-      label: "기타 투자위험"
-      filter: "latest"
-
-  # main 랭그래프 실행 section 지정 리스트
-#  default-order: [risk_industry, risk_company, risk_etc]
-  default-order: [risk_industry]
-
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
 opensearch:
   uris: ${OPENSEARCH_URIS}
