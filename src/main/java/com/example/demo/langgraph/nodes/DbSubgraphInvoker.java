@@ -1,6 +1,6 @@
-package com.example.demo.dbsubgraph.nodes;
+package com.example.demo.langgraph.nodes;
 
-import com.example.demo.dbsubgraph.state.DbSubGraphState;
+import com.example.demo.dbsubgraph.DbSubGraphState;
 import com.example.demo.dto.dbsubgraph.DbDocDto;
 import com.example.demo.langgraph.state.DraftState;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,6 @@ import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
         subStateInit.put(DbSubGraphState.SECTION, state.<String>value(DraftState.SECTION).orElse(""));
         subStateInit.put(DbSubGraphState.CORP_CODE, state.<String>value(DraftState.CORP_CODE).orElse(""));
         subStateInit.put(DbSubGraphState.IND_CODE, state.<String>value(DraftState.IND_CODE).orElse(""));
-        subStateInit.put(DbSubGraphState.IND_NAME, state.<String>value(DraftState.IND_NAME).orElse(""));
 
         // SubGraph 실행
         return CompletableFuture.supplyAsync(() -> {
@@ -37,9 +35,13 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
                     .orElse(new DbSubGraphState(Map.of()));
 
             // SubGraph 결과에서 DB_DOCS 추출
-            List<DbDocDto> dbDocs = subGraphResult.<List<DbDocDto>>value(DbSubGraphState.DB_DOCS)
-                    .orElse(new ArrayList<>());
-            return Map.of(DraftState.DB_DOCS, dbDocs);
+            List<DbDocDto> dbDocs = subGraphResult.getDbDocs();
+            String financials = subGraphResult.getFinancials();
+
+            return Map.of(
+                    DraftState.DB_DOCS, dbDocs,
+                    DraftState.FINANCIALS, financials
+            );
         });
     }
 }

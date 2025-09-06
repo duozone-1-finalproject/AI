@@ -28,6 +28,7 @@ WRITING (paragraphs only; no lists/tables/headings)
 - Each risk item MUST follow:
   a) One-sentence TOPIC LINE: “cause/condition → specific impact on CORP_NAME”.
   b) 1–2 follow-up paragraphs: evidence (figures/dates/contracts/governance changes/liquidity & debt/litigation, etc.), impact pathway, and current mitigation (if any).
+  c) Each risk item MUST start with a Korean sequential marker such as "가.", "나.", "다.", ... at the beginning of the paragraph.
 - Evidence-based, precise, neutral. No hype, vagueness, or unfounded certainty.
 - Citations:
   • Do NOT add `출처:` for facts derived from FIN_DATA.

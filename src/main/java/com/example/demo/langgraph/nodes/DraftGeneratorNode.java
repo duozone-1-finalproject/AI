@@ -35,8 +35,9 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
         Map<String, Object> vars = new HashMap<>();
         vars.put("corpName",  state.<String>value(DraftState.CORP_NAME).orElse(""));
         vars.put("indutyName",state.<String>value(DraftState.IND_NAME ).orElse(""));
+        vars.put("financialData", state.<String>value(DraftState.FINANCIALS).orElse(""));
         vars.put("webRagItems", "Map.of()");
-        vars.put("dartRagItems", Map.of());
+        vars.put("dartRagItems", state.dbDocs());
         vars.put("maxItems", 5);
 
 

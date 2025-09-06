@@ -31,6 +31,7 @@ ai:
     maxItems: 5
     webRagItems: [ ]      # 더미
     dartRagItems: [ ]     # 더미
+    financialData: ""
   prompts:
     draft_default: "classpath:prompts/draft_default.st"
     validator_default: "classpath:prompts/validator_default.st"

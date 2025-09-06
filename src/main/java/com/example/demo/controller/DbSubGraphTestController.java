@@ -21,9 +21,16 @@ public class DbSubGraphTestController {
     private final TestDbSubgraphinvoker graphService;
 
     @PostMapping
-    public List<DbDocDto> draft(@Valid @RequestBody DraftRequestDto req) {
+    public List<DbDocDto> dbContent(@Valid @RequestBody DraftRequestDto req) {
         // 디버그 출력
         log.debug("DraftRequestDto: {}", req);
         return graphService.runOne("risk_industry", req);
+    }
+
+    @PostMapping("/financials")
+    public String draftFinancials(@Valid @RequestBody DraftRequestDto req) {
+        // 디버그 출력
+        log.debug("DraftRequestDto: {}", req);
+        return graphService.runTest("risk_company", req);
     }
 }
