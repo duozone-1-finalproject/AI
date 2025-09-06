@@ -1,9 +1,9 @@
-package com.example.demo.util;
+package com.example.demo.util.dbsubgraph;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FinancialMetricsCalculatorUtils {
+public class FinancialUtils {
     public static Map<String, Object> calculate(Map<String, Double> dataset, Map<String, Double> prevValues) {
         double revenue = dataset.getOrDefault("revenue", 0.0);
         double operatingIncome = dataset.getOrDefault("operating_income", 0.0);
@@ -42,4 +42,43 @@ public class FinancialMetricsCalculatorUtils {
             return 0.0;
         }
     }
+
+
+    public static Integer toInt(Object value) {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Number num) {
+            return num.intValue(); // 5777.0 -> 5777
+        }
+        try {
+            return (int) Double.parseDouble(value.toString().replaceAll(",", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static String convertToMarkdown(Map<String, Map<String, Double>> data) {
+        StringBuilder sb = new StringBuilder();
+
+        // 헤더 추가
+        sb.append("|항목|당기|전기|전전기|\n");
+        sb.append("|---|---|---|---|\n");
+
+        // 각 row 추가
+        for (Map.Entry<String, Map<String, Double>> entry : data.entrySet()) {
+            String item = entry.getKey();
+            Map<String, Double> values = entry.getValue();
+
+            int thstrm = (int) Math.floor(values.getOrDefault("thstrm", 0.0) / 1_000_000);
+            int frmtrm = (int) Math.floor(values.getOrDefault("frmtrm", 0.0) / 1_000_000);
+            int bfefrmtrm = (int) Math.floor(values.getOrDefault("bfefrmtrm", 0.0) / 1_000_000);
+
+            sb.append(String.format("|%s|%d|%d|%d|\n", item, thstrm, frmtrm, bfefrmtrm));
+        }
+
+        return sb.toString();
+    }
+
+
 }

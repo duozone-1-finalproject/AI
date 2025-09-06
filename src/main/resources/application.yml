@@ -28,6 +28,16 @@ spring:
         options:
           model: ${OPENAI_MODEL}
           temperature: 1
+  # MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행
+  mcp:
+    client:
+      enabled: true
+      type: SYNC     # SYNC or ASYNC
+      stdio:
+        connections:
+          duck: # 연결 이름
+            command: "C:/Users/jyjj0/.mcpvenv/Scripts/duckduckgo-mcp-server.exe"  # ddg mcp path -> 환경변수 처리해야함
+            args: [ ]
   # Kafka Configuration
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
@@ -55,12 +65,14 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: true
 
+
 # prompt 경로 및 Section 매핑
 ai:
   defaults:
     maxItems: 5
     webRagItems: [ ]      # 더미
     dartRagItems: [ ]     # 더미
+    financialData: ""
   prompts:
     draft_default: "classpath:prompts/draft_default.st"
     check_default: "classpath:prompts/check_default.st"
@@ -77,14 +89,14 @@ ai:
     # 사업위험
     risk_industry:
       prompt: "classpath:prompts/risk_industry.st"
-      sources: [news, db]
+      sources: [web, db]
       label: "사업위험"
       filter: "industry"
 
     # 회사위험
     risk_company:
       prompt: "classpath:prompts/risk_company.st"
-      sources: [web, db]
+      sources: [news, db]
       label: "회사위험"
       filter: "financial"
 
@@ -102,7 +114,6 @@ ai:
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
 opensearch:
   uris: ${OPENSEARCH_URIS}
-  #uris: ${OPENSEARCH_URI:http://localhost:9200}
   connection-timeout: 5s     # connect timeout
   socket-timeout: 60s        # read timeout
   max-conn-total: 100

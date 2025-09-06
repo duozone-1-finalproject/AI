@@ -18,17 +18,24 @@ public class DbSubGraphServiceImpl implements DbSubGraphService {
 
 
     @Override
-    public List<String> fetchPeerCorpCodes(Query query, String indexName) throws IOException {
-        return openSearchRepository.findPeerCorpCodes(query, indexName);
+    public List<String> findPeerCompanies(Query query, String indexName) throws IOException {
+        return openSearchRepository.fetchPeerCorpCodes(query, indexName);
     }
 
     @Override
-    public List<String> fetchReportSections(List<String> corpCodes, String sectionTitle) throws IOException {
+    public List<String> getReportSections(List<String> corpCodes, String sectionTitle) throws IOException {
         return openSearchRepository.fetchSectionContents(corpCodes, sectionTitle);
     }
 
     @Override
-    public List<Map<String, Object>> fetchStandardAccounts(String corpCode) throws IOException {
+    public List<Map<String, Object>> getStandardFinancialAccounts(String corpCode) throws IOException {
         return openSearchRepository.fetchStandardAccounts(corpCode);
     }
+
+    @Override
+    public Map<String, Map<String, Double>> getAllFinancialAccounts(String corpCode) throws IOException {
+        return openSearchRepository.fetchAllAccount(corpCode);
+    }
+
+
 }

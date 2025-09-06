@@ -8,6 +8,7 @@ import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
 
     private final PromptCatalogService catalog;
+
+    @Qualifier("default")
     private final ChatClient chatClient;
 
     @Override
@@ -30,6 +33,7 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
 
             // 0) 공통 변수 1회 추출
             Map<String, Object> baseVars = extractBaseVars(state);
+
 
             // 1) 초안 생성
             Prompt sysDraft = catalog.createSystemPrompt("draft_default", Map.of());

@@ -1,6 +1,6 @@
 package com.example.demo.dbsubgraph.nodes;
 
-import com.example.demo.dbsubgraph.state.DbSubGraphState;
+import com.example.demo.dbsubgraph.DbSubGraphState;
 import com.example.demo.dto.dbsubgraph.QueryRequestDto;
 import com.example.demo.service.subgraph.db.DbSubGraphService;
 import com.example.demo.service.subgraph.db.QueryGenerateService;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.example.demo.dbsubgraph.state.DbSubGraphState.PEER_CODES;
+import static com.example.demo.dbsubgraph.DbSubGraphState.PEER_CODES;
 
 @Component("corpCodeRetrieval")
 @RequiredArgsConstructor
@@ -27,12 +27,12 @@ public class CorpCodeRetrievalNode implements AsyncNodeAction<DbSubGraphState> {
         List<String> peerCodes;
         try {
             QueryRequestDto request = queryGenerateService.generateQuery(
-                    state.<String>value(DbSubGraphState.FILTER_CRITERIA).orElseThrow(),
-                    state.<String>value(DbSubGraphState.CORP_CODE).orElseThrow(),
-                    state.<String>value(DbSubGraphState.IND_CODE).orElseThrow()
+                    state.getFilterCriteria(),
+                    state.getCorpCode(),
+                    state.getIndustryCode()
             );
 
-            peerCodes = dbSubGraphService.fetchPeerCorpCodes(request.query(), request.indexName());
+            peerCodes = dbSubGraphService.findPeerCompanies(request.query(), request.indexName());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
