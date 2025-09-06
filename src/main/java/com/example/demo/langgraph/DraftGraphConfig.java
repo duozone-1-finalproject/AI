@@ -19,8 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.bsc.langgraph4j.action.AsyncEdgeAction.*;
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -55,7 +53,7 @@ public class DraftGraphConfig {
         // 엣지연결
         graph.addEdge(StateGraph.START, "prompt");
         graph.addEdge("prompt", "source_select");
-
+      
         // source_select -> fan-out (db)
         graph.addConditionalEdges("source_select",
                 edge_async(s -> {

@@ -1,6 +1,18 @@
 server:
   port: 8081
 
+
+# Application Configuration
+app:
+  kafka:
+    enabled: ${APP_KAFKA_ENABLED:true}   # 브로커/카프카 안쓸 땐 false 로 실행
+
+# Kafka 로그 레벨 스위치 (브로커/AI 카프카 안쓸 때 OFF 로)
+logging:
+  level:
+    org.apache.kafka: ${APP_KAFKA_LOG_LEVEL:INFO}
+    org.springframework.kafka: ${APP_KAFKA_LOG_LEVEL:INFO}
+
 spring:
   config:
     import: optional:file:.env[.properties]
@@ -16,19 +28,43 @@ spring:
         options:
           model: ${OPENAI_MODEL}
           temperature: 1
-    # --- MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행 ---
-    mcp:
-      client:
-        enabled: true
-        type: SYNC     # SYNC or ASYNC
-        stdio:
-          connections:
-            duck: # 연결 이름
-              command: "C:/Users/jyjj0/.mcpvenv/Scripts/duckduckgo-mcp-server.exe"  # ddg mcp path -> 환경변수 처리해야함
-              args: [ ]
-              # env:
-              #   HTTP_PROXY: ${HTTP_PROXY:}
-              #   HTTPS_PROXY: ${HTTPS_PROXY:}
+  # MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행
+  mcp:
+    client:
+      enabled: true
+      type: SYNC     # SYNC or ASYNC
+      stdio:
+        connections:
+          duck: # 연결 이름
+            command: "C:/Users/jyjj0/.mcpvenv/Scripts/duckduckgo-mcp-server.exe"  # ddg mcp path -> 환경변수 처리해야함
+            args: [ ]
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    # 브로커 없을 때 리스너 자체를 시작하지 않음
+    listener:
+      auto-startup: ${app.kafka.enabled:true}
+      missing-topics-fatal: false
+    # 브로커 없어도 부팅 실패하지 않게
+    admin:
+      fail-fast: false
+    # 재접속 로그 빈도 낮추기 (선택)
+    properties:
+      reconnect.backoff.ms: 10000
+      reconnect.backoff.max.ms: 60000
+      retry.backoff.ms: 10000
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:ai-server-group}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
 
 # prompt 경로 및 Section 매핑
 ai:
@@ -39,6 +75,10 @@ ai:
     financialData: ""
   prompts:
     draft_default: "classpath:prompts/draft_default.st"
+    check_default: "classpath:prompts/check_default.st"
+    risk_industry_checklist: "classpath:prompts/risk_industry_checklist.st"
+    risk_company_checklist: "classpath:prompts/risk_company_checklist.st"
+    risk_etc_checklist: "classpath:prompts/risk_etc_checklist.st"
     validator_default: "classpath:prompts/validator_default.st"
     validator_risk: "classpath:prompts/validator_risk.st"
     validator_user: "classpath:prompts/validator_user.st"
@@ -80,18 +120,5 @@ opensearch:
   max-conn-per-route: 100
   sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      acks: all
-      retries: 3
-    consumer:
-      group-id: ${KAFKA_CONSUMER_GROUP:ai-backend-group}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      auto-offset-reset: earliest
-      enable-auto-commit: true
 
 

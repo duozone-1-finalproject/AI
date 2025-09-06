@@ -17,13 +17,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService {
-
+    private static final String MAX_ITEMS_LIMIT = "5";
     private static final long TIMEOUT_SEC = 300; // 섹션별 타임아웃
 
     private final CompiledGraph<DraftState> graph;
@@ -63,9 +62,9 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.CORP_NAME, req.getCorpName());
         init.put(DraftState.IND_CODE, req.getIndutyCode());
         init.put(DraftState.IND_NAME, req.getIndutyName());
-        init.put(DraftState.RPT_EXIST, Boolean.TRUE.equals(req.getRptExist()));
         init.put(DraftState.SECTION, sectionKey);
         init.put(DraftState.SECTION_LABEL, sectionLabel);
+        init.put(DraftState.MAX_ITEMS, MAX_ITEMS_LIMIT);
 
         AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
 

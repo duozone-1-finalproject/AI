@@ -47,7 +47,6 @@ public class KafkaReportConsumer {
             draftRequest.setCorpName(corpName != null ? corpName : "UNKNOWN");
             draftRequest.setIndutyCode(indutyCode != null ? indutyCode : "UNKNOWN");
             draftRequest.setIndutyName(indutyName != null ? indutyName : "UNKNOWN");
-            draftRequest.setRptExist(true); // 기본값
 
             // 🔥 실제 AI 처리 실행
             long startTime = System.currentTimeMillis();
