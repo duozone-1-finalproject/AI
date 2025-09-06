@@ -1,6 +1,6 @@
 package com.example.demo.langgraph.nodes;
 
-import com.example.demo.langgraph.state.DraftState;
+import com.example.demo.langgraph.DraftState;
 import com.example.demo.service.PromptCatalogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
