@@ -1,20 +1,30 @@
-package com.example.demo.config;
+package com.example.demo.langgraph.web.client;
+
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+
+@Component
+public class DuckDuckClient {
+
+
+    public String search(String query) {
+// MCP 호출 로직 구현 부분
+// 실제 MCP 통신 코드 작성
+        return "{result: ...}"; // 임시 예시
+    }
+}
 
 @Configuration
-public class AiClientConfig {
+class ChatClientsConfig {
 
-    /**
-     * Spring AI가 오토컨피그로 제공하는 ChatClient.Builder를 주입받아
-     * 애플리케이션 전역에서 재사용할 ChatClient 빈을 생성합니다.
-     */
-    @Bean("default")
-    public ChatClient chatClient(ChatClient.Builder builder) {
-        return builder.build();
+    @Bean("chatPlain")
+    ChatClient chatPlain(ChatClient.Builder b) {
+        return b.build(); // 툴 없음
     }
 
     @Bean("chatWithMcp")

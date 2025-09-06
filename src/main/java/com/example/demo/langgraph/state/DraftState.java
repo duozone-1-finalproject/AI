@@ -1,3 +1,6 @@
+//LangGraph에서 사용하는 상태(State) 클래스
+//그래프 실행 중에 주고받는 데이터(회사명, 산업명, 기사 결과, 요약 등)를 담는 컨테이너** 역할
+
 package com.example.demo.langgraph.state;
 
 import com.example.demo.dto.dbsubgraph.DbDocDto;
@@ -7,6 +10,8 @@ import org.bsc.langgraph4j.state.Channels;
 
 import java.util.*;
 
+//LangGraph4j에서 제공하는 기본 State 관리 기능을 확장한 클래스
+
 public class DraftState extends AgentState {
 
     // ---- 키 상수 ----
@@ -15,6 +20,14 @@ public class DraftState extends AgentState {
     public static final String IND_CODE = "indutyCode";
     public static final String IND_NAME = "indutyName";
     public static final String RPT_EXIST = "rptExist";
+
+    public static final String SUMMARIES = "summaries";
+
+    // ---- 섹션 타입 상수 ----
+    // public static final String SECTION_RISK_INDUSTRY = "산업 위험";   // 산업위험
+    // public static final String SECTION_RISK_COMPANY  = "사업 위험";   // 회사위험
+    //public static final String SECTION_RISK_ETC      = "기타 위험";   // 기타위험 (확장 가능)
+
     public static final String SECTION = "section";
     public static final String SECTION_LABEL = "sectionLabel";
     public static final String PROMPT = "prompt";
@@ -37,6 +50,9 @@ public class DraftState extends AgentState {
     public static final String ERRORS = "errors"; // List<String>
 
     // ---- SCHEMA: base vs appender 구분 ----
+    // 각 키와 채널(Channel)의 매핑 정의
+    // 이때 `Channels.appender(...)`: 리스트처럼 누적(append)할 때 사용.
+
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
             // 입력/메타 (덮어쓰기)
             Map.entry(CORP_CODE, Channels.base(() -> "")),
@@ -60,6 +76,9 @@ public class DraftState extends AgentState {
             Map.entry(DB_READY, Channels.base(() -> false)),
             Map.entry(WEB_READY, Channels.base(() -> false)),
             Map.entry(NEWS_READY, Channels.base(() -> false)),
+      
+            Map.entry(SUMMARIES, Channels.appender(ArrayList::new)),
+
 
             // 생성/검증/루프 (덮어쓰기 + 피드백은 누적)
             Map.entry(DRAFT, Channels.appender(ArrayList::new)),
