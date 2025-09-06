@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebConfig {
 
-    @Bean
+    /*@Bean
     public DuckService duckService() {
         return new DuckService();
     }
@@ -33,28 +33,34 @@ public class WebConfig {
     public SearchNode searchNode(WebService webService) {
         return new SearchNode(webService);
     }
+    */
 
-    @Bean
-    public SummaryNode summaryNode() {
-        return new SummaryNode();
-    }
-    // ✅ Node와 State를 연결하는 Graph 정의 (검색까지만)
-    @Bean
-    public CompiledGraph<WebState> webGraph(QueryBuilderNode queryBuilderNode,
-                                            SearchNode searchNode,
-                                            SummaryNode summaryNode) {
-        GraphBuilder<WebState> builder = GraphBuilder.create(WebState.SCHEMA);
+    @Bean(name = "webSubGraph")
+    public CompiledGraph<WebState> webSubGraph(QueryBuilderNode queryBuilderNode,
+                                               SearchNode searchNode,
+                                               SummaryNode summaryNode) {
+// WebState 기반으로 StateGraph 생성
+        StateGraph.Builder<WebState> builder = StateGraph.builder(WebState.SCHEMA);
 
-        builder.addNode("queryBuilder", queryBuilderNode);
+
+// 노드 등록
+        builder.addNode("query", queryBuilderNode);
         builder.addNode("search", searchNode);
         builder.addNode("summary", summaryNode);
 
-// 실행 순서 정의: 쿼리 작성 → 검색 → 요약
-        builder.addEdge("queryBuilder", "search");
+
+// 실행 순서: query → search → summary
+        builder.addEdge("query", "search");
         builder.addEdge("search", "summary");
 
-        Graph<WebState> graph = builder.build();
-        return graph.compile();
+
+// 시작/종료 지점
+        builder.setEntryPoint("query");
+        builder.setExitPoint("summary");
+
+
+// 컴파일 후 반환
+        return builder.build().compile();
     }
 }
 
