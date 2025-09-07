@@ -1,9 +1,9 @@
 //외부에서 가져온 데이터(webDocs, newsDocs) 만 요약 대상
 
-package com.example.demo.langgraph.web.nodes;
+package com.example.demo.webgraph.nodes;
 
 import com.example.demo.langgraph.state.DraftState;
-import com.example.demo.langgraph.web.state.WebState;
+import com.example.demo.webgraph.state.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class SummaryNode implements AsyncNodeAction<WebState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         // 외부 데이터만 요약 대상으로 사용 (web + news)
-        List<String> webDocs = state.webDocs();
-        List<String> newsDocs = state.newsDocs();
+        List<String> webDocs = state.getWebDocs();
+        List<String> newsDocs = state.getNewsDocs();
 
         List<String> summaries = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class SummaryNode implements AsyncNodeAction<WebState> {
 
         // state 업데이트
         Map<String, Object> partial = Map.of(
-                DraftState.SUMMARIES, summaries
+                WebState.SUMMARIES, summaries
         );
 
         System.out.println("[SummaryNode] 생성된 요약 개수: " + summaries.size());

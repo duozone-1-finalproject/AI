@@ -1,6 +1,6 @@
 /*package com.example.demo.langgraph.web.nodes;
 
-import com.example.demo.langgraph.web.state.WebState;
+import com.example.demo.webgraph.state.web.WebState;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 
 import java.util.List;

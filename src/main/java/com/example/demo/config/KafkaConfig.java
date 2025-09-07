@@ -51,6 +51,7 @@ public class KafkaConfig {
      * Consumer Configuration - String 전용
      * Backend에서 JSON 문자열로 요청을 받음
      */
+/*
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();

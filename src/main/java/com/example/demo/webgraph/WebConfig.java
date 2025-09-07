@@ -1,20 +1,14 @@
 // 여기에 node와 state가 어떻게 연결되는지 만들기.
-package com.example.demo.langgraph.web;
+package com.example.demo.webgraph;
 
-import com.example.demo.dbsubgraph.nodes.CorpCodeRetrievalNode;
-import com.example.demo.dbsubgraph.nodes.DataPreprocessorNode;
-import com.example.demo.dbsubgraph.nodes.FilterCriteriaNode;
-import com.example.demo.dbsubgraph.nodes.ReportContentRetrievalNode;
-import com.example.demo.langgraph.nodes.*;
-import com.example.demo.langgraph.web.nodes.QueryBuilderNode;
-import com.example.demo.langgraph.web.nodes.SearchNode;
-import com.example.demo.langgraph.web.nodes.SummaryNode;
-import com.example.demo.langgraph.web.state.WebState;
+import com.example.demo.webgraph.nodes.QueryBuilderNode;
+import com.example.demo.webgraph.nodes.SearchNode;
+import com.example.demo.webgraph.nodes.SummaryNode;
+import com.example.demo.webgraph.state.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
 import org.bsc.langgraph4j.StateGraph;
-import org.bsc.langgraph4j.action.AsyncNodeActionWithConfig;
 import org.bsc.langgraph4j.state.Channel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +26,6 @@ public class WebConfig {
 
     @Bean(name = "webSubGraph")
     public CompiledGraph<WebState> webSubGraph() throws GraphStateException {
-
-
 
         // ✅ WebState 기반으로 StateGraph 생성
         Map<String, Channel<?>> schema = new LinkedHashMap<>(WebState.SCHEMA);

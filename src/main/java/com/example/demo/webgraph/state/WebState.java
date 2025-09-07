@@ -1,6 +1,6 @@
 // 저장소
 
-package com.example.demo.langgraph.web.state;
+package com.example.demo.webgraph.state;
 
 import org.apache.kafka.common.protocol.types.Field;
 import org.bsc.langgraph4j.state.AgentState;
@@ -21,14 +21,13 @@ public class WebState extends AgentState {
     public static final String IND_NAME = "indutyName";
     public static final String SECTION_LABEL = "sectionLabel";
     public static final String WEB_DOCS = "webDocs";
-    public static final String NEWS_DOCS = "newsDocs";
-
 
     // 결과 키
     public static final String SUMMARIES = "summaries";
     public static final String QUERY = "query"; // QueryBuilderNode 결과
     public static final String ARTICLES = "articles"; // SearchNode 결과
     public static final String VALIDATED = "validated"; // ValidationNode 결과
+    public static final String ERRORS = "erros";
 
     // ---- SCHEMA ----
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
@@ -40,7 +39,8 @@ public class WebState extends AgentState {
             // 결과값
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES, Channels.appender(ArrayList::new)),
-            Map.entry(SUMMARIES, Channels.appender(ArrayList::new))
+            Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
+            Map.entry(ERRORS, Channels.appender(ArrayList::new))
             //Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)) -> 검증노드 미구현. 추후 수정 예정
     );
 
@@ -56,6 +56,16 @@ public class WebState extends AgentState {
     state 내부 값을 안전하게 꺼내는 도우미
     Node/Service에서 값을 읽을 때
     매번 state.value("키")라고 안 쓰고, 깔끔하게 state.getArticles()처럼 쓸 수 있게 해줌 */
+
+   public String getCorpName() {
+       return this.<String>value(CORP_NAME).orElse("");
+   }
+    public String getIndName() {
+        return this.<String>value(IND_NAME).orElse("");
+    }
+    public String getSectionLabel() {
+        return this.<String>value(SECTION_LABEL).orElse("");
+    }
     public List<String> getQueries() {
         return this.<List<String>>value(QUERY).orElse(List.of());
     }
@@ -70,10 +80,6 @@ public class WebState extends AgentState {
 
     public List<String> getWebDocs() {
         return this.<List<String>>value(WEB_DOCS).orElse(List.of());
-    }
-
-    public List<String> getNewsDocs() {
-        return this.<List<String>>value(NEWS_DOCS).orElse(List.of());
     }
 
     public boolean isValidated() {

@@ -42,7 +42,6 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
         vars.put("dartRagItems", Map.of());
         vars.put("maxItems", 5);
 
-
         // 프롬프트(시스템+유저) 조합
         Prompt sys = catalog.createSystemPrompt("draft_default", Map.of());
         Prompt user = catalog.createPrompt(section, vars);
@@ -52,10 +51,10 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
         Prompt finalPrompt = new Prompt(messages);
 
         // pretty print: [SYSTEM]/[USER] 블록으로 구분해서 전체 프롬프트 로깅
-        String promptLog = messages.stream()
-                .map(m -> "[" + m.getMessageType() + "] " + String.valueOf(m.getText()))
-                .collect(Collectors.joining("\n---\n"));
-        log.info("\n===== finalPrompt =====\n{}\n=======================", promptLog);
+       // String promptLog = messages.stream()
+       //         .map(m -> "[" + m.getMessageType() + "] " + String.valueOf(m.getText()))
+       //         .collect(Collectors.joining("\n---\n"));
+       // log.info("\n===== finalPrompt =====\n{}\n=======================", promptLog);
 
         // 호출
         String text = chatClient.prompt(finalPrompt).call().content();
