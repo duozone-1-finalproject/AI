@@ -27,10 +27,8 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
             // 입력 가져오기
             List<String> drafts = state.getDraft();
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
-            @SuppressWarnings("unchecked")
             List<Map<String, Object>> issues = state.getAdjustInput();
 
-            String section = state.getSection();
             String sectionLbl = state.getSectionLabel();
 
             // 이슈 직렬화
@@ -38,7 +36,6 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
 
             // 템플릿 변수
             Map<String, Object> vars = Map.of(
-                    "section", section,
                     "sectionLabel", sectionLbl,
                     "draft", draft,
                     "issuesText", issuesText

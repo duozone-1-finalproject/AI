@@ -1,10 +1,10 @@
 [작성 섹션]
-- section: <sectionLabel>
+<sectionLabel>
 
 [초안 원문]
 <draft>
 
-[지침/검색 컨텍스트 요약]
+[지침/검색 컨텍스트 요약] // ID(TITLE)::DETAIL
 <guideCtx>
 
 [평가 과업]

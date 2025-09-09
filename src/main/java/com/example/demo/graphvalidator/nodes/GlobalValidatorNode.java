@@ -29,21 +29,28 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
     private final PromptCatalogService catalog;
     private final ObjectMapper om;
 
+    private static String nvl(String s) {
+        return s == null ? "" : s;
+    }
+
+    private static String clip(String s, int max) {
+        if (s == null) return "";
+        return s.length() <= max ? s : s.substring(0, max) + "…";
+    }
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(ValidatorState state) {
         try {
             // 라운드 제한
             List<String> drafts = state.getDraft();
-            if (drafts.size() >= MAX_TRY) return CompletableFuture.completedFuture(Map.of("decision","end"));
+            if (drafts.size() >= MAX_TRY) return CompletableFuture.completedFuture(Map.of("decision", "end"));
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
             String guideIndex = state.getGuideIndex();
 
-            @SuppressWarnings("unchecked")
-            List<Map<String,String>> hits = state.getGuideHits();
+            List<Map<String, String>> hits = state.getGuideHits();
 
-            String section     = state.getSection();
-            String sectionLbl  = state.getSectionLabel();
+            String section = state.getSection();
+            String sectionLbl = state.getSectionLabel();
 
             // 1) 시스템 템플릿 선택
             String sysKey = "standard".equals(guideIndex)
@@ -53,18 +60,18 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
             // 2) 유저 템플릿 변수 준비
             String guideCtx = hits.stream()
                     .limit(12)
-                    .map(m -> "- " + m.getOrDefault("title","") + " :: " + m.getOrDefault("detail",""))
+                    .map(m -> "- " + m.getOrDefault("id", "") + "(" + m.getOrDefault("title", "") + ") :: " +
+                            clip(m.getOrDefault("detail", ""), 1000))
                     .collect(Collectors.joining("\n"));
 
-            Map<String,Object> vars = Map.of(
-                    "section", section,
+            Map<String, Object> vars = Map.of(
                     "sectionLabel", sectionLbl,
                     "draft", draft,
                     "guideCtx", guideCtx
             );
 
             // 3) 템플릿 → Prompt 만들기
-            Prompt sysPrompt  = catalog.createSystemPrompt(sysKey, vars);    // SystemMessage 1개
+            Prompt sysPrompt = catalog.createSystemPrompt(sysKey, vars);    // SystemMessage 1개
             Prompt userPrompt = catalog.createPrompt("validator_user", vars); // UserMessage 1개
 
             // 4) 메시지 병합하여 최종 Prompt 구성
@@ -74,17 +81,17 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
 
             // 5) 호출 & 파싱
             String json = chatClient.prompt(finalPrompt).call().content();
-            json = json.replaceAll("```json\\s*","").replaceAll("```","").trim();
+            json = json.replaceAll("```json\\s*", "").replaceAll("```", "").trim();
 
             ValidationDto vr = om.readValue(json, ValidationDto.class);
-            var adjustInput = (vr.getIssues()==null? List.<ValidationDto.Issue>of(): vr.getIssues())
+            var adjustInput = (vr.getIssues() == null ? List.<ValidationDto.Issue>of() : vr.getIssues())
                     .stream().map(i -> Map.of(
-                            "span",        nvl(i.getSpan()),
-                            "reason",      nvl(i.getReason()),
-                            "ruleId",      nvl(i.getRuleId()),
-                            "evidence",    nvl(i.getEvidence()),
-                            "suggestion",  nvl(i.getSuggestion()),
-                            "severity",    nvl(i.getSeverity())
+                            "span", nvl(i.getSpan()),
+                            "reason", nvl(i.getReason()),
+                            "ruleId", nvl(i.getRuleId()),
+                            "evidence", nvl(i.getEvidence()),
+                            "suggestion", nvl(i.getSuggestion()),
+                            "severity", nvl(i.getSeverity())
                     )).toList();
 
             String method = state.getMethod();
@@ -109,5 +116,4 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
             ));
         }
     }
-    private static String nvl(String s){ return s==null? "": s; }
 }
