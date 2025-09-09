@@ -25,7 +25,6 @@ import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
 @RequiredArgsConstructor
 public class DraftGraphConfig {
 
-    private final PromptSelectorNode promptSelector;
     private final SourceSelectorNode sourceSelector;
     //    private final WebSubgraphInvoker webSubgraphInvoker; // 웹검색 RAG 서브 랭그래프
 //    private final NewsSubgraphInvoker newsSubgraphInvoker; // 뉴스검색 RAG 서브 랭그래프
@@ -33,6 +32,7 @@ public class DraftGraphConfig {
     private final ContextAggregatorNode contextAggregator; // RAG Context 병합 노드
     private final BaseVarsInitializerNode baseVarsInitializerNode;
     private final DraftGeneratorNode draftGenerator;
+    private final MinimalCheckNode minimalCheck;
     private final ValidatorGraphInvokerNode validatorInvoker;
 
 
@@ -43,7 +43,6 @@ public class DraftGraphConfig {
         StateGraph<DraftState> graph = new StateGraph<>(schema, DraftState::new);
 
         // 노드정의
-        graph.addNode("prompt", promptSelector);
         graph.addNode("source_select", sourceSelector);
 //                graph.addNode("web_branch",    node_async(webSubgraphInvoker));
 //                graph.addNode("news_branch",   node_async(newsSubgraphInvoker));
@@ -51,11 +50,11 @@ public class DraftGraphConfig {
         graph.addNode("aggregate",     contextAggregator);
         graph.addNode("base_vars_init", baseVarsInitializerNode);
         graph.addNode("generate", draftGenerator);
+        graph.addNode("minimal_check", minimalCheck);
         graph.addNode("validate", validatorInvoker);
 
         // 엣지연결
-        graph.addEdge(StateGraph.START, "prompt");
-        graph.addEdge("prompt", "source_select");
+        graph.addEdge(StateGraph.START, "source_select");
       
         // source_select -> fan-out (db)
         graph.addConditionalEdges("source_select",
@@ -113,7 +112,8 @@ public class DraftGraphConfig {
         );
 
         graph.addEdge("base_vars_init", "generate");
-        graph.addEdge("generate", "validate");
+        graph.addEdge("generate", "minimal_check");
+        graph.addEdge("minimal_check", "validate");
         graph.addEdge("validate", StateGraph.END);
 //        graph.addEdge("generate", StateGraph.END);
 

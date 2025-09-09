@@ -16,13 +16,13 @@ public class BaseVarsInitializerNode implements AsyncNodeAction<DraftState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         Map<String, Object> baseVars = Map.copyOf(Map.of(
-                        "corpName", state.getCorpName(),
-                        "indutyName", state.getIndutyName(),
-                        "webRagItems", List.of(),
-                        "dartRagItems", List.of(),
-                        "financialData", List.of(),
-                        "otherRiskInputs", List.of(),
-                        "maxItems", state.getMaxItems()
+                        "corpName", state.getCorpName(), // String
+                        "indutyName", state.getIndutyName(), // String
+                        "webRagItems", state.getWebDocs(),  // JSON
+                        "dartRagItems", state.getDbDocs(), // JSON
+                        "financialData", state.getFinancials(), // String Markdown 테이블
+                        "otherRiskInputs", List.of(), // JSON 현재 더미 [] 주입, 추후 수정예정
+                        "maxItems", state.getMaxItems() // String e.g. "5"
                 ));
         return CompletableFuture.completedFuture(Map.of(DraftState.BASEVARS, baseVars));
     }
