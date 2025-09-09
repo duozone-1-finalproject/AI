@@ -7,4 +7,5 @@ import java.util.List;
 public interface CheckService {
     ValidationDto check(CheckRequestDto requestDto);
     List<String> draftValidate(CheckRequestDto requestDto);
+    String revise(ValidationDto.Issue requestDto);
 }

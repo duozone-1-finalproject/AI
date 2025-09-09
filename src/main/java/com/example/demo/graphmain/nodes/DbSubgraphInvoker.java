@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
 
-    @Autowired
     private CompiledGraph<DbSubGraphState> dbSubGraph;
 
     @Override

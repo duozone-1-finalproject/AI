@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ContextAggregatorNode implements AsyncNodeAction<DraftState> {
 
+    @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         boolean dbReady = !state.getDbDocs().isEmpty();
 //        boolean webReady  = !state.getWebDocs().isEmpty();

@@ -10,7 +10,6 @@ public class DbSubGraphConstants {
             "매출액", "영업이익", "당기순이익", "자산총계", "자본총계",
             "영업활동현금흐름", "투자활동현금흐름", "재무활동현금흐름"
     );
-
     public static final Map<String, String> KEY_MAP = Map.of(
             "매출액", "revenue",
             "영업이익", "operating_income",

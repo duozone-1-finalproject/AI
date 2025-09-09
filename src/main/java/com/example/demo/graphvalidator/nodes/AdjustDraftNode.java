@@ -7,6 +7,7 @@ import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
 
+    @Qualifier("default")
     private final ChatClient chatClient;
     private final PromptCatalogService catalog;
 

@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 @Component("initBaseVars")
 @RequiredArgsConstructor
 public class BaseVarsInitializerNode implements AsyncNodeAction<DraftState> {
+
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         Map<String, Object> baseVars = Map.copyOf(Map.of(

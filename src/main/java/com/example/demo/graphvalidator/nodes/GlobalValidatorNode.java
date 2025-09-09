@@ -9,6 +9,7 @@ import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
 
     private static final long MAX_TRY = 2;
+    @Qualifier("default")
     private final ChatClient chatClient;
     private final PromptCatalogService catalog;
     private final ObjectMapper om;
