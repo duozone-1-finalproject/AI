@@ -6,7 +6,7 @@ LANGUAGE
 INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
 - CORP_NAME := <corpName>                // issuer name
 - IND_NAME  := <indutyName>              // industry / sector
-- FIN_DATA  := <financialData>           // JSON object with issuer-level signals (do not echo)
+- FIN_DATA  := <financialData>           // Markdown Table of Financial Data
 - WEB_RAG   := <webRagItems>             // OPTIONAL JSON[] of {source, title, url, pubDate(YYYY-MM-DD), content} (de-noised claims)
 - DART_RAG  := <dartRagItems>            // OPTIONAL JSON[] of {issuer, filingType, filedDate, section, snippet, url}
 - MAX_ITEMS := <maxItems>                // number of risk items to produce (default: 5)

@@ -6,7 +6,7 @@ LANGUAGE
 INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
 - DRAFT       := <draft>         // previously generated Korean draft (paragraphs)
 - CORP_NAME   := <corpName>      // optional; for clarity in topic lines
-- FIN_DATA    := <financialData> // OPTIONAL JSON; used only to recognize internal facts (do not echo)
+- FIN_DATA    := <financialData> // OPTIONAL Markdown Table: financial data; used only to recognize internal facts (do not echo)
 - RAG_SOURCES := <ragSources>    // OPTIONAL JSON[]: [{source,title,url,pubDate(YYYY-MM-DD)}] for repairing missing citations
 
 SCOPE

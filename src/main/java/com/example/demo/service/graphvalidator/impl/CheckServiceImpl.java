@@ -56,7 +56,7 @@ public class CheckServiceImpl implements CheckService {
         init.put(ValidatorState.DRAFT, req.getDraft());
 
         ValidatorState state = runGraph(init);
-        return state.<ValidationDto>value(ValidatorState.VALIDATION).orElseThrow();
+        return state.getValidation();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CheckServiceImpl implements CheckService {
         init.put(ValidatorState.DRAFT, req.getDraft());
 
         ValidatorState state = runGraph(init);
-        return state.<List<String>>value(ValidatorState.DRAFT).orElseThrow();
+        return state.getDraft();
     }
 
     @Override
