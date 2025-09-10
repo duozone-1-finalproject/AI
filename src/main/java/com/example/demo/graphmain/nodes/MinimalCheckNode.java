@@ -40,7 +40,7 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
 
             // 2) 섹션별 체크리스트(자체 내부검증) 실행
             String checklistTemplate = selectChecklistTemplate(section);
-            Prompt sysCheck = catalog.createSystemPrompt("check_default", Map.of());
+            Prompt sysCheck = catalog.createSystemPrompt("check_sys", Map.of());
             Prompt userCheck = catalog.createPrompt(checklistTemplate, varsForChecklist(section, baseVars, draftText));
 
             List<Message> checkMsgs = new ArrayList<>(sysCheck.getInstructions());

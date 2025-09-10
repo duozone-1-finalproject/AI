@@ -3,12 +3,13 @@ package com.example.demo.graphvalidator.nodes;
 import com.example.demo.dto.graphvalidator.ValidationDto;
 import com.example.demo.graphvalidator.ValidatorState;
 import com.example.demo.service.graphmain.impl.PromptCatalogService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.ResponseFormat;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -18,24 +19,25 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static com.example.demo.constants.JsonSchemaConstants.VALIDATION_JSON_SCHEMA;
+
 // 기업공시작성기준 검증 노드
 @Component("globalValidator")
 @RequiredArgsConstructor
 public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
 
-    private static final long MAX_TRY = 2;
+    private static final long MAX_TRY = 3;
     @Qualifier("default")
     private final ChatClient chatClient;
     private final PromptCatalogService catalog;
-    private final ObjectMapper om;
 
     private static String nvl(String s) {
         return s == null ? "" : s;
     }
 
-    private static String clip(String s, int max) {
+    private static String clip(String s) {
         if (s == null) return "";
-        return s.length() <= max ? s : s.substring(0, max) + "…";
+        return s.length() <= 1000 ? s : s.substring(0, 1000) + "…";
     }
 
     @Override
@@ -46,44 +48,73 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
             if (drafts.size() >= MAX_TRY) return CompletableFuture.completedFuture(Map.of("decision", "end"));
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
             String guideIndex = state.getGuideIndex();
+            String guideLabel = switch (guideIndex) {
+                case "standard" -> "기업공시서식작성기준";
+                case "risk_standard" -> "투자위험요소 기재요령 안내서";
+                default -> "";
+            };
 
             List<Map<String, String>> hits = state.getGuideHits();
 
-            String section = state.getSection();
             String sectionLbl = state.getSectionLabel();
 
-            // 1) 시스템 템플릿 선택
-            String sysKey = "standard".equals(guideIndex)
-                    ? "validator_default"
-                    : "validator_risk";
+            // 1) 유저 템플릿 선택
+            String userKey = switch (guideIndex) {
+                case "standard" -> "validator_user_default";
+                case "risk_standard" -> "validator_user_risk";
+                default -> "validator_user_default"; // 안전 폴백
+            };
 
             // 2) 유저 템플릿 변수 준비
             String guideCtx = hits.stream()
                     .limit(12)
-                    .map(m -> "- " + m.getOrDefault("id", "") + "(" + m.getOrDefault("title", "") + ") :: " +
-                            clip(m.getOrDefault("detail", ""), 1000))
+                    .map(m -> {
+                        String id = nvl(m.get("id"));
+                        String title = nvl(m.get("title"));
+                        String detail = nvl(m.get("detail"));
+                        return id + "(" + title + ")::" + clip(detail);
+                    })
                     .collect(Collectors.joining("\n"));
 
             Map<String, Object> vars = Map.of(
                     "sectionLabel", sectionLbl,
                     "draft", draft,
+                    "guideLabel", guideLabel,
                     "guideCtx", guideCtx
             );
 
             // 3) 템플릿 → Prompt 만들기
-            Prompt sysPrompt = catalog.createSystemPrompt(sysKey, vars);    // SystemMessage 1개
-            Prompt userPrompt = catalog.createPrompt("validator_user", vars); // UserMessage 1개
+            Prompt sysPrompt = catalog.createSystemPrompt("validator_sys", vars);    // SystemMessage 1개
+            Prompt userPrompt = catalog.createPrompt(userKey, vars); // UserMessage 1개
 
             // 4) 메시지 병합하여 최종 Prompt 구성
             List<Message> messages = new ArrayList<>(sysPrompt.getInstructions());
             messages.addAll(userPrompt.getInstructions());
             Prompt finalPrompt = new Prompt(messages);
 
-            // 5) 호출 & 파싱
-            String json = chatClient.prompt(finalPrompt).call().content();
-            json = json.replaceAll("```json\\s*", "").replaceAll("```", "").trim();
+            // (3) JSON Schema 강제 (strict) 옵션 설정
+            ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
+                    .name("ValidationDto")
+                    .schema(VALIDATION_JSON_SCHEMA)
+                    .strict(true)
+                    .build();
 
-            ValidationDto vr = om.readValue(json, ValidationDto.class);
+            ResponseFormat rf = ResponseFormat.builder()
+                    .type(ResponseFormat.Type.JSON_SCHEMA)
+                    .jsonSchema(jsonSchema)
+                    .build();
+
+            OpenAiChatOptions options = OpenAiChatOptions.builder()
+                    .responseFormat(rf)
+                    .build();
+
+            // (4) 호출 & 구조화 파싱 (코드펜스 제거 불필요)
+            ValidationDto vr = chatClient
+                    .prompt(finalPrompt)
+                    .call()
+                    .entity(ValidationDto.class); // Spring AI가 content를 DTO로 변환
+
+            // (5) adjust 분기용 가공
             var adjustInput = (vr.getIssues() == null ? List.<ValidationDto.Issue>of() : vr.getIssues())
                     .stream().map(i -> Map.of(
                             "span", nvl(i.getSpan()),
@@ -96,7 +127,6 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
 
             String method = state.getMethod();
             String decision;
-
             // "check" 메소드 요청일 경우, LLM의 수정 제안 여부와 관계없이 항상 그래프를 종료합니다.
             if ("check".equals(method)) {
                 decision = "end";

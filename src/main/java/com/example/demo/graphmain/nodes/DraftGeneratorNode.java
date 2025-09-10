@@ -36,7 +36,7 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
 
 
             // 1) 초안 생성
-            Prompt sysDraft = catalog.createSystemPrompt("draft_default", Map.of());
+            Prompt sysDraft = catalog.createSystemPrompt("draft_sys", Map.of());
             Prompt userDraft = catalog.createPrompt(section, baseVars);
 
             List<Message> draftMsgs = new ArrayList<>(sysDraft.getInstructions());
