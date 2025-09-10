@@ -72,7 +72,8 @@ public class WebState extends AgentState {
     }
 
     public List<WebResponseDto.Article> getArticles() {
-        return this.<List<String>>value(ARTICLES).orElse(List.of());
+        return this.<List<WebResponseDto.Article>>value(ARTICLES)
+                .orElse(List.of());
     }
 
     public List<WebResponseDto.Article> getFetched() {

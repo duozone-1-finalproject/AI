@@ -4,16 +4,17 @@
 - 오직 MCP 도구 "search"만 호출합니다. ("fetch_content" 등 다른 도구 금지)
 
 [출력 형식]
-- 오직 JSON 배열만 출력합니다. JSON 외 텍스트/마크다운/코드블록 금지.
-- 각 항목 스키마:
-  {
-    "keyword": "원본 키워드",
-    "section_label": "사업위험 또는 회사위험",
-    "title": "제목",
-    "url": "정규화된 URL",
-    "date": "YYYY-MM-DD 또는 null",
-    "source": "뉴스|블로그|논문|정부|기타"
-  }
+- 반드시 최상위 JSON 객체에 `articles` 배열을 포함해야 합니다.
+- JSON 외 텍스트/마크다운/코드블록 금지.
+- `articles` 배열의 각 항목 스키마:
+{
+"keyword": "원본 키워드",
+"section_label": "사업위험 또는 회사위험",
+"title": "제목",
+"url": "정규화된 URL",
+"date": "YYYY-MM-DD 또는 null",
+"source": "뉴스|블로그|논문|정부|기타"
+}
 - 배열 길이 = (키워드 수 × 3)
 
 [검색/선정 규칙]

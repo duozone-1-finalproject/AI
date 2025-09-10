@@ -43,10 +43,10 @@ ai:
     validator_user: "classpath:prompts/validator_user.st"
     adjust_default: "classpath:prompts/adjust_default.st"
     adjust_user: "classpath:prompts/adjust_user.st"
-    web_duckduckgo_rule: "classpath:prompts/web_duckduckgo_rule.st"
-    web_duckduckgo_search: "classpath:prompts/web_duckduckgo_search.st"
-    web_rule: "classpath:prompts/web_rule.st"
-    web_search: "classpath:prompts/web_search.st"
+    fetch_rule: "classpath:prompts/fetch_rule.st"
+    fetch_request: "classpath:prompts/fetch_request.st"
+    search node_rule: "classpath:prompts/search node_rule.st"
+    search node_request: "classpath:prompts/search node_request.st"
 
 
   sections:
