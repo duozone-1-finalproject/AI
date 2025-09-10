@@ -1,8 +1,8 @@
 // 저장소
 
-package com.example.demo.webgraph.state;
+package com.example.demo.graphweb;
 
-import org.apache.kafka.common.protocol.types.Field;
+import com.example.demo.dto.WebResponseDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
@@ -20,12 +20,12 @@ public class WebState extends AgentState {
     public static final String CORP_NAME = "corpName";
     public static final String IND_NAME = "indutyName";
     public static final String SECTION_LABEL = "sectionLabel";
-    public static final String WEB_DOCS = "webDocs";
 
     // 결과 키
-    public static final String SUMMARIES = "summaries";
     public static final String QUERY = "query"; // QueryBuilderNode 결과
     public static final String ARTICLES = "articles"; // SearchNode 결과
+    public static final String FETCHED = "fetched";   // 이게 필요함? FetchNode 결과 (본문 포함된 Article)
+    public static final String BEFOREV = "beforev";   // FetchNode 이후 결과 저장용
     public static final String VALIDATED = "validated"; // ValidationNode 결과
     public static final String ERRORS = "erros";
 
@@ -39,9 +39,10 @@ public class WebState extends AgentState {
             // 결과값
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES, Channels.appender(ArrayList::new)),
-            Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
+            Map.entry(FETCHED, Channels.appender(ArrayList::new)),
+            Map.entry(BEFOREV, Channels.appender(ArrayList::new)),
             Map.entry(ERRORS, Channels.appender(ArrayList::new))
-            //Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)) -> 검증노드 미구현. 추후 수정 예정
+            // Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)) -> 검증노드 미구현. 추후 수정 예정
     );
 
     /* 생성자
@@ -70,22 +71,21 @@ public class WebState extends AgentState {
         return this.<List<String>>value(QUERY).orElse(List.of());
     }
 
-    public List<String> getArticles() {
+    public List<WebResponseDto.Article> getArticles() {
         return this.<List<String>>value(ARTICLES).orElse(List.of());
     }
 
-    public List<String> getSummaries() {
-        return this.<List<String>>value(SUMMARIES).orElse(List.of());
+    public List<WebResponseDto.Article> getFetched() {
+        return this.<List<WebResponseDto.Article>>value(FETCHED).orElse(List.of());
     }
 
-    public List<String> getWebDocs() {
-        return this.<List<String>>value(WEB_DOCS).orElse(List.of());
+    public List<WebResponseDto.Article> getBeforev() {
+        return this.<List<WebResponseDto.Article>>value(BEFOREV).orElse(List.of());
     }
 
     public boolean isValidated() {
         return this.<Boolean>value(VALIDATED).orElse(false);
     }
-
 }
 
 // memo

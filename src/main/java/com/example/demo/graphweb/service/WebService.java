@@ -1,9 +1,8 @@
-package com.example.demo.webgraph.service;
+package com.example.demo.graphweb.service;
 
-import com.example.demo.dbsubgraph.state.DbSubGraphState;
 import com.example.demo.dto.WebRequestDto;
 import com.example.demo.dto.WebResponseDto;
-import com.example.demo.webgraph.state.WebState;
+import com.example.demo.graphweb.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,8 @@ public class WebService {
         // 결과를 DTO로 변환
         WebResponseDto response = new WebResponseDto();
         response.setQueries(resultState.getQueries());
-        response.setArticles(resultState.getArticles());
-        response.setSummaries(resultState.getSummaries());
+        response.setArticles(resultState.getArticles()); // 원본 검색 결과
+        response.setBeforev(resultState.getBeforev()); // FetchNode 이후 본문 포함 결과
 
         return response;
     }

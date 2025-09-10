@@ -8,9 +8,14 @@
 [처리 지시]
 1) <tasks_json>은 다음 스키마의 배열입니다:
    [
-     { "keyword": "키워드A", "urls": ["https://...", "https://...", "https://..."] },
-     { "keyword": "키워드B", "urls": ["https://...", "https://...", "https://..."] },
-     ...
+     { "keyword": "시장 전망", "urls": [] },
+     { "keyword": "산업 동향", "urls": [] },
+     { "keyword": "경쟁 심화", "urls": [] },
+     { "keyword": "시장 점유율", "urls": [] },
+     { "keyword": "재무 상태 악화", "urls": [] },
+     { "keyword": "유동성 위기", "urls": [] },
+     { "keyword": "차입금 증가", "urls": [] },
+     { "keyword": "채무 상환능력", "urls": [] }
    ]
 
 2) 각 객체에 대해:

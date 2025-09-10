@@ -44,7 +44,6 @@ dependencies {
     // LangGraph4j
     implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"
     implementation "org.bsc.langgraph4j:langgraph4j-spring-ai:${langgraph4jVersion}"
-    implementation "org.bsc.langgraph4j:langgraph4j:${langgraph4jVersion}"
 
     // Lombok
     compileOnly "org.projectlombok:lombok"

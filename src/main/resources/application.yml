@@ -24,7 +24,7 @@ spring:
         stdio:
           connections:
             duck: # 연결 이름
-              command: "C:/Users/jyjj0/.mcpvenv/Scripts/duckduckgo-mcp-server.exe"  # ddg mcp path -> 환경변수 처리해야함
+              command: ${DDG_CMD}  # ddg mcp path -> 환경변수 처리해야함
               args: [ ]
               # env:
               #   HTTP_PROXY: ${HTTP_PROXY:}
@@ -44,9 +44,9 @@ ai:
     adjust_default: "classpath:prompts/adjust_default.st"
     adjust_user: "classpath:prompts/adjust_user.st"
     web_duckduckgo_rule: "classpath:prompts/web_duckduckgo_rule.st"
-    web_duckduckgo_search: "classpath:resources/prompts/web_duckduckgo_search.st"
-    web_rule: "classpath: prompts/web_rule.st"
-    web_search: "classpath: prompts/web_search.st"
+    web_duckduckgo_search: "classpath:prompts/web_duckduckgo_search.st"
+    web_rule: "classpath:prompts/web_rule.st"
+    web_search: "classpath:prompts/web_search.st"
 
 
   sections:
@@ -99,5 +99,5 @@ opensearch:
       enable-auto-commit: true
 
 
-  APP_KAFKA_ENABLED=false
-  APP_KAFKA_LOG_LEVEL=OFF
+#  APP_KAFKA_ENABLED=false
+#  APP_KAFKA_LOG_LEVEL=OFF
