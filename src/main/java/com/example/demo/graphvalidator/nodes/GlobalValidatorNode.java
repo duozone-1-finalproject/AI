@@ -90,7 +90,6 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
             // 4) 메시지 병합하여 최종 Prompt 구성
             List<Message> messages = new ArrayList<>(sysPrompt.getInstructions());
             messages.addAll(userPrompt.getInstructions());
-            Prompt finalPrompt = new Prompt(messages);
 
             // (3) JSON Schema 강제 (strict) 옵션 설정
             ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
@@ -107,6 +106,8 @@ public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {
             OpenAiChatOptions options = OpenAiChatOptions.builder()
                     .responseFormat(rf)
                     .build();
+
+            Prompt finalPrompt = new Prompt(messages, options);
 
             // (4) 호출 & 구조화 파싱 (코드펜스 제거 불필요)
             ValidationDto vr = chatClient
