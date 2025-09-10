@@ -28,6 +28,7 @@ public class WebState extends AgentState {
     public static final String BEFOREV = "beforev";   // FetchNode 이후 결과 저장용
     public static final String VALIDATED = "validated"; // ValidationNode 결과
     public static final String ERRORS = "erros";
+    public static final String FINAL_RESULT = "final_result";
 
     // ---- SCHEMA ----
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
@@ -41,7 +42,8 @@ public class WebState extends AgentState {
             Map.entry(ARTICLES, Channels.appender(ArrayList::new)),
             Map.entry(FETCHED, Channels.appender(ArrayList::new)),
             Map.entry(BEFOREV, Channels.appender(ArrayList::new)),
-            Map.entry(ERRORS, Channels.appender(ArrayList::new))
+            Map.entry(ERRORS, Channels.appender(ArrayList::new)),
+            Map.entry(FINAL_RESULT, Channels.appender(ArrayList::new))
             // Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)) -> 검증노드 미구현. 추후 수정 예정
     );
 
@@ -83,10 +85,12 @@ public class WebState extends AgentState {
     public List<WebResponseDto.Article> getBeforev() {
         return this.<List<WebResponseDto.Article>>value(BEFOREV).orElse(List.of());
     }
+    public List<WebResponseDto.Article> getFinalResult() {
+        return this.<List<WebResponseDto.Article>>value(FINAL_RESULT).orElse(List.of());
 
-    public boolean isValidated() {
-        return this.<Boolean>value(VALIDATED).orElse(false);
     }
+
+
 }
 
 // memo
