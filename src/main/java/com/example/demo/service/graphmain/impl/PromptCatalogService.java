@@ -30,10 +30,8 @@ public class PromptCatalogService {
 
     private Resource resolve(String key) {
         final Resource res;
-        if (SECTIONS.containsKey(key)) {
+        if (PROMPTS.containsKey(key)) {
             res = resourceLoader.getResource(SECTIONS.get(key));
-        } else if (PROMPTS.containsKey(key)) {
-            res = resourceLoader.getResource(PROMPTS.get(key));
         } else {
             throw new IllegalArgumentException("Unknown prompt key: " + key);
         }

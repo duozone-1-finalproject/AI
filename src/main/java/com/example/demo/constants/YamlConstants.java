@@ -83,23 +83,19 @@ public class YamlConstants {
 
     // 프롬프트 템플릿 위치 (ai.prompts)
     public static final Map<String, String> PROMPTS = Map.ofEntries(
-            Map.entry("draft_default", "classpath:prompts/draft_default.st"),
-            Map.entry("check_default", "classpath:prompts/check_default.st"),
+            Map.entry("draft_sys", "classpath:prompts/draft_default.st"),
+            Map.entry("risk_industry", "classpath:prompts/risk_industry.st"),
+            Map.entry("risk_company", "classpath:prompts/risk_company.st"),
+            Map.entry("risk_etc", "classpath:prompts/risk_etc.st"),
+            Map.entry("check_sys", "classpath:prompts/check_default.st"),
             Map.entry("risk_industry_checklist", "classpath:prompts/risk_industry_checklist.st"),
             Map.entry("risk_company_checklist", "classpath:prompts/risk_company_checklist.st"),
             Map.entry("risk_etc_checklist", "classpath:prompts/risk_etc_checklist.st"),
-            Map.entry("validator_default", "classpath:prompts/validator_default.st"),
-            Map.entry("validator_risk", "classpath:prompts/validator_risk.st"),
-            Map.entry("validator_user", "classpath:prompts/validator_user.st"),
+            Map.entry("validator_sys", "classpath:prompts/validator_sys.st"),
+            Map.entry("validator_user_risk", "classpath:prompts/validator_user_risk.st"),
+            Map.entry("validator_user_default", "classpath:prompts/validator_user_default.st"),
             Map.entry("adjust_default", "classpath:prompts/adjust_default.st"),
             Map.entry("adjust_user", "classpath:prompts/adjust_user.st")
-    );
-
-    // 섹션 (ai.sections)
-    public static final Map<String, String> SECTIONS = Map.ofEntries(
-            Map.entry("risk_industry", "classpath:prompts/risk_industry.st"),
-            Map.entry("risk_company", "classpath:prompts/risk_company.st"),
-            Map.entry("risk_etc", "classpath:prompts/risk_etc.st")
     );
 
 }
