@@ -72,6 +72,26 @@ public class FetchNode implements AsyncNodeAction<WebState> {
             String sysText = "당신은 “웹 본문 수집 전문가”입니다. 입력받은 JSON 배열의 각 항목에 대해 `fetch_content` 도구를 호출하여 본문을 가져온 후, 입력된 모든 필드와 `content` 필드를 포함한 완전한 JSON 객체들의 배열을 반환해야 합니다. 출력은 오직 JSON 배열이어야 합니다.";
 
             String userText = "[작업 대상 목록]\n" + tasksJson;
+            
+            /*
+            // 하드코딩된 System/User Prompt
+            String sysText = "당신은 “웹 본문 요약·정규화 수집기”입니다.\n"
+                    + "[도구 사용 제약]\n"
+                    + "- 오직 MCP 도구 \"fetch_content\"만 호출합니다. (search 및 그 외 도구 호출 금지)\n"
+                    + "[입력/출력 규칙]\n"
+                    + "- 출력은 오직 JSON 배열만 허용합니다. JSON 외 텍스트/마크다운/코드블록 금지.\n"
+                    + "- 각 아이템은 스키마 { \"keyword\",\"title\",\"url\",\"source\",\"date\",\"text\" } 를 가집니다.\n"
+                    + "- 본문은 정규화된 키워드 어절만 남깁니다.\n";
+
+
+            String userText = "[작업 입력]\n"
+                    + "- keyword: " + article.getKeyword() + "\n"
+                    + "- url: " + article.getUrl() + "\n"
+                    + "- per_keyword: 2\n"
+                    + "- max_len: 300\n"
+                    + "- normalize: lower\n"
+                    + "- joiner: _\n";
+                       */
 
             Prompt finalPrompt = new Prompt(List.of(
                     new SystemMessage(sysText),
