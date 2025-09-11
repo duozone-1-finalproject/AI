@@ -60,17 +60,20 @@ public class YamlConstants {
             Map.entry("cont_liab", "우발부채 등에 관한 사항"),
             Map.entry("sanction", "제재 등과 관련된 사항"),
             Map.entry("post_event", "작성기준일 이후 발생한 주요사항 등 기타사항"),
-            Map.entry("tables", "상세표")
+            Map.entry("tables", "상세표"),
+            Map.entry("S1_1D_1", "기타 공지사항")
     );
 
     public static final Map<String, List<String>> SOURCES_MAP = Map.of(
             "risk_industry", List.of("web", "db"),
             "risk_company", List.of("news", "db"),
-            "risk_etc", List.of("web", "db")
+            "risk_etc", List.of("web", "db"),
+            "S1_1D_1", List.of()
     );
 
     public static final List<String> DEFAULT_ORDER =
             List.of("risk_industry", "risk_company", "risk_etc");
+//    List.of("risk_industry","risk_company", "risk_etc", "S1_1D_1");
 
 
     // 기본 변수값 (ai.defaults)
@@ -78,7 +81,8 @@ public class YamlConstants {
             "maxItems", 5,
             "webRagItems", List.of(),
             "dartRagItems", List.of(),
-            "financialData", ""
+            "financialData", "",
+            "otherRiskInputs", List.of()
     );
 
     // 프롬프트 템플릿 위치 (ai.prompts)
@@ -87,15 +91,17 @@ public class YamlConstants {
             Map.entry("risk_industry", "classpath:prompts/risk_industry.st"),
             Map.entry("risk_company", "classpath:prompts/risk_company.st"),
             Map.entry("risk_etc", "classpath:prompts/risk_etc.st"),
-            Map.entry("check_sys", "classpath:prompts/check_default.st"),
+            Map.entry("check_sys", "classpath:prompts/check_sys.st"),
             Map.entry("risk_industry_checklist", "classpath:prompts/risk_industry_checklist.st"),
             Map.entry("risk_company_checklist", "classpath:prompts/risk_company_checklist.st"),
             Map.entry("risk_etc_checklist", "classpath:prompts/risk_etc_checklist.st"),
             Map.entry("validator_sys", "classpath:prompts/validator_sys.st"),
             Map.entry("validator_user_risk", "classpath:prompts/validator_user_risk.st"),
             Map.entry("validator_user_default", "classpath:prompts/validator_user_default.st"),
-            Map.entry("adjust_default", "classpath:prompts/adjust_default.st"),
-            Map.entry("adjust_user", "classpath:prompts/adjust_user.st")
+            Map.entry("adjust_sys", "classpath:prompts/adjust_sys.st"),
+            Map.entry("adjust_user", "classpath:prompts/adjust_user.st"),
+            Map.entry("check_revise_sys", "classpath:prompts/check_revise_sys.st"),
+            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st")
     );
 
 }
