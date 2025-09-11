@@ -1,14 +1,9 @@
-[작성 섹션]
-<sectionLabel>
+[Bind once]
+sectionLabel := <sectionLabel>
+draft := <draft>
+issues := <issues>   // JSON array like: [{"span":"...","suggestion":"...","severity":"low|medium|high", ...}, ...]
 
-[원본 초안]
-<draft>
-
-[수정 지시 목록]
-<issuesText>
-
-지시:
-- 위 지시 목록의 각 항목에 대해 해당 span에만 수정 적용.
-- span 텍스트의 위치가 여러 곳일 수 있으므로 의미/맥락이 동일한 구간에만 적용.
-- 나머지 텍스트는 원문과 "동일하게" 유지.
-- 최종 출력은 수정된 전체 본문 텍스트 1개만.
+[Task]
+- Read issues. For each item, rewrite only the matching span in the draft according to the severity policy, using suggestion as a reference.
+- If a span has no exact match in the draft, skip it and continue with the next item.
+- Produce only the final, fully modified draft text as the output (in Korean).
