@@ -18,7 +18,7 @@ public final class OpensearchIndexRegistry {
         // 기업공시작성기준
         map.put("standard",  "opensearch/standard.json");
         // 투자위험요소 기재요령 안내서
-        map.put("risk_standard",  "opensearch/risk_standard.json");
+        //map.put("risk_standard",  "opensearch/risk_standard.json");
         return map;
     }
 }
