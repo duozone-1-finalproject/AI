@@ -61,19 +61,19 @@ public class YamlConstants {
             Map.entry("sanction", "제재 등과 관련된 사항"),
             Map.entry("post_event", "작성기준일 이후 발생한 주요사항 등 기타사항"),
             Map.entry("tables", "상세표"),
-            Map.entry("S1_1D_1", "기타 공지사항")
+            Map.entry("other_notice", "기타 공지사항")
     );
 
     public static final Map<String, List<String>> SOURCES_MAP = Map.of(
             "risk_industry", List.of("web", "db"),
             "risk_company", List.of("news", "db"),
             "risk_etc", List.of("web", "db"),
-            "S1_1D_1", List.of()
+            "other_notice", List.of()
     );
 
     public static final List<String> DEFAULT_ORDER =
-            List.of("risk_industry", "risk_company", "risk_etc");
-//    List.of("risk_industry","risk_company", "risk_etc", "S1_1D_1");
+//            List.of("risk_industry", "risk_company", "risk_etc");
+            List.of("risk_industry", "risk_company", "risk_etc", "other_notice");
 
 
     // 기본 변수값 (ai.defaults)
@@ -101,7 +101,9 @@ public class YamlConstants {
             Map.entry("adjust_sys", "classpath:prompts/adjust_sys.st"),
             Map.entry("adjust_user", "classpath:prompts/adjust_user.st"),
             Map.entry("check_revise_sys", "classpath:prompts/check_revise_sys.st"),
-            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st")
+            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st"),
+            Map.entry("other_notice", "classpath:prompts/other_notice.st"),
+            Map.entry("other_notice_checklist", "classpath:prompts/other_notice_checklist.st")
     );
 
 }
