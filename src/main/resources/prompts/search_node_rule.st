@@ -13,7 +13,7 @@
 "title": "제목",
 "url": "정규화된 URL",
 "date": "YYYY-MM-DD 또는 null",
-"source": "뉴스|블로그|논문|정부|기타"
+"source": "뉴스"
 }
 - 배열 길이 = (키워드 수 × 3)
 
@@ -29,9 +29,5 @@
 - 불명확하면 반드시 null.
 
 [출처 분류]
-- URL 도메인을 분석하여 ["뉴스","블로그","논문","정부","기타"] 중 하나만 표기
+- URL 도메인을 분석하여 ["뉴스"] 하나만 표기
   - 뉴스: reuters, bloomberg, apnews, nytimes, wsj, ft, bbc, cnn, theverge, wired, yonhapnews, hankyung, mk, sedaily, zdnet 등
-  - 블로그: blog.naver, tistory, medium, substack, velog, hashnode 등
-  - 논문: arxiv.org, doi.org, aclweb, openreview, nature, science, springer, elsevier, ieee, acm 등
-  - 정부: *.go.kr, *.gov 및 공공기관 포털
-  - 그 외는 모두 "기타"

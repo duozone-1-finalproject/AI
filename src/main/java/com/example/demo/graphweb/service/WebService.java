@@ -24,18 +24,13 @@ public class WebService {
         initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
 
         // 그래프 실행
-        WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));  ;
+        WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));
 
-        // 결과를 DTO로 변환
+        // [수정] 그래프 실행 결과(resultState)에서 최종 데이터를 추출하여 응답 DTO를 생성합니다.
         WebResponseDto response = new WebResponseDto();
-        response.setQueries(resultState.getQueries());
-        response.setArticles(resultState.getArticles()); // 원본 검색 결과
-        response.setBeforev(resultState.getBeforev()); // FetchNode 이후 본문 포함 결과
+        response.setArticles(resultState.getFinalResult()); // 최종 검증 통과한 기사 목록
+        response.setErrors(resultState.getErrors()); // 에러 로그
 
-        return response;
+        return response; // 완성된 응답 객체를 반환합니다.
     }
 }
-
-
-
-

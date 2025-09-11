@@ -4,6 +4,7 @@ package com.example.demo.graphweb;
 import com.example.demo.graphweb.nodes.QueryBuilderNode;
 import com.example.demo.graphweb.nodes.SearchNode;
 import com.example.demo.graphweb.nodes.FetchNode;
+//import com.example.demo.graphweb.nodes.ValidationNode;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
@@ -22,6 +23,7 @@ public class WebConfig {
     private final QueryBuilderNode queryBuilderNode;
     private final SearchNode searchNode;
     private final FetchNode fetchNode;
+    //private final ValidationNode validationNode; // 💡 ValidationNode 구현 전까지 임시 주석 처리
 
     @Bean(name = "webSubGraph")
     public CompiledGraph<WebState> webSubGraph() throws GraphStateException {
@@ -34,19 +36,16 @@ public class WebConfig {
         graph.addNode("query", queryBuilderNode);
         graph.addNode("search", searchNode);
         graph.addNode("fetch", fetchNode);
+        //graph.addNode("validation", validationNode); // 💡 임시 주석 처리
 
         // ✅ 엣지 연결 (실행 순서: query → search → fetch)
         graph.addEdge(StateGraph.START, "query");
         graph.addEdge("query", "search");
         graph.addEdge("search", "fetch");
-        graph.addEdge("fetch", StateGraph.END);
+        //graph.addEdge("fetch", "validation"); // 💡 임시 주석 처리
+        graph.addEdge("fetch", StateGraph.END); // 💡 임시로 fetch 결과를 최종 종료로 연결
 
         // ✅ 실행용 그래프 컴파일 후 반환
         return graph.compile();
     }
 }
-
-
-
-
-

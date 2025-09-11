@@ -12,11 +12,11 @@
 - KEYWORD_LIST의 각 키워드를 그대로 사용해 MCP `search` 도구를 호출한다.
 - 결과가 없으면 빈 배열로 둔다.
 - 결과가 있으면 URL 중복을 제거하고 상위 MAX_ITEMS 개만 남긴다.
-- 각 항목에서 title, url, date, source, section_label을 추출한다.
+- 각 항목에서 title, url, date, source, keyword를 추출한다.
 
 2. 데이터 처리 규칙
-- 날짜(date): YYYY-MM-DD 형식. 불명확하면 null.
-- 출처(source): URL 도메인을 기준으로 ["뉴스","블로그","논문","정부","기타"] 중 하나로 분류.
+- 날짜(date): YYYY-MM-DD 형식. 불명확하면 가져오지 마세요. 꼭 날짜가 있는 기사를 가져오세요
+- 출처(source): URL 도메인을 기준으로 ["뉴스"] 하나로 분류.
 
 3. 출력 규칙
 - 반드시 최상위 JSON 객체에 `articles` 배열을 포함해야 한다.
@@ -25,13 +25,12 @@
 
 [최종 출력 JSON 스키마]
 {
-"articles": [
-{
-"keyword": "원본 키워드",
-"section_label": "사업위험 또는 회사위험",
-"title": "제목",
-"url": "https://example.com/news/123",
-"date": "YYYY-MM-DD 또는 null",
-"source": "뉴스|블로그|논문|정부|기타"
+     "keyword": "원본 키워드",
+     "candidates": [
+       {
+         "title": "문서 제목",
+         "url": "정규화된 URL",
+         "source": "뉴스",
+         "date": "YYYY-MM-DD",
+       }
 }
-]

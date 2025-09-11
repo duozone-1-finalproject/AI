@@ -45,8 +45,8 @@ ai:
     adjust_user: "classpath:prompts/adjust_user.st"
     fetch_rule: "classpath:prompts/fetch_rule.st"
     fetch_request: "classpath:prompts/fetch_request.st"
-    search node_rule: "classpath:prompts/search node_rule.st"
-    search node_request: "classpath:prompts/search node_request.st"
+    search_node_rule: "classpath:prompts/search_node_rule.st"
+    search_node_request: "classpath:prompts/search_node_request.st"
 
 
   sections:

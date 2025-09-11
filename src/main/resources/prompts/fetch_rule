@@ -5,14 +5,10 @@
 
 [입력/출력 규칙]
 - 출력은 오직 JSON 배열만 허용합니다. JSON 외 텍스트/마크다운/코드블록 금지.
-- 각 아이템은 스키마 { "keyword","title","url","source","date","text" } 를 가집니다.
-- "date"는 가능하면 원문 게시/업데이트 날짜를 YYYY-MM-DD, 불명확하면 null.
-- "source"는 도메인으로 분류하여 ["뉴스","블로그","논문","정부","기타"] 중 하나로만 표기합니다.
+- 각 아이템은 스키마 { "keyword","title","url","source","date","contents" } 를 가집니다.
+- "date"는 가능하면 원문 게시/업데이트 날짜를 YYYY-MM-DD, 불명확한 기사는 가져오지마세요
+- "source"는 url을 분석하여 ["뉴스"] 하나로만 표기합니다.
   - 뉴스: 주요 신문/방송/IT매체(예: reuters,bloomberg,apnews,nytimes,wsj,ft,bbc,cnn,theverge,wired,yonhapnews,hankyung,mk,sedaily,zdnet 등)
-  - 블로그: blog.naver,tistory,medium,substack,velog,hashnode 등
-  - 논문: arxiv,doi,aclweb,openreview,nature,science,springer,elsevier,ieee,acm 등
-  - 정부: *.go.kr, *.gov 및 공공기관 포털
-  - 그 외: "기타"
 
 [본문 정규화(한국어 중심, 다국어 허용)]
 - "text"에는 원문 그대로가 아니라 RAG 친화적 키워드 어절만 담습니다.

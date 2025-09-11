@@ -4,9 +4,12 @@ import java.util.List;
 
 public final class KeywordContants {
 
-    public static final List<String> BUS_KWD = List.of("시장 전망", "산업 동향", "경쟁 심화", "시장 점유율", "판매 단가 하락", "신규 규제", "정부 정책 변화", "법적 진입장벽", "기술 변화", "신기술 개발", "제품 수명주기", "연구개발 투자", "연구개발 실패", "매출 편중", "매출처 집중", "주요 고객 의존", "거래처 악화", "원자재 가격 상승", "공급망 리스크", "핵심 부품 부족", "외주 차질", "연구개발 중단", "연구개발 보조금 중단", "핵심 인력 유출", "연구개발 지연", "임상시험 실패", "신약 개발", "라이선스 아웃", "메타버스 플랫폼", "신규 사업 실패", "유전 개발", "자원 개발 리스크", "기술특례 상장", "IP 분쟁");
+    public static final String SECTION_BUSINESS = "사업위험";
+    public static final String SECTION_COMPANY  = "회사위험";
 
-    public static final List<String> COM_KWD = List.of("재무 상태 악화", "유동성 위기", "차입금 증가", "채무 상환능력", "이자보상비율 하락", "영업 현금흐름 적자", "현금흐름 악화", "매출 감소", "수익성 악화", "영업 적자", "매출채권 회수 불능", "재고자산 증가", "재고자산 감액 손실", "영업권 손상", "유형자산 진부화", "연구개발비 증가", "개발 실패 손실", "영업실적 악화", "지속 가능성 위기", "기업가치 하락");
+    public static final List<String> BUS_KWD = List.of("시장 전망", "산업 동향", "경쟁 심화", "시장 점유율");
+
+    public static final List<String> COM_KWD = List.of("재무 상태 악화", "유동성 위기", "차입금 증가", "매출 감소");
 
     //인스턴스화 방지?
     private KeywordContants() {

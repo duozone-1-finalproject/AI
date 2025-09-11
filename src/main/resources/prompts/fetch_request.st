@@ -15,7 +15,7 @@
      { "keyword": "재무 상태 악화", "urls": [] },
      { "keyword": "유동성 위기", "urls": [] },
      { "keyword": "차입금 증가", "urls": [] },
-     { "keyword": "채무 상환능력", "urls": [] }
+     { "keyword": "매출감소", "urls": [] }
    ]
 
 2) 각 객체에 대해:
@@ -29,14 +29,16 @@
      * 복합어는 <joiner>로 결합(기본 "_")
      * 길이가 <max_len>을 넘지 않도록 요약 압축
 
-3) 도메인 기반으로 "source" 분류(뉴스/블로그/논문/정부/기타)와 "date"(YYYY-MM-DD 또는 null) 추출.
+3) 도메인 기반으로 "source" 분류(뉴스)와 "date"(YYYY-MM-DD) 추출.
 
 4) 오직 아래 JSON 배열만 출력합니다(추가 텍스트 금지). 각 항목 스키마:
    {
      "keyword": "원본 키워드",
-     "title": "문서 제목",
-     "url": "정규화된 URL",
-     "source": "뉴스|블로그|논문|정부|기타",
-     "date": "YYYY-MM-DD 또는 null",
-     "text": "정규화된 핵심 어절 키워드들을 공백으로 구분한 문자열"
-   }
+     "candidates": [
+       {
+         "title": "문서 제목",
+         "url": "정규화된 URL",
+         "source": "뉴스",
+         "date": "YYYY-MM-DD",
+         "contents": "정규화된 핵심 어절 키워드들을 공백으로 구분한 문자열"
+       }

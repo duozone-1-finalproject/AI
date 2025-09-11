@@ -12,10 +12,14 @@ public class WebResponseDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private List<String> queries;      // QueryBuilderNode에서 생성된 쿼리
-    private List<Article> articles;    // SearchNode 결과 (링크/스니펫)
-    private List<Article> beforev;     // FetchNode 이후 본문까지 포함한 결과
-    //private Boolean validated; // ValidationNode 결과
+    /**
+     * SearchNode에서 LLM의 검색 결과를 파싱하기 위해 사용됩니다.
+     */
+    private List<Article> articles;
+
+    public void setErrors(List<String> errors) {
+
+    }
 
     @Data
     public static class Article implements Serializable {
@@ -27,7 +31,7 @@ public class WebResponseDto implements Serializable {
         private String title;         // 제목
         private String url;           // URL
         private String date;          // YYYY-MM-DD
-        private String source;        // 뉴스|블로그|논문|정부|기타
-        private String content;       // Fetch 결과 본문
+        private String source;        // 뉴스
+        private String content;       // Fetch 결과 본문 (FetchNode에서 채워짐)
     }
 }
