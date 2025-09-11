@@ -24,17 +24,20 @@ public class HttpClientConfig {
             // 1) 연결/소켓 타임아웃은 ConnectionConfig로
             ConnectionConfig connCfg = ConnectionConfig.custom()
                     .setConnectTimeout(Timeout.ofSeconds(15))   // TCP+TLS 수립까지
-                    .setSocketTimeout(Timeout.ofSeconds(90))    // 소켓 read/write 대기
+                    .setSocketTimeout(Timeout.ofSeconds(300))    // 소켓 read/write 대기
                     .build();
 
             PoolingHttpClientConnectionManager cm =
                     PoolingHttpClientConnectionManagerBuilder.create()
                             .setDefaultConnectionConfig(connCfg)
+                            .setMaxConnTotal(200)
+                            .setMaxConnPerRoute(50)
+                            .setValidateAfterInactivity(TimeValue.ofSeconds(5)) // stale conn 방지
                             .build();
 
             // 2) 응답/풀대기 타임아웃은 RequestConfig로
             RequestConfig reqCfg = RequestConfig.custom()
-                    .setResponseTimeout(Timeout.ofSeconds(90))      // 서버 응답 대기
+                    .setResponseTimeout(Timeout.ofSeconds(300))      // 서버 응답 대기
                     .setConnectionRequestTimeout(Timeout.ofSeconds(20)) // 풀에서 커넥션 빌리는 대기
                     .build();
 
