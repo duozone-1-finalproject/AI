@@ -62,7 +62,7 @@ ai:
 # Opensearch - 보안X(HTTP, 기본 인증 없음)
 opensearch:
   #uris: ${OPENSEARCH_URIS}
-  uris: ${OPENSEARCH_URI:http://localhost:9200}
+  uris: ${OPENSEARCH_URIS:http://http://192.168.0.77:9200}
   connection-timeout: 5s     # connect timeout
   socket-timeout: 60s        # read timeout
   max-conn-total: 100
