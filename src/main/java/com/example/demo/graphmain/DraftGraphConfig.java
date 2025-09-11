@@ -115,7 +115,6 @@ public class DraftGraphConfig {
         graph.addEdge("generate", "minimal_check");
         graph.addEdge("minimal_check", "validate");
         graph.addEdge("validate", StateGraph.END);
-//        graph.addEdge("generate", StateGraph.END);
 
         return graph.compile(); // 실행용 그래프 생성
     }

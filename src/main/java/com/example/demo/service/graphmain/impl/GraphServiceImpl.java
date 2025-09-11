@@ -83,6 +83,6 @@ public class GraphServiceImpl implements GraphService {
             finalState = new DraftState(Map.of());
         }
 
-        return finalState.<List<String>>value(DraftState.DRAFT).orElseThrow().getLast();
+        return finalState.getDrafts().getLast();
     }
 }
