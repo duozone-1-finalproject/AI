@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static com.example.demo.constants.JsonSchemaConstants.VALIDATION_JSON_SCHEMA;
 
-// 기업공시작성기준 검증 노드
+// 검증그래프 검증 노드
 @Component("globalValidator")
 @RequiredArgsConstructor
 public class GlobalValidatorNode implements AsyncNodeAction<ValidatorState> {

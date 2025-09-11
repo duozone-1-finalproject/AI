@@ -37,6 +37,8 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
             Map<String, Object> baseVars = state.getBaseVars();
 
             String draftText = state.getDrafts().getLast();
+            log.info("[MinimalCheckNode] BEFORE - draft: {}", draftText);
+
 
             // 2) 섹션별 체크리스트(자체 내부검증) 실행
             String checklistTemplate = selectChecklistTemplate(section);
@@ -48,6 +50,9 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
 
             Prompt checkPrompt = new Prompt(checkMsgs);
             String fixed = chatClient.prompt(checkPrompt).call().content();
+            log.info("[MinimalCheckNode] AFTER - fixed: {}", fixed);
+
+
 
             // 3) 폴백
             String finalDraft = (fixed == null || fixed.isBlank()) ? draftText : fixed;

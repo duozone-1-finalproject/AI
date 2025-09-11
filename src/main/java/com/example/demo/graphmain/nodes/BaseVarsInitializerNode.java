@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static com.example.demo.constants.MainGraphConstants.OTHER_RISK_INPUT;
+
 @Component("initBaseVars")
 @RequiredArgsConstructor
 public class BaseVarsInitializerNode implements AsyncNodeAction<DraftState> {
@@ -21,7 +23,7 @@ public class BaseVarsInitializerNode implements AsyncNodeAction<DraftState> {
                         "webRagItems", state.getWebDocs(),  // JSON
                         "dartRagItems", state.getDbDocs(), // JSON
                         "financialData", state.getFinancials(), // String Markdown 테이블
-                        "otherRiskInputs", List.of(), // JSON 현재 더미 [] 주입, 추후 수정예정
+                        "otherRiskInputs", OTHER_RISK_INPUT, // JSON 현재 더미 주입, 추후 수정예정
                         "maxItems", state.getMaxItems() // String e.g. "5"
                 ));
         return CompletableFuture.completedFuture(Map.of(DraftState.BASEVARS, baseVars));

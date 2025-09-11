@@ -2,7 +2,9 @@ package com.example.demo.graphvalidator.nodes;
 
 import com.example.demo.graphvalidator.ValidatorState;
 import com.example.demo.service.graphmain.impl.PromptCatalogService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component("adjust")
 @RequiredArgsConstructor
 public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
@@ -20,6 +23,7 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
     @Qualifier("default")
     private final ChatClient chatClient;
     private final PromptCatalogService catalog;
+    private final ObjectMapper om;
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(ValidatorState state) {
@@ -28,21 +32,28 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
             List<String> drafts = state.getDraft();
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
             List<Map<String, Object>> issues = state.getAdjustInput();
+            log.info("[AdjustDraftNode] issuse: {}", issues);
 
             String sectionLbl = state.getSectionLabel();
 
-            // 이슈 직렬화
-            String issuesText = serializeIssues(issues);
+            List<Map<String, String>> minimal = issues.stream()
+                    .map(it -> Map.of(
+                            "span", String.valueOf(it.getOrDefault("span","")),
+                            "suggestion", String.valueOf(it.getOrDefault("suggestion","")),
+                            "severity", String.valueOf(it.getOrDefault("severity",""))
+                    ))
+                    .toList();
 
-            // 템플릿 변수
+            String issuesJson = om.writeValueAsString(minimal);
+
+            // 템플릿 변수 교체
             Map<String, Object> vars = Map.of(
                     "sectionLabel", sectionLbl,
                     "draft", draft,
-                    "issuesText", issuesText
+                    "issues", issuesJson    // <-- adjust_user.st에서 issues := <issues>
             );
 
-            // 프롬프트(시스템+유저) 조합
-            Prompt sys = catalog.createSystemPrompt("adjust_default", vars);
+            Prompt sys  = catalog.createSystemPrompt("adjust_sys", vars);
             Prompt user = catalog.createPrompt("adjust_user", vars);
 
             List<Message> messages = new ArrayList<>(sys.getInstructions());
@@ -60,30 +71,5 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
                     ValidatorState.DECISION, "end"
             ));
         }
-    }
-
-    private String serializeIssues(List<Map<String, Object>> issues) {
-        if (issues == null || issues.isEmpty()) return "- (수정 지시 없음)";
-        final String SEP = "-----";
-        StringBuilder sb = new StringBuilder();
-        int i = 1;
-        for (Map<String, Object> it : issues) {
-            String span = String.valueOf(it.getOrDefault("span", "")).trim();
-            String reason = String.valueOf(it.getOrDefault("reason", "")).trim();
-            String ruleId = String.valueOf(it.getOrDefault("ruleId", "")).trim();
-            String evidence = String.valueOf(it.getOrDefault("evidence", "")).trim();
-            String suggestion = String.valueOf(it.getOrDefault("suggestion", "")).trim();
-            String severity = String.valueOf(it.getOrDefault("severity", "")).trim();
-
-            sb.append(SEP).append(" ISSUE #").append(i++).append("\n");
-            sb.append("span: ").append(span).append("\n");
-            sb.append("reason: ").append(reason).append("\n");
-            if (!ruleId.isEmpty()) sb.append("ruleId: ").append(ruleId).append("\n");
-            if (!evidence.isEmpty()) sb.append("evidence: ").append(evidence).append("\n");
-            sb.append("suggestion: ").append(suggestion).append("\n");
-            if (!severity.isEmpty()) sb.append("severity: ").append(severity).append("\n");
-        }
-        sb.append(SEP).append(" END");
-        return sb.toString();
     }
 }

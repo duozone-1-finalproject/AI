@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
 
+    @Autowired
     private CompiledGraph<DbSubGraphState> dbSubGraph;
 
     @Override
@@ -29,18 +30,15 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
         subStateInit.put(DbSubGraphState.IND_CODE, state.getIndutyCode());
 
         // SubGraph 실행
-        return CompletableFuture.supplyAsync(() -> {
-            DbSubGraphState subGraphResult = dbSubGraph.invoke(subStateInit)
-                    .orElse(new DbSubGraphState(Map.of()));
+        DbSubGraphState finalState = dbSubGraph.invoke(subStateInit).orElse(new DbSubGraphState(Map.of()));
 
-            // SubGraph 결과에서 DB_DOCS 추출
-            List<DbDocDto> dbDocs = subGraphResult.getDbDocs();
-            String financials = subGraphResult.getFinancials();
+        // SubGraph 결과에서 DB_DOCS, financials 추출
+        List<DbDocDto> dbDocs = finalState.getDbDocs();
+        String financials = finalState.getFinancials();
 
-            return Map.of(
-                    DraftState.DB_DOCS, dbDocs,
-                    DraftState.FINANCIALS, financials
-            );
-        });
+        return CompletableFuture.completedFuture(Map.of(
+                DraftState.DB_DOCS, dbDocs,
+                DraftState.FINANCIALS, financials
+        ));
     }
 }
