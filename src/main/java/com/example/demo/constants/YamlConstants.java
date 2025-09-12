@@ -61,23 +61,21 @@ public class YamlConstants {
             Map.entry("sanction", "제재 등과 관련된 사항"),
             Map.entry("post_event", "작성기준일 이후 발생한 주요사항 등 기타사항"),
             Map.entry("tables", "상세표"),
-            Map.entry("other_notice", "기타 공지사항")
+            Map.entry("other_notice", "기타 공지 사항")
     );
 
     public static final Map<String, List<String>> SOURCES_MAP = Map.of(
             "risk_industry", List.of("web", "db"),
             "risk_company", List.of("news", "db"),
-            "risk_etc", List.of("web", "db"),
-            "other_notice", List.of()
+            "risk_etc", List.of("web", "db")
     );
 
-    public static final List<String> DEFAULT_ORDER =
-            List.of("risk_industry", "risk_company", "risk_etc", "other_notice");
-//            List.of("risk_company");
-//            List.of("risk_etc");
+    public static final List<String> DEFAULT_ORDER = List.of(
+            "risk_industry",
+            "risk_company",
+            "risk_etc"
+    );
 
-
-    // 기본 변수값 (ai.defaults)
     public static final Map<String, Object> DEFAULTS = Map.of(
             "maxItems", 5,
             "webRagItems", List.of(),
@@ -88,7 +86,7 @@ public class YamlConstants {
 
     // 프롬프트 템플릿 위치 (ai.prompts)
     public static final Map<String, String> PROMPTS = Map.ofEntries(
-            Map.entry("draft_sys", "classpath:prompts/draft_default.st"),
+            Map.entry("draft_sys", "classpath:prompts/draft_sys.st"),
             Map.entry("risk_industry", "classpath:prompts/risk_industry.st"),
             Map.entry("risk_company", "classpath:prompts/risk_company.st"),
             Map.entry("risk_etc", "classpath:prompts/risk_etc.st"),
@@ -102,9 +100,7 @@ public class YamlConstants {
             Map.entry("adjust_sys", "classpath:prompts/adjust_sys.st"),
             Map.entry("adjust_user", "classpath:prompts/adjust_user.st"),
             Map.entry("check_revise_sys", "classpath:prompts/check_revise_sys.st"),
-            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st"),
-            Map.entry("other_notice", "classpath:prompts/other_notice.st"),
-            Map.entry("other_notice_checklist", "classpath:prompts/other_notice_checklist.st")
+            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st")
     );
 
 }

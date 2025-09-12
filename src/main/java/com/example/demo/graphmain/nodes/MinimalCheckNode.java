@@ -84,9 +84,6 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
                 // PRIMARY=otherRiskInputs, EXTERNAL=ragSources(=webRagItems)
                 v.put("ragSources", base.getOrDefault("webRagItems", Collections.emptyList()));
             }
-            case "other_notice" -> {
-                // corpName 이미 base에 있으므로 그대로 사용
-            }
         }
         return v;
     }
@@ -96,7 +93,6 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
             case "risk_industry" -> "risk_industry_checklist";
             case "risk_company"  -> "risk_company_checklist";
             case "risk_etc"      -> "risk_etc_checklist";
-            case "other_notice"  -> "other_notice_checklist";
             default -> throw new IllegalArgumentException("Unknown section: " + section);
         };
     }

@@ -32,14 +32,11 @@ public class GraphServiceImpl implements GraphService {
 
     @Override
     public DraftResponseDto run(DraftRequestDto req) {
-        // 동시에 돌릴 섹션 키 목록
-        List<String> sectionKeys = DEFAULT_ORDER;
-
         try (ExecutorService es = Executors.newVirtualThreadPerTaskExecutor()) {
             DraftResponseDto dto = new DraftResponseDto();
 
             // 섹션별 병렬 실행 → 완료되면 DTO에 바로 set
-            List<CompletableFuture<Void>> tasks = sectionKeys.stream()
+            List<CompletableFuture<Void>> tasks = DEFAULT_ORDER.stream()
                     .map(key -> CompletableFuture
                             .supplyAsync(() -> runOne(key, req), es)
                             .orTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
@@ -71,8 +68,6 @@ public class GraphServiceImpl implements GraphService {
 
         stream.forEach(nodeOutput -> {
             DraftState currentState = nodeOutput.state();
-            // 디버깅용 로그처리(즉시 보고싶다면, info)
-            // log.info("Graph node processed. Current state: {}", currentState);
             log.debug("Graph node processed. Current state: {}", currentState);
             finalStateRef.set(currentState);
         });

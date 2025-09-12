@@ -15,7 +15,6 @@ public class DraftResponseDto {
             case "risk_industry" -> this.riskIndustry = value;
             case "risk_company"  -> this.riskCompany  = value;
             case "risk_etc"      -> this.riskEtc      = value;
-            case "other_notice"  -> this.otherNotice  = value;
             default -> throw new IllegalArgumentException("Unknown section: " + key);
         }
     }
