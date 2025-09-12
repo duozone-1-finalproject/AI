@@ -40,7 +40,7 @@ public class IndexBootstrap {
             List<HttpHost> hosts4 = props.getUris().stream().map(u -> {
                 var uri = java.net.URI.create(u);
                 String scheme = (uri.getScheme() == null) ? "http" : uri.getScheme();
-                int port = (uri.getPort() == -1) ? 9200 : uri.getPort();
+                int port = (uri.getPort() == -1) ? -1 : uri.getPort();
                 return new HttpHost(uri.getHost(), port, scheme);
             }).toList();
 

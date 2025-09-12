@@ -40,7 +40,7 @@ spring:
             args: [ ]
   # Kafka Configuration
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     # 브로커 없을 때 리스너 자체를 시작하지 않음
     listener:
       auto-startup: ${app.kafka.enabled:true}
@@ -59,20 +59,23 @@ spring:
       acks: all
       retries: 3
     consumer:
+      # AI 서버용 group-id
       group-id: ${KAFKA_CONSUMER_GROUP:ai-server-group}
+      # FastAPI 전용 group-id
+      fastapi-group-id: ${KAFKA_FASTAPI_CONSUMER_GROUP:fastapi-backend-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
       enable-auto-commit: true
 
-# Opensearch - 보안X(HTTP, 기본 인증 없음)
-opensearch:
-  uris: ${OPENSEARCH_URIS}
-  connection-timeout: 5s     # connect timeout
-  socket-timeout: 60s        # read timeout
-  max-conn-total: 100
-  max-conn-per-route: 100
-  sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
+  # Opensearch - 보안X(HTTP, 기본 인증 없음)
+  opensearch:
+    uris: ${OPENSEARCH_URI}
+    connection-timeout: 5s     # connect timeout
+    socket-timeout: 60s        # read timeout
+    max-conn-total: 100
+    max-conn-per-route: 100
+    sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
 
 
 

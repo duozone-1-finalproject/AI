@@ -26,7 +26,7 @@ public class OpensearchConfig {
     private HttpHost toHost(String uriStr) {
         URI u = URI.create(uriStr);
         String scheme = (u.getScheme() != null) ? u.getScheme() : "http";
-        int port = (u.getPort() != -1) ? u.getPort() : 9200;
+        int port = (u.getPort() != -1) ? u.getPort() : -1;
         return new HttpHost(scheme, u.getHost(), port);
     }
 
