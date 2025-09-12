@@ -1,0 +1,66 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.0.6 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36" version="28.0.6">
+  <diagram name="페이지-1" id="MWUOnU8SsgyexCHP_RMo">
+    <mxGraphModel dx="1737" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-1" target="Nhbr1NCzJQDAOKzrk5yh-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-1" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;miangraph 기준&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;state에서 가져올 것&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;- corp name&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;- induty name&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;- induty code&lt;/font&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="20" y="140" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="410" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-2" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Query 생성&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;LLM 생성&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;- 작성된 prompt 기준으로&lt;/font&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="140" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-3" target="Nhbr1NCzJQDAOKzrk5yh-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-3" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;duckduckgo mcp&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;검색&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;- web or news 사용&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="420" y="140" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-4" target="Nhbr1NCzJQDAOKzrk5yh-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-4" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;검색으로 아래 내용&amp;nbsp;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;가져오기&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font size=&quot;3&quot;&gt;- link, title, date, story(본문 내용)&amp;nbsp;&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="620" y="140" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-5" target="Nhbr1NCzJQDAOKzrk5yh-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-5" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;전처리&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;story 3줄 요약&lt;/font&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="820" y="140" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-6" target="Nhbr1NCzJQDAOKzrk5yh-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-6" target="Nhbr1NCzJQDAOKzrk5yh-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-6" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;검증&lt;br&gt;&lt;br&gt;- LLM이 원하는 기사를 잘 찾아 왔는지?&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;상세한 방법은&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;추후 추가 예쩡&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="820" y="350" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="Nhbr1NCzJQDAOKzrk5yh-7" target="Nhbr1NCzJQDAOKzrk5yh-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-7" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;재검색&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="560" y="390" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-8" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;END&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;maingraph로 이동&lt;/font&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="820" y="580" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-17" value="NO" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="690" y="390" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Nhbr1NCzJQDAOKzrk5yh-18" value="YES" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="910" y="530" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
