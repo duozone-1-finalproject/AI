@@ -22,7 +22,6 @@ public class DraftState extends AgentState {
     public static final String SUMMARIES = "summaries";
     public static final String SECTION = "section";
     public static final String SECTION_LABEL = "sectionLabel";
-    public static final String PROMPT = "prompt";
     public static final String SOURCES = "sources"; // ex) ["web","news","db"]
     public static final String FINANCIALS = "financials";
 
@@ -57,7 +56,6 @@ public class DraftState extends AgentState {
             Map.entry(IND_NAME, Channels.base(() -> "")),
             Map.entry(SECTION, Channels.base(() -> "")),
             Map.entry(SECTION_LABEL, Channels.base(() -> "")),
-            Map.entry(PROMPT, Channels.base(() -> "")),
             // 선택 소스는 1회만 쓰면 base, 동적 누적이면 appender로 바꿔도 됨
             Map.entry(SOURCES, Channels.base(() -> new ArrayList<String>())),
             Map.entry(FINANCIALS, Channels.base(() -> "")),
@@ -96,7 +94,6 @@ public class DraftState extends AgentState {
     public List<String> getSummaries() { return this.<List<String>>value(SUMMARIES).orElse(new ArrayList<>()); }
     public String getSection() { return this.<String>value(SECTION).orElse(""); }
     public String getSectionLabel() { return this.<String>value(SECTION_LABEL).orElse(""); }
-    public String getPrompt() { return this.<String>value(PROMPT).orElse(""); }
     public List<String> getSources() { return this.<List<String>>value(SOURCES).orElse(Collections.emptyList()); }
     public String getFinancials() { return this.<String>value(FINANCIALS).orElse(""); }
 
