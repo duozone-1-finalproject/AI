@@ -4,6 +4,7 @@ import com.example.demo.graphdb.DbSubGraphState;
 import com.example.demo.dto.graphdb.DbDocDto;
 import com.example.demo.graphmain.DraftState;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component("db_branch")
 @RequiredArgsConstructor
 public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
@@ -30,18 +32,18 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
         subStateInit.put(DbSubGraphState.IND_CODE, state.getIndutyCode());
 
         // SubGraph 실행
-        return CompletableFuture.supplyAsync(() -> {
-            DbSubGraphState subGraphResult = dbSubGraph.invoke(subStateInit)
-                    .orElse(new DbSubGraphState(Map.of()));
+        DbSubGraphState finalState = dbSubGraph.invoke(subStateInit).orElse(new DbSubGraphState(Map.of()));
 
-            // SubGraph 결과에서 DB_DOCS 추출
-            List<DbDocDto> dbDocs = subGraphResult.getDbDocs();
-            String financials = subGraphResult.getFinancials();
+        // SubGraph 결과에서 DB_DOCS, financials 추출
+        List<DbDocDto> dbDocs = finalState.getDbDocs();
+        log.info("[DbSubgraphInvoker] dbDocs: {}", dbDocs);
+        String financials = finalState.getFinancials();
+        log.info("[DbSubgraphInvoker] financials: {}", financials);
 
-            return Map.of(
-                    DraftState.DB_DOCS, dbDocs,
-                    DraftState.FINANCIALS, financials
-            );
-        });
+
+        return CompletableFuture.completedFuture(Map.of(
+                DraftState.DB_DOCS, dbDocs,
+                DraftState.FINANCIALS, financials
+        ));
     }
 }

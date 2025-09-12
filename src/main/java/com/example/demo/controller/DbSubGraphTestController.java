@@ -24,7 +24,7 @@ public class DbSubGraphTestController {
     public List<DbDocDto> dbContent(@Valid @RequestBody DraftRequestDto req) {
         // 디버그 출력
         log.debug("DraftRequestDto: {}", req);
-        return graphService.runOne("risk_industry", req);
+        return graphService.runOne("risk_etc", req);
     }
 
     @PostMapping("/financials")
