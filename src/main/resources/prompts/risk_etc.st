@@ -37,6 +37,7 @@ WRITING (paragraphs only; no lists/tables/headings)
   b) 1–2 follow-up paragraphs: evidence (share counts/free-float %, lock-up dates & size, conversion/exercise terms & timing,
      over-allotment/stabilization intent, ownership concentration, payout history/policy), impact pathway (supply shock, control shift, EPS/ownership dilution),
      current mitigation (if any).
+  c) Each risk item MUST start with a Korean sequential marker such as "가.", "나.", "다.", ... at the beginning of the paragraph.
 - Evidence-based, precise, neutral. No hype, vagueness, or unfounded certainty.
 - Citations:
   • Do NOT add `출처:` for facts taken directly from OFFER_DATA.

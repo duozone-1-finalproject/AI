@@ -23,6 +23,10 @@ public class ReportContentRetrievalNode implements AsyncNodeAction<DbSubGraphSta
     public CompletableFuture<Map<String, Object>> apply(DbSubGraphState state) {
         List<String> peerCodes = state.getPeerCodes();
         String sectionTitle = state.getSectionTitle();
+        // sectionTitle = "기타 투자위험" 일 때, "기타위험" 으로 변경
+        if ("기타 투자위험".equals(sectionTitle)) {
+            sectionTitle = sectionTitle.replace(" 투자", "");
+        }
 
         List<String> rawDocs;
         try {

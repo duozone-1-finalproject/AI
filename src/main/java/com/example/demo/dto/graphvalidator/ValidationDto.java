@@ -13,6 +13,7 @@ public class ValidationDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private String guide;    // "기업공시서식작성기준" | "투자위험요소 기재요령 안내서"
     private Quality quality;
     private String decision; // "accept" | "revise"
     private List<Issue> issues;
@@ -23,7 +24,6 @@ public class ValidationDto implements Serializable {
         @Serial
         private static final long serialVersionUID = 1L;
 
-        private Integer context_use;
         private Integer guideline_adherence;
         private Integer factuality;
         private Integer clarity;

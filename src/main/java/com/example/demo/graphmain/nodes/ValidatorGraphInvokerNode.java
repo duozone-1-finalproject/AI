@@ -4,6 +4,7 @@ import com.example.demo.dto.graphvalidator.CheckRequestDto;
 import com.example.demo.graphmain.DraftState;
 import com.example.demo.service.graphvalidator.CheckService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 // 검증 그래프 호출
+@Slf4j
 @Component("validatorGraphInvoker")
 @RequiredArgsConstructor
 public class ValidatorGraphInvokerNode implements AsyncNodeAction<DraftState> {
