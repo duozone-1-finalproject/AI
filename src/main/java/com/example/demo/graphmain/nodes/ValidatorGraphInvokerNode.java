@@ -25,8 +25,6 @@ public class ValidatorGraphInvokerNode implements AsyncNodeAction<DraftState> {
         String draft = state.getDrafts().getLast();
         String section = state.getSection();
         String indutyName = state.getIndutyName();
-        log.info("[ValidatorGraphInvokerNode] section: {}", section);
-        log.info("[ValidatorGraphInvokerNode] draft: {}", draft);
 
         // section값이 other_notice일 때, 검증 그래프 부르지않고 패스
         if ("other_notice".equals(section)) {

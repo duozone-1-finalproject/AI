@@ -72,8 +72,9 @@ public class YamlConstants {
     );
 
     public static final List<String> DEFAULT_ORDER =
-//            List.of("risk_industry", "risk_company", "risk_etc");
             List.of("risk_industry", "risk_company", "risk_etc", "other_notice");
+//            List.of("risk_company");
+//            List.of("risk_etc");
 
 
     // 기본 변수값 (ai.defaults)
