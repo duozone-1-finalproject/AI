@@ -1,8 +1,9 @@
-// src/main/java/com/example/ai_server/kafka/KafkaReportConsumer.java
+// src/main/java/com/example/demo/kafka/KafkaReportConsumer.java
 package com.example.demo.kafka;
 
-import com.example.demo.dto.kafka.Ai_Server_RequestDto;
-import com.example.demo.dto.kafka.Ai_Server_ResponseDto;
+// 새로 생성한 DTO들 import
+import com.example.demo.dto.kafka.VariableMappingRequestDto;
+import com.example.demo.dto.kafka.VariableMappingResponseDto;
 import com.example.demo.dto.graphmain.DraftRequestDto;
 import com.example.demo.dto.graphmain.DraftResponseDto;
 import com.example.demo.service.graphmain.GraphService;
@@ -13,8 +14,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,69 +21,67 @@ public class KafkaReportConsumer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
-    private final GraphService graphService; // 🔥 GraphService 주입
+    private final GraphService graphService;
 
     private static final String RESPONSE_TOPIC = "ai-report-response";
 
-    @KafkaListener(topics = "ai-report-request", groupId = "ai-server-group")
-    public void consumeReportRequest(String message) {
+    @KafkaListener(topics = "ai-report-request", groupId = "ai-service-group")
+    public void consumeVariableMappingRequest(String message) {
+        log.info("변수 매핑 요청 수신: {}", message.substring(0, Math.min(message.length(), 100)) + "...");
+
         try {
-            // 요청 JSON → DTO 변환
-            Ai_Server_RequestDto request = objectMapper.readValue(message, Ai_Server_RequestDto.class);
+            // Backend 요청 JSON → DTO 변환
+            VariableMappingRequestDto request = objectMapper.readValue(message, VariableMappingRequestDto.class);
 
-            // Map에서 회사 정보 추출
-            String corpName = extractCorpName(request.getCompanyData());
-            String corpCode = extractCorpCode(request.getCompanyData());
-            String indutyName = extractIndutyName(request.getCompanyData());
-            String indutyCode = extractIndutyCode(request.getCompanyData());
+            log.info("변수 매핑 처리 시작: requestId={}, corpName={}, indutyName={}",
+                    request.getRequestId(), request.getCorpName(), request.getIndutyName());
 
-            log.info("AI 서버 요청 수신: requestId={}, company={}, industry={}",
-                    request.getRequestId(), corpName, indutyName);
-
-            // 🔥 GraphService용 요청 DTO 생성
+            // GraphService용 요청 DTO 생성
             DraftRequestDto draftRequest = new DraftRequestDto();
-            draftRequest.setCorpCode(corpCode != null ? corpCode : "UNKNOWN");
-            draftRequest.setCorpName(corpName != null ? corpName : "UNKNOWN");
-            draftRequest.setIndutyCode(indutyCode != null ? indutyCode : "UNKNOWN");
-            draftRequest.setIndutyName(indutyName != null ? indutyName : "UNKNOWN");
+            draftRequest.setCorpCode(request.getCorpCode());
+            draftRequest.setCorpName(request.getCorpName());
+            draftRequest.setIndutyCode(request.getIndutyCode());
+            draftRequest.setIndutyName(request.getIndutyName());
 
-            // 🔥 실제 AI 처리 실행
+            // 실제 AI 처리 실행
             long startTime = System.currentTimeMillis();
             DraftResponseDto aiResult = graphService.run(draftRequest);
             long processingTime = System.currentTimeMillis() - startTime;
 
-            // 🔥 AI 결과를 HTML로 변환
-            String generatedHtml = generateHtmlReport(aiResult, corpName);
-            String summary = generateSummary(aiResult);
+            log.info("AI 처리 완료: requestId={}, processingTime={}ms",
+                    request.getRequestId(), processingTime);
 
-            // 응답 DTO 생성
-            Ai_Server_ResponseDto response = Ai_Server_ResponseDto.builder()
+            // Backend가 기대하는 형식으로 응답 생성
+            VariableMappingResponseDto response = VariableMappingResponseDto.builder()
                     .requestId(request.getRequestId())
-                    .status("SUCCESS")
-                    .summary(summary)
-                    .generatedHtml(generatedHtml)
+                    .riskIndustry(aiResult.getRiskIndustry() != null ? aiResult.getRiskIndustry() : "산업 리스크 분석 중...")
+                    .riskCompany(aiResult.getRiskCompany() != null ? aiResult.getRiskCompany() : "기업 리스크 분석 중...")
+                    .riskEtc(aiResult.getRiskEtc() != null ? aiResult.getRiskEtc() : "기타 리스크 분석 중...")
+                    //.s1_1d_1(generateS1_1D_1Response(aiResult)) // 추가 LLM 응답
                     .processingTime(processingTime)
+                    .status("SUCCESS")
                     .build();
 
             // Kafka 응답 전송
             String responseJson = objectMapper.writeValueAsString(response);
             kafkaTemplate.send(RESPONSE_TOPIC, request.getRequestId(), responseJson);
 
-            log.info("AI 서버 응답 전송 완료: requestId={}, processingTime={}ms",
-                    request.getRequestId(), processingTime);
+            log.info("변수 매핑 응답 전송 완료: requestId={}", request.getRequestId());
 
         } catch (Exception e) {
-            log.error("AI 서버 요청 처리 실패", e);
+            log.error("변수 매핑 처리 실패", e);
 
             // 에러 응답 전송
             try {
-                Ai_Server_RequestDto request = objectMapper.readValue(message, Ai_Server_RequestDto.class);
-                Ai_Server_ResponseDto errorResponse = Ai_Server_ResponseDto.builder()
+                VariableMappingRequestDto request = objectMapper.readValue(message, VariableMappingRequestDto.class);
+                VariableMappingResponseDto errorResponse = VariableMappingResponseDto.builder()
                         .requestId(request.getRequestId())
-                        .status("ERROR")
-                        .summary("AI 처리 중 오류 발생: " + e.getMessage())
-                        .generatedHtml("<html><body><h1>처리 실패</h1><p>오류가 발생했습니다.</p></body></html>")
+                        .riskIndustry("처리 실패: " + e.getMessage())
+                        .riskCompany("처리 실패: " + e.getMessage())
+                        .riskEtc("처리 실패: " + e.getMessage())
+                        //.s1_1d_1("처리 실패: " + e.getMessage())
                         .processingTime(0L)
+                        .status("FAILED")
                         .build();
 
                 String errorJson = objectMapper.writeValueAsString(errorResponse);
@@ -95,107 +92,40 @@ public class KafkaReportConsumer {
         }
     }
 
-    // 🔥 회사 정보 추출 헬퍼 메서드들
-    private String extractCorpName(Map<String, Object> companyData) {
-        if (companyData == null) return null;
-        Object overviewObj = companyData.get("companyOverview");
-        if (overviewObj instanceof Map) {
-            Map<String, Object> overview = (Map<String, Object>) overviewObj;
-            return (String) overview.get("corpName");
-        }
-        return null;
-    }
-
-    private String extractCorpCode(Map<String, Object> companyData) {
-        if (companyData == null) return null;
-        Object overviewObj = companyData.get("companyOverview");
-        if (overviewObj instanceof Map) {
-            Map<String, Object> overview = (Map<String, Object>) overviewObj;
-            return (String) overview.get("corpCode");
-        }
-        return null;
-    }
-
-    private String extractIndutyName(Map<String, Object> companyData) {
-        if (companyData == null) return null;
-        Object overviewObj = companyData.get("companyOverview");
-        if (overviewObj instanceof Map) {
-            Map<String, Object> overview = (Map<String, Object>) overviewObj;
-            return (String) overview.get("indutyName");
-        }
-        return null;
-    }
-
-    private String extractIndutyCode(Map<String, Object> companyData) {
-        if (companyData == null) return null;
-        Object overviewObj = companyData.get("companyOverview");
-        if (overviewObj instanceof Map) {
-            Map<String, Object> overview = (Map<String, Object>) overviewObj;
-            return (String) overview.get("indutyCode");
-        }
-        return null;
-    }
-
-    // 🔥 AI 결과를 HTML로 변환
-    private String generateHtmlReport(DraftResponseDto aiResult, String corpName) {
-        StringBuilder html = new StringBuilder();
-        html.append("<!DOCTYPE html>");
-        html.append("<html lang='ko'>");
-        html.append("<head>");
-        html.append("<meta charset='UTF-8'>");
-        html.append("<title>").append(corpName).append(" 리스크 분석 보고서</title>");
-        html.append("<style>");
-        html.append("body { font-family: Arial, sans-serif; margin: 20px; }");
-        html.append("h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }");
-        html.append("h2 { color: #555; margin-top: 30px; }");
-        html.append(".section { margin-bottom: 20px; padding: 15px; border-left: 4px solid #007bff; background: #f8f9fa; }");
-        html.append("</style>");
-        html.append("</head>");
-        html.append("<body>");
-
-        html.append("<h1>").append(corpName).append(" 리스크 분석 보고서</h1>");
+    /**
+     * S1_1D_1 변수용 응답 생성 (추후 LLM 응답 예정)
+     */
+    private String generateS1_1D_1Response(DraftResponseDto aiResult) {
+        // 현재는 임시 응답, 추후 별도 LLM 호출로 대체
+        StringBuilder response = new StringBuilder();
+        response.append("종합 분석 결과:\n");
 
         if (aiResult.getRiskIndustry() != null && !aiResult.getRiskIndustry().trim().isEmpty()) {
-            html.append("<div class='section'>");
-            html.append("<h2>🏭 산업 리스크</h2>");
-            html.append("<p>").append(aiResult.getRiskIndustry().replace("\n", "<br>")).append("</p>");
-            html.append("</div>");
+            response.append("산업 리스크 요약: ").append(extractSummary(aiResult.getRiskIndustry())).append("\n");
         }
 
         if (aiResult.getRiskCompany() != null && !aiResult.getRiskCompany().trim().isEmpty()) {
-            html.append("<div class='section'>");
-            html.append("<h2>🏢 기업 리스크</h2>");
-            html.append("<p>").append(aiResult.getRiskCompany().replace("\n", "<br>")).append("</p>");
-            html.append("</div>");
+            response.append("기업 리스크 요약: ").append(extractSummary(aiResult.getRiskCompany())).append("\n");
         }
 
-        if (aiResult.getRiskEtc() != null && !aiResult.getRiskEtc().trim().isEmpty()) {
-            html.append("<div class='section'>");
-            html.append("<h2>⚠️ 기타 리스크</h2>");
-            html.append("<p>").append(aiResult.getRiskEtc().replace("\n", "<br>")).append("</p>");
-            html.append("</div>");
-        }
+        response.append("종합적으로 투자 시 주의가 필요한 영역입니다.");
 
-        html.append("<hr>");
-        html.append("<p><small>생성일시: ").append(java.time.LocalDateTime.now()).append("</small></p>");
-        html.append("</body>");
-        html.append("</html>");
-
-        return html.toString();
+        return response.toString();
     }
 
-    // 🔥 요약문 생성
-    private String generateSummary(DraftResponseDto aiResult) {
-        StringBuilder summary = new StringBuilder();
-        summary.append("AI 리스크 분석 완료. ");
+    /**
+     * 응답에서 첫 번째 문장 추출 (간단한 요약)
+     */
+    private String extractSummary(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return "분석 데이터 없음";
+        }
 
-        int sections = 0;
-        if (aiResult.getRiskIndustry() != null && !aiResult.getRiskIndustry().trim().isEmpty()) sections++;
-        if (aiResult.getRiskCompany() != null && !aiResult.getRiskCompany().trim().isEmpty()) sections++;
-        if (aiResult.getRiskEtc() != null && !aiResult.getRiskEtc().trim().isEmpty()) sections++;
+        String[] sentences = text.split("\\.");
+        if (sentences.length > 0) {
+            return sentences[0].trim() + ".";
+        }
 
-        summary.append("총 ").append(sections).append("개 섹션의 리스크 분석이 생성되었습니다.");
-
-        return summary.toString();
+        return text.length() > 50 ? text.substring(0, 50) + "..." : text;
     }
 }
