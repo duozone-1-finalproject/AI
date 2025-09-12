@@ -42,7 +42,6 @@ public class WebState extends AgentState {
             Map.entry(IND_NAME,      Channels.base(() -> "")),
             Map.entry(SECTION_LABEL, Channels.base(() -> "")),
 
-
             // 결과값
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES,   Channels.base(ArrayList<KeywordBundle>::new)),

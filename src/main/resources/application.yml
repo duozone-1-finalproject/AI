@@ -1,6 +1,11 @@
 server:
   port: 8081
 
+logging:
+  level:
+    org.springframework.ai.mcp: DEBUG
+    io.modelcontextprotocol: DEBUG
+
 spring:
   config:
     import: optional:file:.env[.properties]
@@ -47,6 +52,8 @@ ai:
     fetch_request: "classpath:prompts/fetch_request.st"
     search_node_rule: "classpath:prompts/search_node_rule.st"
     search_node_request: "classpath:prompts/search_node_request.st"
+    web_Validator_request: "resources/prompts/web_Validator_request"
+    web_Validator_rule: "resources/prompts/web_Validator_rule"
 
 
   sections:

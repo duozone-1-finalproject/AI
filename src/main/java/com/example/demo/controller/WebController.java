@@ -8,6 +8,8 @@ import com.example.demo.dto.WebResponseDto;
 import com.example.demo.graphweb.service.WebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -15,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/duck")
 public class WebController {
-
+    @Qualifier("chatWithMcp")
+    private final ChatClient chatClient;
     private final WebService webService;
 
     // ✅ 사용자 입력은 corpName, indutyName, section만 받음.
@@ -24,6 +27,11 @@ public class WebController {
     public WebResponseDto search(@RequestBody WebRequestDto req) {
         log.info("Received web request: {}", req);
         return webService.run(req);
+    }
+
+    @GetMapping("/test")
+    public String test_ddg(@RequestParam String q) {
+        return chatClient.prompt(q).call().content();
     }
 }
 

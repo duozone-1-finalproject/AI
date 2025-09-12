@@ -1,6 +1,7 @@
 package com.example.demo.graphweb.nodes;
 
 import com.example.demo.dto.WebResponseDto;
+import com.example.demo.dto.FetchLLMDto;
 import com.example.demo.graphweb.WebState;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -66,9 +68,15 @@ public class FetchNode implements AsyncNodeAction<WebState> {
             jsonResponse = jsonResponse.replaceAll("```json\\s*", "").replaceAll("```", "").trim();
 
             // 5. LLM의 응답(JSON)을 DTO 리스트로 파싱합니다.
-            List<WebResponseDto.Article> fetchedArticles = om.readValue(jsonResponse, new TypeReference<>() {});
+            // LLM은 [ {keyword: "...", candidates: [...]}, ... ] 형태의 배열을 반환합니다.
+            List<FetchLLMDto> fetchResults = om.readValue(jsonResponse, new TypeReference<>() {});
 
-            log.info("[FetchNode] LLM으로부터 {}개의 기사 본문을 성공적으로 수집했습니다.", fetchedArticles.size());
+            // 💡 중첩된 구조에서 Article 목록만 모두 추출하여 하나의 리스트로 만듭니다.
+            List<WebResponseDto.Article> fetchedArticles = fetchResults.stream()
+                    .flatMap(result -> result.getCandidates() != null ? result.getCandidates().stream() : Stream.empty())
+                    .toList();
+
+            log.info("[FetchNode] LLM으로부터 총 {}개의 기사 본문을 성공적으로 수집했습니다.", fetchedArticles.size());
 
             // 6. [상태 저장 수정] 결과를 'FETCHED_ARTICLES' 상태에 저장하여 다음 노드로 전달합니다.
             return CompletableFuture.completedFuture(Map.of(WebState.FETCHED_ARTICLES, fetchedArticles));

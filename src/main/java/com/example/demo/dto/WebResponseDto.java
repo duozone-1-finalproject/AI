@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.graphweb.WebState;
 import lombok.Data;
 
 import java.io.Serial;
@@ -15,7 +16,10 @@ public class WebResponseDto implements Serializable {
     /**
      * SearchNode에서 LLM의 검색 결과를 파싱하기 위해 사용됩니다.
      */
-    private List<Article> articles;
+    private List<Article> candidates; // 최종 검증을 통과한 기사 목록
+
+    // 디버깅용: searchnode의 중간 결과물 담을 필드
+    private List<WebState.KeywordBundle> searchNodeResult;
 
     public void setErrors(List<String> errors) {
 

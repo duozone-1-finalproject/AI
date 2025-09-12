@@ -4,7 +4,7 @@ package com.example.demo.graphweb;
 import com.example.demo.graphweb.nodes.QueryBuilderNode;
 import com.example.demo.graphweb.nodes.SearchNode;
 import com.example.demo.graphweb.nodes.FetchNode;
-//import com.example.demo.graphweb.nodes.ValidationNode;
+
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
@@ -22,7 +22,7 @@ public class WebConfig {
 
     private final QueryBuilderNode queryBuilderNode;
     private final SearchNode searchNode;
-    private final FetchNode fetchNode;
+//    private final FetchNode fetchNode;
     //private final ValidationNode validationNode; // 💡 ValidationNode 구현 전까지 임시 주석 처리
 
     @Bean(name = "webSubGraph")
@@ -35,15 +35,15 @@ public class WebConfig {
         // ✅ 노드 정의
         graph.addNode("query", queryBuilderNode);
         graph.addNode("search", searchNode);
-        graph.addNode("fetch", fetchNode);
-        //graph.addNode("validation", validationNode); // 💡 임시 주석 처리
+        //graph.addNode("fetch", fetchNode); // 💡 FetchNode 테스트 전까지 임시 주석 처리
+        //graph.addNode("validation", validationNode); // 💡 ValidationNode 구현 전까지 임시 주석 처리
 
-        // ✅ 엣지 연결 (실행 순서: query → search → fetch)
+        // ✅ 엣지 연결 (실행 순서: query → search → END)
         graph.addEdge(StateGraph.START, "query");
         graph.addEdge("query", "search");
-        graph.addEdge("search", "fetch");
+        graph.addEdge("search", StateGraph.END); // 💡 SearchNode 결과만 확인하기 위해 바로 종료
         //graph.addEdge("fetch", "validation"); // 💡 임시 주석 처리
-        graph.addEdge("fetch", StateGraph.END); // 💡 임시로 fetch 결과를 최종 종료로 연결
+        //graph.addEdge("fetch", StateGraph.END); // 💡 임시 주석 처리
 
         // ✅ 실행용 그래프 컴파일 후 반환
         return graph.compile();

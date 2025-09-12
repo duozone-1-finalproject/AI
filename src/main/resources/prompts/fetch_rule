@@ -4,8 +4,14 @@
 - 오직 MCP 도구 "fetch_content"만 호출합니다. (search 및 그 외 도구 호출 금지)
 
 [입력/출력 규칙]
-- 출력은 오직 JSON 배열만 허용합니다. JSON 외 텍스트/마크다운/코드블록 금지.
-- 각 아이템은 스키마 { "keyword","title","url","source","date","contents" } 를 가집니다.
+- 출력은 반드시 아래 스키마를 따르는 객체들의 JSON 배열이어야 합니다.
+  [
+    {
+      "keyword": "원본 키워드",
+      "candidates": [ { "title": "...", "url": "...", "source": "...", "date": "...", "contents": "..." } ]
+    }
+  ]
+- JSON 외 다른 텍스트나 설명을 포함하지 마세요.
 - "date"는 가능하면 원문 게시/업데이트 날짜를 YYYY-MM-DD, 불명확한 기사는 가져오지마세요
 - "source"는 url을 분석하여 ["뉴스"] 하나로만 표기합니다.
   - 뉴스: 주요 신문/방송/IT매체(예: reuters,bloomberg,apnews,nytimes,wsj,ft,bbc,cnn,theverge,wired,yonhapnews,hankyung,mk,sedaily,zdnet 등)

@@ -32,13 +32,9 @@
 3) 도메인 기반으로 "source" 분류(뉴스)와 "date"(YYYY-MM-DD) 추출.
 
 4) 오직 아래 JSON 배열만 출력합니다(추가 텍스트 금지). 각 항목 스키마:
-   {
-     "keyword": "원본 키워드",
-     "candidates": [
-       {
-         "title": "문서 제목",
-         "url": "정규화된 URL",
-         "source": "뉴스",
-         "date": "YYYY-MM-DD",
-         "contents": "정규화된 핵심 어절 키워드들을 공백으로 구분한 문자열"
-       }
+[
+  {
+    "keyword": "원본 키워드",
+    "candidates": [ { "title": "...", "url": "...", "source": "...", "date": "...", "contents": "..." } ]
+  }
+]
