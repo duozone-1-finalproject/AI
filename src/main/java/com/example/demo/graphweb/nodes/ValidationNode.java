@@ -44,8 +44,8 @@ public class ValidationNode implements AsyncNodeAction<WebState> {
             String articlesJson = om.writeValueAsString(fetchedArticles);
 
             // 3. PromptCatalogService를 사용하여 프롬프트를 생성합니다.
-            Prompt sysPrompt = catalog.createSystemPrompt("web_Validator_rule", Map.of());
-            Prompt userPrompt = catalog.createPrompt("web_Validator_request", Map.of("articles_json", articlesJson));
+            Prompt sysPrompt = catalog.createSystemPrompt("web_validator_sys", Map.of());
+            Prompt userPrompt = catalog.createPrompt("web_validator_user", Map.of("articles_json", articlesJson));
 
             List<Message> messages = new ArrayList<>(sysPrompt.getInstructions());
             messages.addAll(userPrompt.getInstructions());

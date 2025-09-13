@@ -71,8 +71,8 @@ public class SearchNode implements AsyncNodeAction<WebState> {
                     "keywords", keywordsJson
             );
 
-            Prompt sys = catalog.createSystemPrompt("search_node_rule", Map.of());
-            Prompt user = catalog.createPrompt("search_node_request", vars);
+            Prompt sys = catalog.createSystemPrompt("search_sys", Map.of());
+            Prompt user = catalog.createPrompt("search_user", vars);
 
             List<Message> messages = new ArrayList<>(sys.getInstructions());
             messages.addAll(user.getInstructions());

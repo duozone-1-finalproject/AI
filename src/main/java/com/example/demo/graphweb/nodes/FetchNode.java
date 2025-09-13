@@ -1,9 +1,11 @@
 package com.example.demo.graphweb.nodes;
 
+import com.example.demo.constants.KeywordContants;
 import com.example.demo.dto.WebResponseDto;
 import com.example.demo.dto.FetchLLMDto;
 import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
+import com.example.demo.jsonschema.SearchSchemas;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +16,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -30,61 +33,38 @@ public class FetchNode implements AsyncNodeAction<WebState> {
     private final PromptCatalogService catalog;
     private final ObjectMapper om;
 
+    // searchResults 0번 인덱스의 candidates의 0번인덱스 만 꺼내서 (SearchLLMDto.Item)
+    // map. vars  프롬프트 변수 넣고 -> string 반환하고(chatclient)(본문) state 하나 만들어서 거기에 리턴 문자열
+
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
-        // 1. SearchNode의 결과(키워드별 기사 묶음)를 가져옵니다.
-        // 💡 [수정] 이제 WebState는 KeywordBundle 대신 SearchLLMDto의 리스트를 직접 저장합니다.
-        List<SearchLLMDto> searchResults = state.getArticles();
-        log.info("[FetchNode] SearchNode로부터 {}개의 키워드 결과를 받았습니다.", searchResults.size());
+        List<SearchLLMDto> articles = state.getArticles();
 
-        if (searchResults.isEmpty()) {
-            return CompletableFuture.completedFuture(Map.of());
-        }
+        // 추후 적용(날리지 말 것!) - 실제 pickedAticle 적용 코드
+//        SearchLLMDto.Item pickedAticle = state.getPickedArticle();
 
-        try {
-            // 2. [구조 수정] 프롬프트 템플릿이 요구하는 `tasks_json` 형식에 맞게 데이터를 가공합니다.
-            // 형식: [{ "keyword": "...", "urls": ["url1", "url2", ...] }, ...]
-            List<Map<String, Object>> tasks = searchResults.stream()
-                    .map(result -> {
-                        List<String> urls = result.getCandidates().stream()
-                                .map(SearchLLMDto.Item::getUrl)
-                                .toList();
-                        return Map.<String, Object>of("keyword", result.getKeyword(), "urls", urls);
-                    })
-                    .toList();
-            String tasksJson = om.writeValueAsString(tasks);
+        SearchLLMDto.Item pickedAticle = articles.get(0).getCandidates().get(0);
 
-            // 3. PromptCatalogService를 사용하여 프롬프트를 동적으로 생성합니다.
-            Prompt sysPrompt = catalog.createSystemPrompt("fetch_rule", Map.of());
-            Prompt userPrompt = catalog.createPrompt("fetch_request", Map.of(
-                    "tasks_json", tasksJson
-                    // per_keyword, max_len 등은 yml의 defaults 값으로 자동 주입됩니다.
-            ));
-            List<Message> messages = new ArrayList<>(sysPrompt.getInstructions());
-            messages.addAll(userPrompt.getInstructions());
+        // 2) 템플릿 변수 바인딩
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("title",   pickedAticle.getTitle());
+        vars.put("url",     pickedAticle.getUrl());
+        vars.put("date",    pickedAticle.getDate());
+        vars.put("source",  pickedAticle.getSource());
+
+        // 3) 프롬프트 만들기(시스템/유저). 템플릿 없으면 간단 문자열로 대체
+            Prompt sys = catalog.createSystemPrompt("fetch_sys", vars);
+            Prompt user = catalog.createPrompt("fetch_user", vars);
+
+           List<Message> messages = new ArrayList<>(sys.getInstructions());
+           messages.addAll(user.getInstructions());
+
             Prompt finalPrompt = new Prompt(messages);
 
-            // 4. LLM을 호출하여 본문 수집을 요청합니다.
-            log.info("[FetchNode] {}개의 키워드에 대한 본문 수집을 LLM에 요청합니다.", tasks.size());
-            String jsonResponse = chatClient.prompt(finalPrompt).call().content();
-            jsonResponse = jsonResponse.replaceAll("```json\\s*", "").replaceAll("```", "").trim();
+//          4) ChatClient 호출 → 본문 String
+            String fetchedText = chatClient.prompt(finalPrompt).call().content();
+            log.info("[FetchNode] fetchedText: {}", fetchedText);
 
-            // 5. LLM의 응답(JSON)을 DTO 리스트로 파싱합니다.
-            // LLM은 [ {keyword: "...", candidates: [...]}, ... ] 형태의 배열을 반환합니다.
-            List<FetchLLMDto> fetchResults = om.readValue(jsonResponse, new TypeReference<>() {});
-
-            // 💡 중첩된 구조에서 Article 목록만 모두 추출하여 하나의 리스트로 만듭니다.
-            List<WebResponseDto.Article> fetchedArticles = fetchResults.stream()
-                    .flatMap(result -> result.getCandidates() != null ? result.getCandidates().stream() : Stream.empty())
-                    .toList();
-
-            log.info("[FetchNode] LLM으로부터 총 {}개의 기사 본문을 성공적으로 수집했습니다.", fetchedArticles.size());
-
-            // 6. [상태 저장 수정] 결과를 'FETCHED_ARTICLES' 상태에 저장하여 다음 노드로 전달합니다.
-            return CompletableFuture.completedFuture(Map.of(WebState.FETCHED_ARTICLES, fetchedArticles));
-        } catch (Exception e) {
-            log.error("[FetchNode] 본문 수집 중 오류 발생", e);
-            return CompletableFuture.completedFuture(Map.of(WebState.ERRORS, List.of("[FetchNode] " + e.getMessage())));
+            return CompletableFuture.completedFuture(Map.of(WebState.FETCHED_ARTICLES, fetchedText));
         }
     }
-}
