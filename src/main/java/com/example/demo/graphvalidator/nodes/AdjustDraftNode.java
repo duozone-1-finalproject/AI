@@ -32,7 +32,7 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
             List<String> drafts = state.getDraft();
             String draft = drafts.isEmpty() ? "" : drafts.getLast();
             List<Map<String, Object>> issues = state.getAdjustInput();
-            log.info("[AdjustDraftNode] issuse: {}", issues);
+            log.debug("[AdjustDraftNode] issuse: {}", issues);
 
             String sectionLbl = state.getSectionLabel();
 
@@ -63,7 +63,7 @@ public class AdjustDraftNode implements AsyncNodeAction<ValidatorState> {
             // 호출
             String revised = chatClient.prompt(finalPrompt).call().content();
 
-            return CompletableFuture.completedFuture(Map.of(ValidatorState.DRAFT, revised));
+            return CompletableFuture.completedFuture(Map.of(ValidatorState.DRAFT, List.of(revised)));
 
         } catch (Exception e) {
             return CompletableFuture.completedFuture(Map.of(

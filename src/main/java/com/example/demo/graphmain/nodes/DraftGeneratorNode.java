@@ -44,12 +44,12 @@ public class DraftGeneratorNode implements AsyncNodeAction<DraftState> {
             Prompt draftPrompt = new Prompt(draftMsgs);
             String draftText = chatClient.prompt(draftPrompt).call().content();
 
-            return CompletableFuture.completedFuture(Map.of(DraftState.DRAFT, draftText));
+            return CompletableFuture.completedFuture(Map.of(DraftState.DRAFT, List.of(draftText)));
 
         } catch (Exception e) {
             log.error("Draft generation failed", e);
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.DRAFT, "",
+                    DraftState.DRAFT, List.of(),
                     DraftState.ERRORS, List.of("[DraftGeneratorNode] " + e.getMessage())
             ));
         }
