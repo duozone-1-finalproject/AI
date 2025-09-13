@@ -25,16 +25,15 @@ public class KafkaReportConsumer {
 
     private static final String RESPONSE_TOPIC = "ai-report-response";
 
-    @KafkaListener(topics = "ai-report-request", groupId = "ai-service-group")
+    @KafkaListener(topics = "ai-report-request", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeVariableMappingRequest(String message) {
         log.info("변수 매핑 요청 수신: {}", message.substring(0, Math.min(message.length(), 100)) + "...");
 
         try {
             // Backend 요청 JSON → DTO 변환
             VariableMappingRequestDto request = objectMapper.readValue(message, VariableMappingRequestDto.class);
-
-            log.info("변수 매핑 처리 시작: requestId={}, corpName={}, indutyName={}",
-                    request.getRequestId(), request.getCorpName(), request.getIndutyName());
+            log.info("변수 매핑 처리 시작: requestId={}, corpCode={}, corpName={}, indutyCode={}, indutyName={}",
+                    request.getRequestId(), request.getCorpCode(), request.getCorpName(),request.getIndutyCode(), request.getIndutyName());
 
             // GraphService용 요청 DTO 생성
             DraftRequestDto draftRequest = new DraftRequestDto();
