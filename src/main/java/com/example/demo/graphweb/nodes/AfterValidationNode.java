@@ -3,12 +3,15 @@ package com.example.demo.graphweb.nodes;
 import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.dto.WebDocs;
 import com.example.demo.graphweb.WebState;
+import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-
+@Component
+@RequiredArgsConstructor
 public class AfterValidationNode implements AsyncNodeAction<WebState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState s) {

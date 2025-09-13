@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-//@Component//
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class ValidationNode implements AsyncNodeAction<WebState> {
