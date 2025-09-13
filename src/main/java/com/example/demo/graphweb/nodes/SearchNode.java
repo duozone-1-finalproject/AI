@@ -9,8 +9,6 @@ package com.example.demo.graphweb.nodes;
 import com.example.demo.constants.KeywordContants;
 import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.graphweb.WebState.Brief;
-import com.example.demo.graphweb.WebState.KeywordBundle;
 import com.example.demo.jsonschema.SearchSchemas;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +21,11 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.ResponseFormat;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -96,55 +94,15 @@ public class SearchNode implements AsyncNodeAction<WebState> {
             Prompt finalPrompt = new Prompt(messages, options);
 
             // 5) LLM 호출 & 원본 응답 로깅
-            SearchLLMDto out = chatClient
+            // 💡 [수정] ParameterizedTypeReference를 사용하여 '객체의 리스트'를 한 번에 받아옵니다.
+            List<SearchLLMDto> results = chatClient
                     .prompt(finalPrompt)
                     .call()
-                    .entity(SearchLLMDto.class);
-            log.info("[SearchNode] LLM Raw Response: {}", out);
-
-            // 6) DTO로 파싱
-//            SearchLLMDto out = om.readValue(rawJsonResponse, SearchLLMDto.class);
-//            List<SearchLLMDto.Item> raw = Optional.ofNullable(out.getCandidates()).orElse(List.of());
-//
-//            // 7) 키워드별 그룹핑 → 중복 제거 → null date 제거 → 최신순 정렬 → 상위 3건
-//            Map<String, List<SearchLLMDto.Item>> byKeyword = raw.stream()
-//                    .filter(i -> allowedKeywords.contains(i.getKeyword()))
-//                    .collect(Collectors.groupingBy(SearchLLMDto.Item::getKeyword));
-//
-//            List<KeywordBundle> bundles = byKeyword.entrySet().stream()
-//                    .map(e -> {
-//                        // URL 기준 중복 제거
-//                        List<SearchLLMDto.Item> dedup = e.getValue().stream()
-//                                .collect(Collectors.collectingAndThen(
-//                                        Collectors.toMap(
-//                                                SearchLLMDto.Item::getUrl,
-//                                                i -> i,
-//                                                (a, b) -> a,
-//                                                LinkedHashMap::new
-//                                        ),
-//                                        m -> new ArrayList<>(m.values())
-//                                ));
-//
-//                        // 최신순 정렬 + 상위 3건
-//                        List<Brief> top3 = dedup.stream()
-//                                .filter(i -> i.getDate() != null && !i.getDate().isBlank())
-//                                .sorted((x, y) -> compareDateDesc(x.getDate(), y.getDate()))
-//                                .limit(3)
-//                                .map(i -> new Brief(
-//                                        safe(i.getTitle()),
-//                                        safe(i.getUrl()),
-//                                        safe(i.getSource()),
-//                                        i.getDate(),
-//                                        null // 검색 단계에서는 contents 비움 (FetchNode에서 채움)
-//                                ))
-//                                .toList();
-//
-//                        return new KeywordBundle(e.getKey(), top3);
-//                    })
-//                    .toList();
-
-            // 8) WebState.ARTICLES에 저장
-            return CompletableFuture.completedFuture(Map.of(WebState.ARTICLES, out));
+                    .entity(new ParameterizedTypeReference<List<SearchLLMDto>>() {});
+            log.info("[SearchNode] LLM으로부터 {}개의 키워드 결과를 받았습니다.", results.size());
+            
+            // 💡 [수정] 이제 복잡한 후처리 없이, LLM의 결과를 그대로 상태에 저장합니다.
+            return CompletableFuture.completedFuture(Map.of(WebState.ARTICLES, results));
 
         } catch (Exception e) {
             log.error("[SearchNode] error", e);
@@ -152,17 +110,5 @@ public class SearchNode implements AsyncNodeAction<WebState> {
                     WebState.ERRORS, List.of("[SearchNode] " + e.getMessage())
             ));
         }
-    }
-
-    // 날짜 내림차순 정렬용
-    private static int compareDateDesc(String d1, String d2) {
-        if (d1 == null && d2 == null) return 0;
-        if (d1 == null) return 1;
-        if (d2 == null) return -1;
-        return d2.compareTo(d1);
-    }
-
-    private static String safe(String s) {
-        return s == null ? "" : s;
     }
 }

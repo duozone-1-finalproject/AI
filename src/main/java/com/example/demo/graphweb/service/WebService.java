@@ -29,7 +29,6 @@ public class WebService {
         // [수정] 그래프 실행 결과(resultState)에서 최종 데이터를 추출하여 응답 DTO를 생성합니다.
         WebResponseDto response = new WebResponseDto();
         response.setCandidates(resultState.getFinalResult()); // 최종 검증 통과한 기사 목록
-        response.setSearchNodeResult(resultState.getArticles()); // 디버깅용: searchnode의 결과 추가
         response.setErrors(resultState.getErrors()); // 에러 로그
 
         return response; // 완성된 응답 객체를 반환합니다.

@@ -22,6 +22,6 @@ public class AiClientConfig {
     @Bean("chatWithMcp")
     ChatClient chatWithMcp(ChatClient.Builder b,
                            SyncMcpToolCallbackProvider mcpTools) {
-        return b.defaultToolCallbacks(mcpTools).build(); // MCP 툴(search/fetch) 사용
+        return b.defaultToolCallbacks(mcpTools).build(); // MCP 툴(search/crawl) 사용
     }
 }

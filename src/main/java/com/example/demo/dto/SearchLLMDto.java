@@ -25,7 +25,7 @@ public class SearchLLMDto implements Serializable {
 
         private String title;
         private String url;     // https://... (형식 검증은 스키마에서 regex로)
-        private String source;  // 뉴스|블로그|논문|정부|기타
+        private String source;  // 뉴스
         private String date;    // YYYY-MM-DD
     }
 }

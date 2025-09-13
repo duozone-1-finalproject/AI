@@ -2,6 +2,7 @@
 
 package com.example.demo.graphweb;
 
+import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.dto.WebResponseDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
@@ -23,13 +24,9 @@ public class WebState extends AgentState {
     public static final String IND_NAME      = "indutyName";   // (팀에서 industryName으로 바꿀 계획이면 alias 추가 고려)
     public static final String SECTION_LABEL = "sectionLabel";
 
-    // ---- 내부 DTO (검색 단계용) ----
-    public record Brief(String title, String url, String source, String date, String contents) {}
-    public record KeywordBundle(String keyword, List<Brief> searched_data) {}
-
     // ---- 결과 키 ----
     public static final String QUERY        = "query";         // List<String> (QueryBuilderNode)
-    public static final String ARTICLES     = "articles";      // List<KeywordBundle> (SearchNode 결과)
+    public static final String ARTICLES     = "articles";      // 💡 [수정] List<SearchLLMDto> (SearchNode 결과)
     public static final String FETCHED_ARTICLES = "fetched_articles"; // List<WebResponseDto.Article> (FetchNode 결과)
     public static final String VALIDATED    = "validated";     // Boolean (ValidationNode 결과)
     public static final String ERRORS       = "errors";        // List<String> (누적 에러 로그)
@@ -44,7 +41,7 @@ public class WebState extends AgentState {
 
             // 결과값
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
-            Map.entry(ARTICLES,   Channels.base(ArrayList<KeywordBundle>::new)),
+            Map.entry(ARTICLES,   Channels.base(ArrayList<SearchLLMDto>::new)), // 💡 [수정] 저장할 타입을 SearchLLMDto의 리스트로 변경
             // FetchNode가 반환하는 List<Article>을 저장하기 위해 appender 채널을 사용합니다.
             Map.entry(FETCHED_ARTICLES, Channels.<WebResponseDto.Article>appender(ArrayList::new)),
             Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)),
@@ -78,9 +75,9 @@ public class WebState extends AgentState {
         return this.<List<String>>value(QUERY).orElse(List.of());
     }
 
-    // 🔸 SearchNode가 저장한 "키워드별 Top3" 번들
-    public List<KeywordBundle> getArticles() {
-        return this.<List<KeywordBundle>>value(ARTICLES).orElse(List.of());
+    // 🔸 SearchNode가 저장한 "키워드별 검색 결과"
+    public List<SearchLLMDto> getArticles() {
+        return this.<List<SearchLLMDto>>value(ARTICLES).orElse(List.of());
     }
 
     // 🔸 FetchNode가 저장한 "본문이 채워진" 기사 목록

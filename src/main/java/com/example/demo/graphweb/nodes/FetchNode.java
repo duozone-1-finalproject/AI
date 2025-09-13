@@ -2,6 +2,7 @@ package com.example.demo.graphweb.nodes;
 
 import com.example.demo.dto.WebResponseDto;
 import com.example.demo.dto.FetchLLMDto;
+import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -32,22 +33,23 @@ public class FetchNode implements AsyncNodeAction<WebState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         // 1. SearchNode의 결과(키워드별 기사 묶음)를 가져옵니다.
-        List<WebState.KeywordBundle> articleBundles = state.getArticles();
-        log.info("[FetchNode] SearchNode로부터 {}개의 키워드 번들을 받았습니다.", articleBundles.size());
+        // 💡 [수정] 이제 WebState는 KeywordBundle 대신 SearchLLMDto의 리스트를 직접 저장합니다.
+        List<SearchLLMDto> searchResults = state.getArticles();
+        log.info("[FetchNode] SearchNode로부터 {}개의 키워드 결과를 받았습니다.", searchResults.size());
 
-        if (articleBundles.isEmpty()) {
+        if (searchResults.isEmpty()) {
             return CompletableFuture.completedFuture(Map.of());
         }
 
         try {
             // 2. [구조 수정] 프롬프트 템플릿이 요구하는 `tasks_json` 형식에 맞게 데이터를 가공합니다.
             // 형식: [{ "keyword": "...", "urls": ["url1", "url2", ...] }, ...]
-            List<Map<String, Object>> tasks = articleBundles.stream()
-                    .map(bundle -> {
-                        List<String> urls = bundle.searched_data().stream()
-                                .map(WebState.Brief::url)
+            List<Map<String, Object>> tasks = searchResults.stream()
+                    .map(result -> {
+                        List<String> urls = result.getCandidates().stream()
+                                .map(SearchLLMDto.Item::getUrl)
                                 .toList();
-                        return Map.<String, Object>of("keyword", bundle.keyword(), "urls", urls);
+                        return Map.<String, Object>of("keyword", result.getKeyword(), "urls", urls);
                     })
                     .toList();
             String tasksJson = om.writeValueAsString(tasks);

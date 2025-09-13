@@ -25,15 +25,21 @@ spring:
     mcp:
       client:
         enabled: true
-        type: SYNC     # SYNC or ASYNC
+        type: SYNC            # 또는 ASYNC
+        request-timeout: 30s
         stdio:
           connections:
-            duck: # 연결 이름
-              command: ${DDG_CMD}  # ddg mcp path -> 환경변수 처리해야함
-              args: [ ]
-              # env:
-              #   HTTP_PROXY: ${HTTP_PROXY:}
-              #   HTTPS_PROXY: ${HTTPS_PROXY:}
+            # DuckDuckGo MCP
+            duck:
+              command: ${DDG_CMD}
+              args: []
+            # tavily
+            tavily:
+              command: "C:/Program Files/nodejs/npx.cmd"
+              args:
+                - -y
+                - mcp-remote
+                - https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}
 
 # prompt 경로 및 Section 매핑
 ai:

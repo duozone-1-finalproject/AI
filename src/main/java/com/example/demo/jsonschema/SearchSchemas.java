@@ -14,12 +14,15 @@ public final class SearchSchemas {
     private static String build(java.util.List<String> allowed) {
         String enums = allowed.stream()
                 .map(k -> "\"" + k + "\"")
-                .collect(java.util.stream.Collectors.joining(","));
+                .collect(Collectors.joining(","));
 
         // 루트가 배열이고, 각 원소가 {keyword, candidates[]} 형태
         // URL/날짜는 format 대신 pattern 사용 (호환성 ↑)
         return """
         {
+         "type": "array",
+          "minItems": 1,
+          "items": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -33,7 +36,7 @@ public final class SearchSchemas {
                   "properties": {
                     "title":  { "type": "string", "minLength": 1 },
                     "url":    { "type": "string", "pattern": "^https?://[^\\\\s]+$" },
-                    "source": { "type": "string", "enum": ["뉴스","블로그","논문","정부","기타"] },
+                    "source": { "type": "string", "enum": ["뉴스"] },
                     "date":   { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
                   },
                   "required": ["title","url","source","date"]
@@ -45,3 +48,6 @@ public final class SearchSchemas {
         """.formatted(enums);
     }
 }
+
+
+//enum은 특정한 키워드만 들어가도록 하는 제약 조건

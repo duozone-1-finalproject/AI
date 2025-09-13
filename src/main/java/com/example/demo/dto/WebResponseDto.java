@@ -18,9 +18,6 @@ public class WebResponseDto implements Serializable {
      */
     private List<Article> candidates; // 최종 검증을 통과한 기사 목록
 
-    // 디버깅용: searchnode의 중간 결과물 담을 필드
-    private List<WebState.KeywordBundle> searchNodeResult;
-
     public void setErrors(List<String> errors) {
 
     }
