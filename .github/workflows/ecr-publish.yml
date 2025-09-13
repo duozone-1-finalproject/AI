@@ -2,7 +2,7 @@ name: Deploy AI to Amazon ECR
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feature/infra" ]
 
 env:
   ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
