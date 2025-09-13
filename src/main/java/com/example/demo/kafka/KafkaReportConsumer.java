@@ -32,7 +32,6 @@ public class KafkaReportConsumer {
         try {
             // Backend 요청 JSON → DTO 변환
             VariableMappingRequestDto request = objectMapper.readValue(message, VariableMappingRequestDto.class);
-
             log.info("변수 매핑 처리 시작: requestId={}, corpCode={}, corpName={}, indutyCode={}, indutyName={}",
                     request.getRequestId(), request.getCorpCode(), request.getCorpName(),request.getIndutyCode(), request.getIndutyName());
 

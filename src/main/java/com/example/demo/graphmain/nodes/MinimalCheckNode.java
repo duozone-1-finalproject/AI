@@ -56,12 +56,14 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
 
             // 3) 폴백
             String finalDraft = (fixed == null || fixed.isBlank()) ? draftText : fixed;
-            return CompletableFuture.completedFuture(Map.of(DraftState.DRAFT, finalDraft));
+            return CompletableFuture.completedFuture(Map.of(
+                    DraftState.DRAFT, List.of(finalDraft)
+            ));
 
         } catch (Exception e) {
             log.error("Draft generation failed", e);
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.DRAFT, "",
+                    DraftState.DRAFT, List.of(),
                     DraftState.ERRORS, List.of("[MinimalCheckNode] " + e.getMessage())
             ));
         }

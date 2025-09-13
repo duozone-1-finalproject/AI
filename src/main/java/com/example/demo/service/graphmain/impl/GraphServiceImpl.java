@@ -26,7 +26,7 @@ import static com.example.demo.constants.YamlConstants.SECTION_MAP;
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService {
     private static final String MAX_ITEMS_LIMIT = "5";
-    private static final long TIMEOUT_SEC = 300; // 섹션별 타임아웃
+    private static final long TIMEOUT_SEC = 600; // 섹션별 타임아웃
 
     private final CompiledGraph<DraftState> graph;
 
@@ -61,6 +61,7 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.SECTION, sectionKey);
         init.put(DraftState.SECTION_LABEL, sectionLabel);
         init.put(DraftState.MAX_ITEMS, MAX_ITEMS_LIMIT);
+        log.debug("################################ MAIN GRAPH START ({}) ##########################################", sectionLabel);
 
         AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
 
@@ -68,7 +69,10 @@ public class GraphServiceImpl implements GraphService {
 
         stream.forEach(nodeOutput -> {
             DraftState currentState = nodeOutput.state();
-            log.debug("Graph node processed. Current state: {}", currentState);
+            log.debug("Main Graph node processed. Current node: {}", nodeOutput.node());
+            log.debug("{}", currentState);
+            log.debug("DrafteState drafts(size={}): {}",
+                    currentState.getDrafts().size(), currentState.getDrafts());
             finalStateRef.set(currentState);
         });
 
@@ -77,7 +81,7 @@ public class GraphServiceImpl implements GraphService {
             // 스트림이 비어있는 경우에 대한 처리
             finalState = new DraftState(Map.of());
         }
-
+        log.debug("################################ MAIN GRAPH END   ({}) ##########################################", sectionLabel);
         return finalState.getDrafts().getLast();
     }
 }

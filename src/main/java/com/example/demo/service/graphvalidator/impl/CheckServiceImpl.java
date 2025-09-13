@@ -33,16 +33,21 @@ public class CheckServiceImpl implements CheckService {
 
 
     private ValidatorState runGraph(Map<String, Object> init) {
+        log.debug("################################ VALIDATOR GRAPH START ({}) ##########################################", init.get(ValidatorState.SECTION_LABEL));
         AsyncGenerator<NodeOutput<ValidatorState>> stream = graph.stream(init);
         final AtomicReference<ValidatorState> finalStateRef = new AtomicReference<>();
 
         stream.forEach(nodeOutput -> {
             ValidatorState currentState = nodeOutput.state();
-            log.info("Graph node processed. Current ValidatorState: {}", currentState);
+
+            log.debug("Validator Graph node processed. Current node: {}", nodeOutput.node());
+            log.debug("ValidateState drafts(size={}): {}", currentState.getDraft().size(), currentState.getDraft());
+            log.debug("{}", currentState);
             finalStateRef.set(currentState);
         });
 
         ValidatorState finalState = finalStateRef.get();
+        log.debug("################################ VALIDATOR GRAPH END   ({}) ##########################################", init.get(ValidatorState.SECTION_LABEL));
         return (finalState != null) ? finalState : new ValidatorState(Map.of());
     }
 
@@ -53,7 +58,7 @@ public class CheckServiceImpl implements CheckService {
         init.put(ValidatorState.IND_NAME, req.getIndutyName());
         init.put(ValidatorState.SECTION, req.getSection());
         init.put(ValidatorState.SECTION_LABEL, SECTION_MAP.get(req.getSection()));
-        init.put(ValidatorState.DRAFT, req.getDraft());
+        init.put(ValidatorState.DRAFT, List.of(req.getDraft()));
 
         ValidatorState state = runGraph(init);
         return state.getValidation();

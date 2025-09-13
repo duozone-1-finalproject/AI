@@ -27,7 +27,7 @@ public class ContextAggregatorNode implements AsyncNodeAction<DraftState> {
 //                DraftState.NEWS_READY, newsReady
         );
         log.debug("[ContextAggregatorNode] DB_READY: {}", dbReady);
-//        log.info("[ContextAggregatorNode] WEB_READY: {}", webReady);
+//        log.debug("[ContextAggregatorNode] WEB_READY: {}", webReady);
 
 
         return CompletableFuture.completedFuture(updates);
