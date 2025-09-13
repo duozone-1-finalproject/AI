@@ -37,7 +37,7 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
             Map<String, Object> baseVars = state.getBaseVars();
 
             String draftText = state.getDrafts().getLast();
-            log.info("[MinimalCheckNode] BEFORE - draft: {}", draftText);
+            log.debug("[MinimalCheckNode] BEFORE - draft: {}", draftText);
 
 
             // 2) 섹션별 체크리스트(자체 내부검증) 실행
@@ -50,18 +50,20 @@ public class MinimalCheckNode implements AsyncNodeAction<DraftState> {
 
             Prompt checkPrompt = new Prompt(checkMsgs);
             String fixed = chatClient.prompt(checkPrompt).call().content();
-            log.info("[MinimalCheckNode] AFTER - fixed: {}", fixed);
+            log.debug("[MinimalCheckNode] AFTER - fixed: {}", fixed);
 
 
 
             // 3) 폴백
             String finalDraft = (fixed == null || fixed.isBlank()) ? draftText : fixed;
-            return CompletableFuture.completedFuture(Map.of(DraftState.DRAFT, finalDraft));
+            return CompletableFuture.completedFuture(Map.of(
+                    DraftState.DRAFT, List.of(finalDraft)
+            ));
 
         } catch (Exception e) {
             log.error("Draft generation failed", e);
             return CompletableFuture.completedFuture(Map.of(
-                    DraftState.DRAFT, "",
+                    DraftState.DRAFT, List.of(),
                     DraftState.ERRORS, List.of("[MinimalCheckNode] " + e.getMessage())
             ));
         }
