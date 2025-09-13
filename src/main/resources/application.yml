@@ -76,3 +76,12 @@ spring:
     max-conn-total: 100
     max-conn-per-route: 100
     sniff-enabled: false       # Managed/로컬 모두 기본 false 권장
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health # 'health' 엔드포인트를 HTTP로 노출
+  endpoint:
+    health:
+      show-details: when_authorized # 인증된 사용자에게만 상세 정보 표시
