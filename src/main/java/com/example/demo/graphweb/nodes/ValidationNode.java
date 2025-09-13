@@ -32,8 +32,7 @@ public class ValidationNode implements AsyncNodeAction<WebState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         // 1. FetchNode가 처리한 '본문이 채워진' 기사 목록을 가져옵니다.
-        List<WebResponseDto.Article> fetchedArticles = state.getFetchedArticles();
-        log.info("[ValidationNode] FetchNode로부터 {}개의 기사를 받아 검증을 시작합니다.", fetchedArticles.size());
+        String fetchedArticles = state.getFetchedArticles();
 
         if (fetchedArticles.isEmpty()) {
             return CompletableFuture.completedFuture(Map.of());
