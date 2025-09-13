@@ -7,11 +7,14 @@ app:
   kafka:
     enabled: ${APP_KAFKA_ENABLED:true}   # 브로커/카프카 안쓸 땐 false 로 실행
 
-# Kafka 로그 레벨 스위치 (브로커/AI 카프카 안쓸 때 OFF 로)
 logging:
   level:
+    # Kafka 로그 레벨 스위치 (브로커/AI 카프카 안쓸 때 OFF 로)
     org.apache.kafka: ${APP_KAFKA_LOG_LEVEL:INFO}
     org.springframework.kafka: ${APP_KAFKA_LOG_LEVEL:INFO}
+    # MCP 로그레벨
+    org.springframework.ai.mcp: DEBUG
+    io.modelcontextprotocol: DEBUG
 
 spring:
   config:
@@ -28,16 +31,22 @@ spring:
         options:
           model: ${OPENAI_MODEL}
           temperature: 1
-  # MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행
-  mcp:
-    client:
-      enabled: true
-      type: SYNC     # SYNC or ASYNC
-      stdio:
-        connections:
-          duck: # 연결 이름
-            command: ${DDG_CMD}
-            args: [ ]
+    # MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행
+    mcp:
+      client:
+        enabled: true
+        type: SYNC     # SYNC or ASYNC
+        stdio:
+          connections:
+            duck: # 연결 이름
+              command: ${DDG_CMD}
+              args: [ ]
+            tavily:
+              command: ${NPX_PATH:npx}
+              args:
+                - -y
+                - mcp-remote
+                - https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}
   # Kafka Configuration
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
