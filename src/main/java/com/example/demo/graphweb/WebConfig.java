@@ -1,14 +1,13 @@
 // 여기에 node와 state가 어떻게 연결되는지 만들기.
 package com.example.demo.graphweb;
 
-import com.example.demo.graphweb.nodes.QueryBuilderNode;
-import com.example.demo.graphweb.nodes.SearchNode;
-import com.example.demo.graphweb.nodes.FetchNode;
+import com.example.demo.graphweb.nodes.*;
 
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.GraphStateException;
 import org.bsc.langgraph4j.StateGraph;
+import org.bsc.langgraph4j.action.AsyncEdgeAction;
 import org.bsc.langgraph4j.state.Channel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,20 @@ import org.springframework.context.annotation.Configuration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.bsc.langgraph4j.StateGraph.START;
+import static org.bsc.langgraph4j.StateGraph.END;
+import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
+
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig {
 
     private final QueryBuilderNode queryBuilderNode;
     private final SearchNode searchNode;
-//    private final FetchNode fetchNode;
-    //private final ValidationNode validationNode; // 💡 ValidationNode 구현 전까지 임시 주석 처리
+    private final FetchNode fetchNode;
+    private final ValidationNode validationNode;
+    private final PickedArticleNode pickedArticleNode;
+    private final AfterValidationNode afterValidationNode;
 
     @Bean(name = "webSubGraph")
     public CompiledGraph<WebState> webSubGraph() throws GraphStateException {
@@ -35,17 +40,28 @@ public class WebConfig {
         // ✅ 노드 정의
         graph.addNode("query", queryBuilderNode);
         graph.addNode("search", searchNode);
-        //graph.addNode("fetch", fetchNode); // 💡 FetchNode 테스트 전까지 임시 주석 처리
-        //graph.addNode("validation", validationNode); // 💡 ValidationNode 구현 전까지 임시 주석 처리
+        graph.addNode("picked", pickedArticleNode);
+        graph.addNode("fetch", fetchNode);
+        graph.addNode("validation", validationNode);
+        graph.addNode("afterValidation", afterValidationNode);
 
         // ✅ 엣지 연결 (실행 순서: query → search → END)
-        graph.addEdge(StateGraph.START, "query");
+        graph.addEdge(START, "query");
         graph.addEdge("query", "search");
-        graph.addEdge("search", StateGraph.END); // 💡 SearchNode 결과만 확인하기 위해 바로 종료
-        //graph.addEdge("fetch", "validation"); // 💡 임시 주석 처리
-        //graph.addEdge("fetch", StateGraph.END); // 💡 임시 주석 처리
+        graph.addEdge("search", END); // 💡 SearchNode 결과만 확인하기 위해 바로 종료
 
-        // ✅ 실행용 그래프 컴파일 후 반환
+        // 엣지 설정
+//        graph.addEdge(START, "query");
+//        graph.addEdge("query", "search");
+//        graph.addEdge("search", "picked");
+//        graph.addEdge("picked", "fetch");
+//        graph.addEdge("fetch", "validation");
+//        graph.addEdge("validation","afterValidation");
+//        graph.addConditionalEdges("afterValidation",
+//                edge_async(s -> "end".equals(s.value(WebState.DECISION).orElse("")) ? END : "picked"),
+//                Map.of(END, END, "picked", "picked")
+//        );
+
         return graph.compile();
     }
 }

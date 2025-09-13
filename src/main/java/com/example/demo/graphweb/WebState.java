@@ -3,6 +3,7 @@
 package com.example.demo.graphweb;
 
 import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.dto.WebDocs;
 import com.example.demo.dto.WebResponseDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
@@ -31,6 +32,12 @@ public class WebState extends AgentState {
     public static final String VALIDATED    = "validated";     // Boolean (ValidationNode 결과)
     public static final String ERRORS       = "errors";        // List<String> (누적 에러 로그)
     public static final String FINAL_RESULT = "final_result";  // List<WebResponseDto.Article> (검증 통과 누적)
+    public static final String CUR_KEY_IDX = "cur_key_idx";
+    public static final String CUR_CAND_IDX = "cur_cand_idx";
+    public static final String PICKED_ARTICLE = "picked_article";
+    public static final String CUR_KEYWORD = "cur_keyword";
+    public static final String WEB_DOCS = "web_docs";
+    public static final String DECISION = "decsion";
 
     // ---- SCHEMA ----
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
@@ -43,14 +50,19 @@ public class WebState extends AgentState {
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES,   Channels.base(ArrayList<SearchLLMDto>::new)), // 💡 [수정] 저장할 타입을 SearchLLMDto의 리스트로 변경
             // FetchNode가 반환하는 List<Article>을 저장하기 위해 appender 채널을 사용합니다.
-            Map.entry(FETCHED_ARTICLES, Channels.<WebResponseDto.Article>appender(ArrayList::new)),
+            Map.entry(FETCHED_ARTICLES, Channels.base(() -> "")),
             Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)),
             // 검증노드에서 통과를 못한 경우 (END로 안가는 경우, 루프되는 노드로 보낼때의 데이터를 어떤걸 보낼건가?
             //Map.entry(FINAL_RESULT, Channels.appender(ArrayList::new)),  // 통과했을 경우 넣을 state
             Map.entry(FINAL_RESULT, Channels.<WebResponseDto.Article>appender(ArrayList::new)),
             // [{keyword:"산업전망", searched_data: [{title, url, source, date}]}, ]
-            Map.entry(ERRORS, Channels.appender(ArrayList::new))
-
+            Map.entry(ERRORS, Channels.appender(ArrayList::new)),
+            Map.entry(CUR_KEY_IDX, Channels.base(() -> 0)),
+            Map.entry(CUR_CAND_IDX, Channels.base(() -> 0)),
+            Map.entry(PICKED_ARTICLE, Channels.base(SearchLLMDto.Item::new)),
+            Map.entry(CUR_KEYWORD, Channels.base(() -> "")),
+            Map.entry(WEB_DOCS, Channels.appender(ArrayList<WebDocs>::new)),
+            Map.entry(DECISION, Channels.base(() -> ""))
     );
 
     /* 생성자
@@ -81,8 +93,8 @@ public class WebState extends AgentState {
     }
 
     // 🔸 FetchNode가 저장한 "본문이 채워진" 기사 목록
-    public List<WebResponseDto.Article> getFetchedArticles() {
-        return this.<List<WebResponseDto.Article>>value(FETCHED_ARTICLES).orElse(List.of());
+    public String getFetchedArticles() {
+        return this.<String>value(FETCHED_ARTICLES).orElse("");
     }
 
     public boolean isValidated() {
@@ -95,6 +107,37 @@ public class WebState extends AgentState {
 
     public List<String> getErrors() {
         return this.<List<String>>value(ERRORS).orElse(List.of());
+    }
+    public SearchLLMDto.Item getPickedArticle() {
+        return this.<SearchLLMDto.Item>value(PICKED_ARTICLE).orElseGet(SearchLLMDto.Item::new);
+    }
+
+    public Integer getCurKeyIdx() {
+        return this.<Integer>value(CUR_KEY_IDX).orElse(0);
+    }
+
+    public Integer getCurCandIdx() {
+        return this.<Integer>value(CUR_CAND_IDX).orElse(0);
+    }
+
+    public Boolean getValidated() {
+        return this.<Boolean>value(VALIDATED).orElse(false);
+    }
+
+    public String getCurKeyword() {
+        return this.<String>value(CUR_KEYWORD).orElse("");
+    }
+
+    // WebState.ARTICLES의 size 얻는 getter
+    public Integer getArticlesSize() {
+        return this.<List<SearchLLMDto>>value(ARTICLES).orElse(List.of()).size();
+    }
+    // WebState.ARTICLES의 CUR_KEY_IDX의 candidates의 size 얻는 getter
+    public Integer getCandidatesSize(Integer keyIdx) {
+        return this.<List<SearchLLMDto>>value(ARTICLES).orElse(List.of()).get(keyIdx).getCandidates().size();
+    }
+    public String getDecision() {
+        return this.<String>value(DECISION).orElse("");
     }
 }
 
