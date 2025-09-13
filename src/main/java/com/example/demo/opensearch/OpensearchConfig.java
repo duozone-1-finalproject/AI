@@ -13,6 +13,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URISyntaxException;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OpensearchProperties.class)
@@ -24,7 +26,11 @@ public class OpensearchConfig {
      * URI 그대로 HttpHost 생성, 포트 없이도 안전
      */
     private HttpHost toHost(String uriStr) {
-        return HttpHost.create(uriStr);
+        try {
+            return HttpHost.create(uriStr);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid URI for OpenSearch: " + uriStr, e);
+        }
     }
 
     @Bean(destroyMethod = "close")
