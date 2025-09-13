@@ -13,9 +13,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.URI;
-import java.time.Duration;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OpensearchProperties.class)
@@ -23,20 +20,22 @@ public class OpensearchConfig {
 
     private final OpensearchProperties props;
 
+    /**
+     * URI 그대로 HttpHost 생성, 포트 없이도 안전
+     */
     private HttpHost toHost(String uriStr) {
-        URI u = URI.create(uriStr);
-        String scheme = (u.getScheme() != null) ? u.getScheme() : "http";
-        int port = (u.getPort() != -1) ? u.getPort() : -1;
-        return new HttpHost(scheme, u.getHost(), port);
+        return HttpHost.create(uriStr);
     }
 
     @Bean(destroyMethod = "close")
     public OpenSearchTransport openSearchTransport() {
-        HttpHost[] hosts = props.getUris().stream().map(this::toHost).toArray(HttpHost[]::new);
+        HttpHost[] hosts = props.getUris().stream()
+                .map(this::toHost)
+                .toArray(HttpHost[]::new);
 
         var builder = ApacheHttpClient5TransportBuilder.builder(hosts);
 
-        var cm = PoolingAsyncClientConnectionManagerBuilder.create()
+        PoolingAsyncClientConnectionManager cm = PoolingAsyncClientConnectionManagerBuilder.create()
                 .setMaxConnTotal(props.getMaxConnTotal())
                 .setMaxConnPerRoute(props.getMaxConnPerRoute())
                 .build();
@@ -46,7 +45,8 @@ public class OpensearchConfig {
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(Timeout.ofMilliseconds(props.getConnectionTimeout().toMillis()))
                         .setResponseTimeout(Timeout.ofMilliseconds(props.getSocketTimeout().toMillis()))
-                        .build()));
+                        .build())
+        );
 
         return builder.build();
     }
