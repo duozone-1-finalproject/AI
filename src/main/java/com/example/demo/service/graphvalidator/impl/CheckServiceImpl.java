@@ -38,7 +38,7 @@ public class CheckServiceImpl implements CheckService {
 
         stream.forEach(nodeOutput -> {
             ValidatorState currentState = nodeOutput.state();
-            log.debug("Graph node processed. Current ValidatorState: {}", currentState);
+            log.info("Graph node processed. Current ValidatorState: {}", currentState);
             finalStateRef.set(currentState);
         });
 

@@ -36,9 +36,9 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
 
         // SubGraph 결과에서 DB_DOCS, financials 추출
         List<DbDocDto> dbDocs = finalState.getDbDocs();
-        log.info("[DbSubgraphInvoker] dbDocs: {}", dbDocs);
+        log.debug("[DbSubgraphInvoker] dbDocs: {}", dbDocs);
         String financials = finalState.getFinancials();
-        log.info("[DbSubgraphInvoker] financials: {}", financials);
+        log.debug("[DbSubgraphInvoker] financials: {}", financials);
 
 
         return CompletableFuture.completedFuture(Map.of(

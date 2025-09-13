@@ -26,6 +26,14 @@ public class ValidatorGraphInvokerNode implements AsyncNodeAction<DraftState> {
         String section = state.getSection();
         String indutyName = state.getIndutyName();
 
+        log.info("### 검증 그래프 INIT DATA ###");
+        log.info("draft: {}", draft);
+        log.info("section: {}", section);
+        log.info("indutyName: {}", indutyName);
+        log.info("### 검증 그래프 시작점 ###");
+
+
+
         CheckRequestDto dto = new CheckRequestDto();
         dto.setDraft(draft);
         dto.setSection(section);
