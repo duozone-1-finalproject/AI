@@ -76,22 +76,9 @@ public class SearchNode implements AsyncNodeAction<WebState> {
 
             List<Message> messages = new ArrayList<>(sys.getInstructions());
             messages.addAll(user.getInstructions());
+            
+            Prompt finalPrompt = new Prompt(messages);
 
-            // 4) JSON Schema 강제 옵션 설정
-            ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
-                    .name("SearchLLMDto")
-                    .schema(schema)
-                    .strict(true)
-                    .build();
-
-            OpenAiChatOptions options = OpenAiChatOptions.builder()
-                    .responseFormat(ResponseFormat.builder()
-                            .type(ResponseFormat.Type.JSON_SCHEMA)
-                            .jsonSchema(jsonSchema)
-                            .build())
-                    .build();
-
-            Prompt finalPrompt = new Prompt(messages, options);
 
             // 5) LLM 호출 & 원본 응답 로깅
             // 💡 [수정] ParameterizedTypeReference를 사용하여 '객체의 리스트'를 한 번에 받아옵니다.
@@ -99,8 +86,8 @@ public class SearchNode implements AsyncNodeAction<WebState> {
                     .prompt(finalPrompt)
                     .call()
                     .entity(new ParameterizedTypeReference<List<SearchLLMDto>>() {});
-            log.info("[SearchNode] LLM으로부터 {}개의 키워드 결과를 받았습니다.", results.size());
-            
+            log.info("[SearchNode] results: {}", results);
+
             // 💡 [수정] 이제 복잡한 후처리 없이, LLM의 결과를 그대로 상태에 저장합니다.
             return CompletableFuture.completedFuture(Map.of(WebState.ARTICLES, results));
 

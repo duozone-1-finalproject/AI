@@ -12,16 +12,16 @@ public final class SearchSchemas {
     public static final String COMPANY  = build(KeywordContants.COM_KWD); // 회사 위험
 
     private static String build(java.util.List<String> allowed) {
-        String enums = allowed.stream()
-                .map(k -> "\"" + k + "\"")
-                .collect(Collectors.joining(","));
+//        String enums = allowed.stream()
+//                .map(k -> "\"" + k + "\"")
+//                .collect(Collectors.joining(","));
 
         // 루트가 배열이고, 각 원소가 {keyword, candidates[]} 형태
         // URL/날짜는 format 대신 pattern 사용 (호환성 ↑)
         return """
         {
          "type": "array",
-          "minItems": 1,
+          "minItems": 6,
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -45,7 +45,7 @@ public final class SearchSchemas {
             },
             "required": ["keyword","candidates"]
         }
-        """.formatted(enums);
+        """;
     }
 }
 
