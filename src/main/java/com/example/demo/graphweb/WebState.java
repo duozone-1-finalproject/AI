@@ -50,7 +50,7 @@ public class WebState extends AgentState {
             Map.entry(QUERY, Channels.base(ArrayList<String>::new)),
             Map.entry(ARTICLES,   Channels.base(ArrayList<SearchLLMDto>::new)), // 💡 [수정] 저장할 타입을 SearchLLMDto의 리스트로 변경
             // FetchNode가 반환하는 List<Article>을 저장하기 위해 appender 채널을 사용합니다.
-            Map.entry(FETCHED_ARTICLES, Channels.<WebResponseDto.Article>appender(ArrayList::new)),
+            Map.entry(FETCHED_ARTICLES, Channels.base(() -> "")),
             Map.entry(VALIDATED, Channels.base(() -> Boolean.FALSE)),
             // 검증노드에서 통과를 못한 경우 (END로 안가는 경우, 루프되는 노드로 보낼때의 데이터를 어떤걸 보낼건가?
             //Map.entry(FINAL_RESULT, Channels.appender(ArrayList::new)),  // 통과했을 경우 넣을 state
@@ -93,8 +93,8 @@ public class WebState extends AgentState {
     }
 
     // 🔸 FetchNode가 저장한 "본문이 채워진" 기사 목록
-    public List<WebResponseDto.Article> getFetchedArticles() {
-        return this.<List<WebResponseDto.Article>>value(FETCHED_ARTICLES).orElse(List.of());
+    public String getFetchedArticles() {
+        return this.<String>value(FETCHED_ARTICLES).orElse("");
     }
 
     public boolean isValidated() {
