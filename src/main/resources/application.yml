@@ -35,7 +35,7 @@ spring:
               args: []
             # tavily
             tavily:
-              command: "C:/Program Files/nodejs/npx.cmd"
+              command: ${TAVILY_CMD}
               args:
                 - -y
                 - mcp-remote
@@ -58,8 +58,8 @@ ai:
     fetch_user: "classpath:prompts/fetch_user.st"
     search_sys: "classpath:prompts/search_sys.st"
     search_user: "classpath:prompts/search_user.st"
-    web_validator_user: "resources/prompts/web_validator_user.st.st"
-    web_validator_sys: "resources/prompts/web_validator_sys.st.st"
+    web_validator_user: "classpath:prompts/web_validator_user.st"
+    web_validator_sys: "classpath:prompts/web_validator_sys.st"
 
 
   sections:
