@@ -70,6 +70,7 @@ public class YamlConstants {
             "risk_etc", List.of("web", "db")
     );
 
+
     public static final List<String> DEFAULT_ORDER = List.of(
             "risk_industry",
             "risk_company",

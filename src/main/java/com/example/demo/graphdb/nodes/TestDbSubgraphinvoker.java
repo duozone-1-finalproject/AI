@@ -27,7 +27,7 @@ public class TestDbSubgraphinvoker {
 
         // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
         DbSubGraphState finalState = dbSubGraph.invoke(subStateInit).orElse(new DbSubGraphState(Map.of()));  // compile()된 그래프는 invoke/stream 가능
-        return (List<DbDocDto>) finalState.value(DbSubGraphState.DB_DOCS).orElse("");
+        return finalState.getDbDocs();
     }
 
     public String runTest(String sectionKey, DraftRequestDto req) {
@@ -39,6 +39,6 @@ public class TestDbSubgraphinvoker {
 
         // 그래프 실행 → 최종 상태에서 초안 텍스트 추출
         DbSubGraphState finalState = dbSubGraph.invoke(subStateInit).orElse(new DbSubGraphState(Map.of()));  // compile()된 그래프는 invoke/stream 가능
-        return finalState.value(DbSubGraphState.FINANCIALS).orElse("").toString();
+        return finalState.getFinancials();
     }
 }
