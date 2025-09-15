@@ -53,11 +53,14 @@ spring:
       reconnect.backoff.ms: 10000
       reconnect.backoff.max.ms: 60000
       retry.backoff.ms: 10000
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       acks: all
       retries: 3
+      properties:
+        max.request.size: ${KAFKA_MAX_REQUEST_SIZE:5242880}   # 🔹 프로듀서 메시지 크기
     consumer:
       # AI 서버용 group-id
       group-id: ${KAFKA_CONSUMER_GROUP:ai-server-group}
@@ -67,6 +70,9 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
       enable-auto-commit: true
+      properties:
+        fetch.max.bytes: ${KAFKA_FETCH_MAX_BYTES:5242880}             # 🔹 컨슈머 전체 fetch
+        max.partition.fetch.bytes: ${KAFKA_MAX_PARTITION_FETCH_BYTES:5242880}  # 🔹
 
   # Opensearch - 보안X(HTTP, 기본 인증 없음)
   opensearch:
