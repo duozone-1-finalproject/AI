@@ -42,13 +42,9 @@ public class FetchNode implements AsyncNodeAction<WebState> {
 //        Map<String, Object> vars = new HashMap<>();
 //        vars.put("title",   pickedAticle.getTitle());
 //        vars.put("url",     pickedAticle.getUrl());
-//        vars.put("date",    pickedAticle.getDate());
-//        vars.put("source",  pickedAticle.getSource());
         Map<String, Object> vars = Map.of(
                 "title", "삼성전자 반도체",
-                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042",
-                "date", "2025-05-21",
-                "source", "news"
+                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042"
         );
 
         // 3) 프롬프트 만들기(시스템/유저). 템플릿 없으면 간단 문자열로 대체

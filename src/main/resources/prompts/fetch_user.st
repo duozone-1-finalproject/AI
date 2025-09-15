@@ -1,38 +1,19 @@
-[입력]
+[Input]
+TITLE: <title>
 URL: <url>
 
-[도구 사용 규칙]
-- 오직 MCP tool extract만 호출하십시오.
-- search 포함 그 외 모든 도구 호출을 금지합니다.
-- 네트워크 요청은 반드시 제공된 url 에 대해서만 수행합니다.
+[Tool Usage Rules]
+- Call only the MCP tool extract.
+- Do not call any other tools, including search.
+- Perform network requests only for the provided URL.
 
-[작업]
-- 위 URL에서 기사 본문만 가져오세요.
-- 네비게이션/광고/댓글/추천/구독 유도/푸터/작성자 소개/연관 링크/저작권 안내 등 본문 외 요소는 모두 제거하세요.
-- 원문 언어를 유지하고, 문단 구분은 보존하며 불필요한 공백만 정리하세요.
-- 최대 6000자까지만 반환하고, 초과 시 문단 경계에서 자른 뒤 …(중략)을 덧붙이세요.
-- 본문이 비정상적이거나 500자 미만이면 #FETCH_EMPTY 를, 접근 실패 등 오류면 #FETCH_ERROR: <사유> 만 출력하세요.
+[Task]
+- Retrieve only the article body from the URL above.
+- Remove all non-body elements such as navigation, ads, comments, recommendations, subscription prompts, footer, author bio, related links, and copyright notices.
+- Preserve the original language and paragraph breaks; only clean up unnecessary whitespace.
+- If the body is abnormal or under 500 characters, output #FETCH_EMPTY; if access fails or another error occurs, output only #FETCH_ERROR: reason.
 
-[추출 규칙]
-- 출력은 반드시 string 형태의 text 배열이여야 합니다.
-- 기사 본문 텍스트만 가져오고, 다음 요소는 전부 제거합니다: 광고/배너/추천기사/구독 유도/댓글/탭/사이드바/푸터/저작권 고지/작성자 프로필/연관 링크
-- 원문 언어를 유지합니다. (번역 금지)
-- 본문의 탭·복수 공백·줄 양옆 공백은 모두 한 칸으로 정리하고 3줄 이상 연속 개행은 2줄로 축약하되, 의미 단락을 구분하는 개행 자체는 그대로 유지
-- 한국어: 조사/어미(은/는/이/가/을/를/에/에서/으로/에게/까지/부터/처럼/로서/했다/합니다 등)
-- 영어 등: 일반 불용어(the, a, of, for, with, about, into, from 등) 제거.
-- 숫자는 날짜/수치 맥락(연도, 분기, 금액, % 등)만 유지, 그 외는 제거.
-- 고유명사/중요 복합어는 단어_단어처럼 언더스코어로 결합(예: 모델_컨텍스트_프로토콜).
-- 가능한 한 표제어/어간 형태로 간명하게 정규화(예: “검토했다”→“검토”).
-- 앞뒤 인용부호("...")도 금지. 본문만 출력.
-- 단락은 \n 로 구분.
-- 다중 페이지/무한 스크롤은 첫 본문 영역만 대상으로(‘다음 페이지’ 링크, ?page= 파라미터, ‘더보기’) 합니다.
-- 본문이 아닌 표/코드/캡션/이미지 설명은 제거합니다. (단, 본문 문장 안의 괄호 설명은 유지)
-- 길이 상한: 최대 6000자. 초과 시 문단 경계에서 자연스럽게 절단하고 끝에 …(중략)만 추가합니다.
-
-[출력 형식 (아주 중요)]
-- 본문 텍스트 하나의 문자열만 출력합니다.
-- JSON/마크다운/코드블록/설명/메타데이터 절대 금지.
-- 성공 시 본문 텍스트 그대로, 실패 시 위의 특수 토큰만 단독 출력합니다.
-- 실패 시 #FETCH_EMPTY 또는 #FETCH_ERROR: ... 한 줄만 출력하세요.
-
-
+[Output Format (Very Important)]
+- Output a single string only.
+- Absolutely no JSON/Markdown/code blocks/descriptions/metadata.
+- On failure, output just one line: #FETCH_EMPTY or #FETCH_ERROR: ...
