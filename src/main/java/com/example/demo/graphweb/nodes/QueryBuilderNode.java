@@ -17,12 +17,14 @@ package com.example.demo.graphweb.nodes;
 
 import com.example.demo.graphweb.WebState;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class QueryBuilderNode implements AsyncNodeAction<WebState> {
@@ -47,6 +49,7 @@ public class QueryBuilderNode implements AsyncNodeAction<WebState> {
                 // 최종 쿼리 문자열 생성 (회사명 + 산업명 + 키워드)
                 .map(k -> corp + " " + ind + " " + k) // 최종 쿼리 문자열
                 .toList();
+        log.info("[QueryBuilderNode] queries: {}", queries);
 
         // WebState.QUERY 채널에 쿼리 리스트를 partial update로 저장
         return CompletableFuture.completedFuture(

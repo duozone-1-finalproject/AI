@@ -35,7 +35,7 @@ spring:
               args: []
             # tavily
             tavily:
-              command: ${TAVILY_CMD}
+              command: ${TAVILY_CMD:npx}
               args:
                 - -y
                 - mcp-remote

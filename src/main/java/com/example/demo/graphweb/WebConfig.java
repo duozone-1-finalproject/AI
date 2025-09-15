@@ -48,8 +48,7 @@ public class WebConfig {
         // ✅ 엣지 연결 (실행 순서: query → search → END)
         graph.addEdge(START, "query");
         graph.addEdge("query", "search");
-        graph.addEdge("search", "fetch");
-        graph.addEdge("fetch", END); // 💡 SearchNode 결과만 확인하기 위해 바로 종료
+        graph.addEdge("search", END);
 
         // 엣지 설정
 //        graph.addEdge(START, "query");

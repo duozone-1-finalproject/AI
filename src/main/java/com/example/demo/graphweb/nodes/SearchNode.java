@@ -6,10 +6,9 @@
 
 package com.example.demo.graphweb.nodes;
 
-import com.example.demo.constants.KeywordContants;
-import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.constants.WebConstants;
+import com.example.demo.dto.SearchEnvelope;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.jsonschema.SearchSchemas;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.ResponseFormat;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -41,55 +39,51 @@ public class SearchNode implements AsyncNodeAction<WebState> {
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         try {
             // 1) QueryBuilderNode가 만든 입력값 불러오기
-            String corpName = state.getCorpName();
-            String indutyName = state.getIndName();
-            String section = state.getSectionLabel();
             List<String> queries = state.getQueries();
 
-            // 2) 섹션별 허용 키워드 & JSON Schema 선택
-            final Set<String> allowedKeywords;
-            final String schema;
-            switch (section) {
-                case KeywordContants.SECTION_COMPANY -> {
-                    allowedKeywords = new HashSet<>(KeywordContants.COM_KWD);
-                    schema = SearchSchemas.COMPANY;
-                }
-                case KeywordContants.SECTION_BUSINESS -> {
-                    allowedKeywords = new HashSet<>(KeywordContants.BUS_KWD);
-                    schema = SearchSchemas.BUSINESS;
-                }
-                default -> throw new IllegalArgumentException("알 수 없는 섹션입니다: " + section);
-            }
-            log.info("[SearchNode] schema: {}", schema);
-            // 3) 프롬프트 구성 (system + user)
+            // JSON 배열 문자열로 직렬화
             String keywordsJson = om.writeValueAsString(queries);
-            log.info("keywordsJson: {}", keywordsJson);
+            String domainsJson  = om.writeValueAsString(WebConstants.DOMAINS);
+
             Map<String, Object> vars = Map.of(
-                    "corp_name", corpName,
-                    "induty_name", indutyName,
-                    "section_label", section,
-                    "keywords", keywordsJson
+                    "keywords", keywordsJson,
+                    "maxItems", 5,
+                    "domains", domainsJson
             );
 
-            Prompt sys = catalog.createSystemPrompt("search_sys", Map.of());
+            Prompt sys = catalog.createSystemPrompt("search_sys", vars);
             Prompt user = catalog.createPrompt("search_user", vars);
 
             List<Message> messages = new ArrayList<>(sys.getInstructions());
             messages.addAll(user.getInstructions());
-            
-            Prompt finalPrompt = new Prompt(messages);
 
+            // (3) JSON Schema 강제 (strict) 옵션 설정
+            ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
+                    .name("SearchEnvelope")
+                    .schema(WebConstants.SEARCH_JSON_SCHEMA)
+                    .strict(true)
+                    .build();
+
+            ResponseFormat rf = ResponseFormat.builder()
+                    .type(ResponseFormat.Type.JSON_SCHEMA)
+                    .jsonSchema(jsonSchema)
+                    .build();
+
+            OpenAiChatOptions options = OpenAiChatOptions.builder()
+                    .responseFormat(rf)
+                    .build();
+            
+            Prompt finalPrompt = new Prompt(messages, options);
 
             // 5) LLM 호출 & 원본 응답 로깅
-            // 💡 [수정] ParameterizedTypeReference를 사용하여 '객체의 리스트'를 한 번에 받아옵니다.
-            List<SearchLLMDto> results = chatClient
+            SearchEnvelope results = chatClient
                     .prompt(finalPrompt)
                     .call()
-                    .entity(new ParameterizedTypeReference<List<SearchLLMDto>>() {});
-            log.info("[SearchNode] results: {}", results);
+                    .entity(SearchEnvelope.class);
+            log.info("[SearchNode] results: {}", results.getItems());
 
             // 💡 [수정] 이제 복잡한 후처리 없이, LLM의 결과를 그대로 상태에 저장합니다.
-            return CompletableFuture.completedFuture(Map.of(WebState.ARTICLES, results));
+            return CompletableFuture.completedFuture(Map.of(WebState.ARTICLES, results.getItems()));
 
         } catch (Exception e) {
             log.error("[SearchNode] error", e);
