@@ -54,12 +54,12 @@ ai:
     validator_user: "classpath:prompts/validator_user.st"
     adjust_default: "classpath:prompts/adjust_default.st"
     adjust_user: "classpath:prompts/adjust_user.st"
-    fetch_sys: "classpath:prompts/fetch_sys.st.st"
+    fetch_sys: "classpath:prompts/fetch_sys.st"
     fetch_user: "classpath:prompts/fetch_user.st"
     search_sys: "classpath:prompts/search_sys.st"
     search_user: "classpath:prompts/search_user.st"
-    web_validator_user: "resources/prompts/web_validator_user.st.st"
-    web_validator_sys: "resources/prompts/web_validator_sys.st.st"
+    web_validator_user: "classpath:prompts/web_validator_user.st"
+    web_validator_sys: "classpath:prompts/web_validator_sys.st"
 
 
   sections:
