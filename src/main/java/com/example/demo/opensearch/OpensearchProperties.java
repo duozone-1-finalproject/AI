@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.List;
 
 @Getter @Setter
-@ConfigurationProperties(prefix = "opensearch")
+@ConfigurationProperties(prefix = "spring.opensearch")
 public class OpensearchProperties {
     private List<String> uris;
     private Duration connectionTimeout;
