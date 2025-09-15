@@ -72,8 +72,8 @@ public class AfterValidationNode implements AsyncNodeAction<WebState> {
         if (meta != null) {
             pass.setTitle(meta.getTitle());
             pass.setUrl(meta.getUrl());
-            pass.setSource(meta.getSource());
-            pass.setDate(meta.getDate());
+            pass.setSource(meta.getTopic());
+            pass.setDate(meta.getPublishedDate());
         }
         pass.setContent(body);
 
