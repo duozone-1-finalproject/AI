@@ -1,19 +1,19 @@
-[입력]
+[Input]
 TITLE: <title>
 URL: <url>
 
-[도구 사용 규칙]
-- 오직 MCP tool extract만 호출하십시오.
-- search 포함 그 외 모든 도구 호출을 금지합니다.
-- 네트워크 요청은 반드시 제공된 url 에 대해서만 수행합니다.
+[Tool Usage Rules]
+- Call only the MCP tool extract.
+- Do not call any other tools, including search.
+- Perform network requests only for the provided URL.
 
-[작업]
-- 위 URL에서 기사 본문만 가져오세요.
-- 네비게이션/광고/댓글/추천/구독 유도/푸터/작성자 소개/연관 링크/저작권 안내 등 본문 외 요소는 모두 제거하세요.
-- 원문 언어를 유지하고, 문단 구분은 보존하며 불필요한 공백만 정리하세요.
-- 본문이 비정상적이거나 500자 미만이면 #FETCH_EMPTY 를, 접근 실패 등 오류면 #FETCH_ERROR: reason 만 출력하세요.
+[Task]
+- Retrieve only the article body from the URL above.
+- Remove all non-body elements such as navigation, ads, comments, recommendations, subscription prompts, footer, author bio, related links, and copyright notices.
+- Preserve the original language and paragraph breaks; only clean up unnecessary whitespace.
+- If the body is abnormal or under 500 characters, output #FETCH_EMPTY; if access fails or another error occurs, output only #FETCH_ERROR: reason.
 
-[출력 형식 (아주 중요)]
-- 단일 문자열만 출력합니다.
-- JSON/마크다운/코드블록/설명/메타데이터 절대 금지.
-- 실패 시 #FETCH_EMPTY 또는 #FETCH_ERROR: ... 한 줄만 출력하세요.
+[Output Format (Very Important)]
+- Output a single string only.
+- Absolutely no JSON/Markdown/code blocks/descriptions/metadata.
+- On failure, output just one line: #FETCH_EMPTY or #FETCH_ERROR: ...
