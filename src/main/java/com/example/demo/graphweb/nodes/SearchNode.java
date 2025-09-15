@@ -1,9 +1,3 @@
-//QueryBuilderNode에서 만든 쿼리를 받아서 DuckDuckGo API 호출
-// → 기사 링크를 가져와 state에 저장.
-// 실제 검색
-// 단순히 기사만 가져오는 것.
-// 이 코드에서 1. date가 없을때는
-
 package com.example.demo.graphweb.nodes;
 
 import com.example.demo.constants.WebConstants;

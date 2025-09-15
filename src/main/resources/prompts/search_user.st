@@ -3,34 +3,34 @@ KEYWORDS  := <keywords>
 MAX_ITEMS := <maxItems>
 
 TASK:
-- KEYWORDS의 각 키워드에 대해 "tavily-search"를 정확히 한 번 호출하라.
-- 호출 인자:
+- For each keyword in KEYWORDS, call "tavily-search" exactly once.
+- Call arguments:
   {
-    "query": 현재 키워드,
+    "query": current keyword,
     "include_domains": <domains>
   }
-- 응답 results를 변환하라.
-  • title := results[i].title  (빈 값 제외)
-  • url   := results[i].url    (^https?:// 형식만 허용)
-  • topic := "news"            (고정)
-  • publishedDate := results[i].published_date → YYYY-MM-DD (변환 실패 시/null일 시, ""로 대체)
-- URL/제목 중복 제거 후 publishedDate 내림차순 정렬, 정확히 MAX_ITEMS개의 candidates를 구성하라.
+- Transform the response results:
+  • title := results[i].title  (exclude empty)
+  • url   := results[i].url    (allow only ^https?://)
+  • topic := "news"            (constant)
+  • publishedDate := results[i].published_date → YYYY-MM-DD (on failure/null, substitute "0000-00-00")
+- After removing duplicates (title/URL), sort by publishedDate desc, then build exactly MAX_ITEMS candidates.
 
 OUTPUT JSON SCHEMA (strict):
 [
   {
-    "keyword": "입력 키워드 원문",
+    "keyword": "the original input keyword",
     "candidates": [
       {
-        "title": "기사 제목",
+        "title": "article title",
         "url": "https://example.com/path",
         "topic": "news",
         "publishedDate": "YYYY-MM-DD"
       }
     ]
   }
-  // KEYWORDS의 각 키워드에 대해 입력 순서 유지
+  // Preserve the input order for all keywords in KEYWORDS
 ]
 
 CONSTRAINTS:
-- 출력은 위 JSON만 포함. 주석, 설명, 여분 필드, 앞뒤 텍스트 금지.
+- The output must include only the JSON above. No comments, explanations, extra fields, or surrounding text.
