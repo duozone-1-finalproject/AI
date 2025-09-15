@@ -80,8 +80,6 @@ spring:
 management:
   endpoints:
     web:
+      base-path: /ai/actuator   # 혹은 /actuator
       exposure:
-        include: health # 'health' 엔드포인트를 HTTP로 노출
-  endpoint:
-    health:
-      show-details: when_authorized # 인증된 사용자에게만 상세 정보 표시
+        include: health
