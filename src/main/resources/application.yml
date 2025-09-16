@@ -68,6 +68,16 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: true
 
+kafka:
+  topics:
+    ai-request: ${KAFKA_TOPIC_AI_REQUEST:ai-report-request}
+    ai-response: ${KAFKA_TOPIC_AI_RESPONSE:ai-report-response}
+    fastapi-request: ${KAFKA_TOPIC_FASTAPI_REQUEST:fastapi-equity-request}
+    fastapi-response: ${KAFKA_TOPIC_FASTAPI_RESPONSE:fastapi-equity-response}
+    validation-request: ${KAFKA_TOPIC_VALIDATION_REQUEST:ai-validation-request}
+    validation-response: ${KAFKA_TOPIC_VALIDATION_RESPONSE:ai-validation-response}
+    revision-request: ${KAFKA_TOPIC_REVISION_REQUEST:ai-revision-request}
+    revision-response: ${KAFKA_TOPIC_REVISION_RESPONSE:ai-revision-response}
   # Opensearch - 보안X(HTTP, 기본 인증 없음)
   opensearch:
     uris: ${OPENSEARCH_URIS} # 복수형으로 변경하여 설정 속성과 일치시킴
