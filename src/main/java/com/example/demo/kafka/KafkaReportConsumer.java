@@ -1,7 +1,5 @@
-// src/main/java/com/example/demo/kafka/KafkaReportConsumer.java
 package com.example.demo.kafka;
 
-// 새로 생성한 DTO들 import
 import com.example.demo.dto.kafka.VariableMappingRequestDto;
 import com.example.demo.dto.kafka.VariableMappingResponseDto;
 import com.example.demo.dto.graphmain.DraftRequestDto;
@@ -14,6 +12,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,50 +26,78 @@ public class KafkaReportConsumer {
 
     private static final String RESPONSE_TOPIC = "ai-report-response";
 
-    @KafkaListener(topics = "ai-report-request", groupId = "${spring.kafka.consumer.group-id}")
+    // 중복 처리 방지를 위한 처리중인 요청 추적
+    private final ConcurrentMap<String, Boolean> processingRequests = new ConcurrentHashMap<>();
+
+    @KafkaListener(
+            topics = "ai-report-request",
+            groupId = "${spring.kafka.consumer.group-id}",
+            concurrency = "1"  // 중복 처리 방지
+    )
     public void consumeVariableMappingRequest(String message) {
-        log.info("변수 매핑 요청 수신: {}", message.substring(0, Math.min(message.length(), 100)) + "...");
+        String requestId = null;
 
         try {
-            // Backend 요청 JSON → DTO 변환
+            // 요청 파싱
             VariableMappingRequestDto request = objectMapper.readValue(message, VariableMappingRequestDto.class);
-            log.info("변수 매핑 처리 시작: requestId={}, corpCode={}, corpName={}, indutyCode={}, indutyName={}",
-                    request.getRequestId(), request.getCorpCode(), request.getCorpName(),request.getIndutyCode(), request.getIndutyName());
+            requestId = request.getRequestId();
 
-            // GraphService용 요청 DTO 생성
-            DraftRequestDto draftRequest = new DraftRequestDto();
-            draftRequest.setCorpCode(request.getCorpCode());
-            draftRequest.setCorpName(request.getCorpName());
-            draftRequest.setIndutyCode(request.getIndutyCode());
-            draftRequest.setIndutyName(request.getIndutyName());
+            log.info("변수 매핑 요청 수신: requestId={}, message length={}",
+                    requestId, message.length());
 
-            // 실제 AI 처리 실행
-            long startTime = System.currentTimeMillis();
-            DraftResponseDto aiResult = graphService.run(draftRequest);
-            long processingTime = System.currentTimeMillis() - startTime;
+            // 중복 처리 체크
+            if (processingRequests.putIfAbsent(requestId, true) != null) {
+                log.warn("이미 처리중인 요청입니다. 무시합니다: requestId={}", requestId);
+                return;
+            }
 
-            log.info("AI 처리 완료: requestId={}, processingTime={}ms",
-                    request.getRequestId(), processingTime);
+            try {
+                log.info("변수 매핑 처리 시작: requestId={}, corpCode={}, corpName={}, indutyCode={}, indutyName={}",
+                        requestId, request.getCorpCode(), request.getCorpName(),
+                        request.getIndutyCode(), request.getIndutyName());
 
-            // Backend가 기대하는 형식으로 응답 생성
-            VariableMappingResponseDto response = VariableMappingResponseDto.builder()
-                    .requestId(request.getRequestId())
-                    .riskIndustry(aiResult.getRiskIndustry() != null ? aiResult.getRiskIndustry() : "산업 리스크 분석 중...")
-                    .riskCompany(aiResult.getRiskCompany() != null ? aiResult.getRiskCompany() : "기업 리스크 분석 중...")
-                    .riskEtc(aiResult.getRiskEtc() != null ? aiResult.getRiskEtc() : "기타 리스크 분석 중...")
-                    //.s1_1d_1(generateS1_1D_1Response(aiResult)) // 추가 LLM 응답
-                    .processingTime(processingTime)
-                    .status("SUCCESS")
-                    .build();
+                // GraphService용 요청 DTO 생성
+                DraftRequestDto draftRequest = new DraftRequestDto();
+                draftRequest.setCorpCode(request.getCorpCode());
+                draftRequest.setCorpName(request.getCorpName());
+                draftRequest.setIndutyCode(request.getIndutyCode());
+                draftRequest.setIndutyName(request.getIndutyName());
 
-            // Kafka 응답 전송
-            String responseJson = objectMapper.writeValueAsString(response);
-            kafkaTemplate.send(RESPONSE_TOPIC, request.getRequestId(), responseJson);
+                // 실제 AI 처리 실행
+                long startTime = System.currentTimeMillis();
+                DraftResponseDto aiResult = graphService.run(draftRequest);
+                long processingTime = System.currentTimeMillis() - startTime;
 
-            log.info("변수 매핑 응답 전송 완료: requestId={}", request.getRequestId());
+                log.info("AI 처리 완료: requestId={}, processingTime={}ms", requestId, processingTime);
+
+                // Backend가 기대하는 형식으로 응답 생성
+                VariableMappingResponseDto response = VariableMappingResponseDto.builder()
+                        .requestId(requestId)
+                        .riskIndustry(aiResult.getRiskIndustry() != null ? aiResult.getRiskIndustry() : "산업 리스크 분석 중...")
+                        .riskCompany(aiResult.getRiskCompany() != null ? aiResult.getRiskCompany() : "기업 리스크 분석 중...")
+                        .riskEtc(aiResult.getRiskEtc() != null ? aiResult.getRiskEtc() : "기타 리스크 분석 중...")
+                        .processingTime(processingTime)
+                        .status("SUCCESS")
+                        .build();
+
+                // Kafka 응답 전송
+                String responseJson = objectMapper.writeValueAsString(response);
+                kafkaTemplate.send(RESPONSE_TOPIC, requestId, responseJson);
+
+                log.info("변수 매핑 응답 전송 완료: requestId={}", requestId);
+
+            } finally {
+                // 처리 완료 후 추적 맵에서 제거
+                processingRequests.remove(requestId);
+            }
 
         } catch (Exception e) {
-            log.error("변수 매핑 처리 실패", e);
+            log.error("변수 매핑 처리 실패: requestId={}", requestId, e);
+
+            // 처리중 맵에서 제거
+            if (requestId != null) {
+                processingRequests.remove(requestId);
+            }
 
             // 에러 응답 전송
             try {
@@ -78,13 +107,13 @@ public class KafkaReportConsumer {
                         .riskIndustry("처리 실패: " + e.getMessage())
                         .riskCompany("처리 실패: " + e.getMessage())
                         .riskEtc("처리 실패: " + e.getMessage())
-                        //.s1_1d_1("처리 실패: " + e.getMessage())
                         .processingTime(0L)
                         .status("FAILED")
                         .build();
 
                 String errorJson = objectMapper.writeValueAsString(errorResponse);
                 kafkaTemplate.send(RESPONSE_TOPIC, request.getRequestId(), errorJson);
+
             } catch (Exception ex) {
                 log.error("에러 응답 전송 실패", ex);
             }
