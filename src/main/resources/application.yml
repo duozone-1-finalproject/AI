@@ -19,8 +19,9 @@ spring:
       base-url: ${OPENAI_BASE_URL}
       chat:
         options:
-          model: ${OPENAI_MODEL}
-          temperature: 1
+            timeout: 30s
+            model: ${OPENAI_MODEL}
+            temperature: 1
     # --- MCP Client: STDIO로 DuckDuckGo MCP를 자식 프로세스로 실행 ---
     mcp:
       client:

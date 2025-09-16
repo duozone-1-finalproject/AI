@@ -12,6 +12,8 @@ URL: <url>
 - Remove all non-body elements such as navigation, ads, comments, recommendations, subscription prompts, footer, author bio, related links, and copyright notices.
 - Preserve the original language and paragraph breaks; only clean up unnecessary whitespace.
 - If the body is abnormal or under 500 characters, output #FETCH_EMPTY; if access fails or another error occurs, output only #FETCH_ERROR: reason.
+- After extraction, perform deletion-based line compression (one fact per line, '\n' separated).
+- No paraphrase/translation. Preserve numbers/units/dates/proper nouns/modality (e.g., 목표/계획/전망/확정/증가·감소).
 
 [Output Format (Very Important)]
 - Output a single string only.

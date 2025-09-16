@@ -9,7 +9,8 @@ For each keyword `k` in KEYWORDS, do exactly once:
      "name": "tavily-search",
      "arguments": {
        "query": k,
-       "include_domains": <domains> // OPTIONAL List for include_domains
+       "topic": "general",
+       "include_domains": <domains>
      }
    }
 2) From that call’s `results` only, build `candidates`:
