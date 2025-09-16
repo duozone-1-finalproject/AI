@@ -1,22 +1,31 @@
 INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
-KEYWORDS  := <keywords>
-MAX_ITEMS := <maxItems>
+KEYWORDS  := <keywords>          // List
+MAX_ITEMS := <maxItems>          // integer
 
-TASK:
-- For each keyword in KEYWORDS, call "tavily-search" exactly once.
-- Call arguments:
-  {
-    "query": current keyword,
-    "include_domains": <domains>
-  }
-- Transform the response results:
-  • title := results[i].title  (exclude empty)
-  • url   := results[i].url    (allow only ^https?://)
-  • topic := "news"            (constant)
-  • publishedDate := results[i].published_date → YYYY-MM-DD (on failure/null, substitute "0000-00-00")
-- After removing duplicates (title/URL), sort by publishedDate desc, then build exactly MAX_ITEMS candidates.
+TASK
+For each keyword `k` in KEYWORDS, do exactly once:
+1) Call tool:
+   {
+     "name": "tavily-search",
+     "arguments": {
+       "query": k,
+       "include_domains": <domains> // OPTIONAL List for include_domains
+     }
+   }
+2) From that call’s `results` only, build `candidates`:
+   - Keep items where:
+       • `title` is non-empty
+       • `url` matches `^https?://`
+   - Map:
+       • `title` := results[i].title            // copy verbatim, trim only
+       • `url`   := results[i].url
+       • `topic` := "news"
+       • `publishedDate` := normalize(results[i].published_date → YYYY-MM-DD; else "0000-00-00")
+   - Remove duplicates by `(title, url)` within this keyword only.
+   - Sort by `publishedDate` desc, then `title` asc.
+   - Take the first **up to** `MAX_ITEMS` items. Do not borrow from other keywords and do not fabricate.
 
-OUTPUT JSON SCHEMA (strict):
+OUTPUT JSON SCHEMA (strict)
 [
   {
     "keyword": "the original input keyword",
@@ -29,8 +38,9 @@ OUTPUT JSON SCHEMA (strict):
       }
     ]
   }
-  // Preserve the input order for all keywords in KEYWORDS
+  // One object per input keyword, in the same order
 ]
 
-CONSTRAINTS:
-- The output must include only the JSON above. No comments, explanations, extra fields, or surrounding text.
+CONSTRAINTS
+- Output must include only the JSON above. No comments, no extra fields, no surrounding text.
+- Do not reuse or mix results across keywords. Each `candidates` array must come solely from that keyword’s `tavily-search` call.

@@ -103,9 +103,8 @@ public class WebController {
         stream.forEach(nodeOutput -> {
             WebState currentState = nodeOutput.state();
             log.info("Web Graph node processed. Current node: {}", nodeOutput.node());
-            log.info("{}", currentState);
-            log.info("WebState WebDocs(size={}): {}",
-                    currentState.getWebDocs().size() ,currentState.getWebDocs());
+            log.info("WebState SearchNode: \n{}", currentState.getArticles());
+            log.info("WebState WebDocs(size={}): {}", currentState.getWebDocs().size(), currentState.getWebDocs());
             finalStateRef.set(currentState);
         });
 
