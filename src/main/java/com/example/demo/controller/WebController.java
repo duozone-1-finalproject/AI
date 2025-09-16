@@ -85,6 +85,20 @@ public class WebController {
         return resultState.getValidated(); // 완성된 응답 객체를 반환합니다.
     }
 
+    @PostMapping("/pre")
+    public String pre(@RequestBody WebRequestDto req) {
+        // 초기 상태 데이터 준비
+        Map<String, Object> initData = new HashMap<>();
+        initData.put(WebState.CORP_NAME, req.getCorpName());
+        initData.put(WebState.IND_NAME, req.getIndutyName());
+        initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
+
+        // 그래프 실행
+        WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));
+
+        return resultState.getProArticles(); // 완성된 응답 객체를 반환합니다.
+    }
+
     @PostMapping("/res")
     public List<WebDocs> res(@RequestBody WebRequestDto req) {
         // 초기 상태 데이터 준비

@@ -61,6 +61,8 @@ ai:
     search_user: "classpath:prompts/search_user.st"
     web_validator_user: "classpath:prompts/web_validator_user.st"
     web_validator_sys: "classpath:prompts/web_validator_sys.st"
+    preprocess_sys: "classpath:prompts/preprocess_sys.st"
+    preprocess_user: "classpath:prompts/preprocess_user.st"
 
 
   sections:

@@ -38,6 +38,7 @@ public class WebState extends AgentState {
     public static final String CUR_KEYWORD = "cur_keyword";
     public static final String WEB_DOCS = "web_docs";
     public static final String DECISION = "decsion";
+    public static final String PRO_ARTICLES = "pro_articles";
 
     // ---- SCHEMA ----
     public static final Map<String, Channel<?>> SCHEMA = Map.ofEntries(
@@ -62,6 +63,7 @@ public class WebState extends AgentState {
             Map.entry(PICKED_ARTICLE, Channels.base(SearchLLMDto.Item::new)),
             Map.entry(CUR_KEYWORD, Channels.base(() -> "")),
             Map.entry(WEB_DOCS, Channels.appender(ArrayList<WebDocs>::new)),
+            Map.entry(PRO_ARTICLES, Channels.base(() -> "")),
             Map.entry(DECISION, Channels.base(() -> ""))
     );
 
@@ -144,6 +146,9 @@ public class WebState extends AgentState {
         return this.<List<WebDocs>>value(WEB_DOCS).orElse(List.of());
     }
 
+    public String getProArticles() { return this.<String>value(PRO_ARTICLES).orElse("");
+
+    }
 }
 
 // memo

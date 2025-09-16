@@ -64,7 +64,7 @@ public class AfterValidationNode implements AsyncNodeAction<WebState> {
         }
 
         // 성공 흐름: 기사 본문 확보됨 → 패스 문서 생성 후 키워드 전환
-        String body = s.getFetchedArticles();
+        String body = s.getProArticles();
         SearchLLMDto.Item meta = s.getPickedArticle();
 
         WebDocs pass = new WebDocs();

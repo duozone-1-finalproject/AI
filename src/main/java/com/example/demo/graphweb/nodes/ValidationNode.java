@@ -39,7 +39,7 @@ public class ValidationNode implements AsyncNodeAction<WebState> {
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
         try {
             // 1) 단건 본문(content) 확보 (String)
-            String content = state.getFetchedArticles();
+            String content = state.getProArticles();
             if (content == null || content.isBlank()) {
                 log.info("[ValidationNode] Empty fetched content -> validated=false");
                 return CompletableFuture.completedFuture(Map.of(WebState.VALIDATED, false));
