@@ -35,14 +35,15 @@ public class FetchNode implements AsyncNodeAction<WebState> {
 
         // 추후 적용(날리지 말 것!) - 실제 pickedAticle 적용 코드
         SearchLLMDto.Item pickedAticle = state.getPickedArticle();
-        pickedAticle = articles.get(0).getCandidates().get(0);
+//        pickedAticle = articles.get(0).getCandidates().get(0);
 
         // 2) 템플릿 변수 바인딩
         Map<String, Object> vars = new HashMap<>();
         vars.put("title",   pickedAticle.getTitle());
         vars.put("url",     pickedAticle.getUrl());
 //        Map<String, Object> vars = Map.of(
-//                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042"
+//                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042",
+//                "title", "삼성전자 반도체 어쩌구"
 //        );
 
         // 3) 프롬프트 만들기(시스템/유저). 템플릿 없으면 간단 문자열로 대체
@@ -56,7 +57,7 @@ public class FetchNode implements AsyncNodeAction<WebState> {
 
 //          4) ChatClient 호출 → 본문 String
             String fetchedText = chatClient.prompt(finalPrompt).call().content();
-            log.info("[FetchNode] fetchedText: {}", fetchedText);
+            log.debug("[FetchNode] fetchedText: {}", fetchedText);
 
             return CompletableFuture.completedFuture(Map.of(WebState.FETCHED_ARTICLES, fetchedText));
         }

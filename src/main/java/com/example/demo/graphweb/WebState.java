@@ -140,6 +140,10 @@ public class WebState extends AgentState {
         return this.<String>value(DECISION).orElse("");
     }
 
+    public List<WebDocs> getWebDocs() {
+        return this.<List<WebDocs>>value(WEB_DOCS).orElse(List.of());
+    }
+
 }
 
 // memo

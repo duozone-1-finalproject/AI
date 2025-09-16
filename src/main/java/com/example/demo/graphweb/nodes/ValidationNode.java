@@ -1,6 +1,9 @@
 package com.example.demo.graphweb.nodes;
 
+import com.example.demo.constants.WebConstants;
+import com.example.demo.dto.SearchEnvelope;
 import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.dto.ValidationResultDto;
 import com.example.demo.graphweb.WebState;
 import com.example.demo.service.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -43,33 +47,19 @@ public class ValidationNode implements AsyncNodeAction<WebState> {
 
             // 2) 제목(title) 확보: Search 단계에서 고른 후보 메타 사용 (없으면 임시 제목)
             SearchLLMDto.Item meta = state.getPickedArticle();
-            String title = (meta != null && meta.getTitle() != null && !meta.getTitle().isBlank())
-                    ? meta.getTitle()
-                    : "untitled";
+            String title = meta.getTitle();
+            String query = state.getCurKeyword();
 
             // 3) LLM 입력 articles_json: 단건도 배열 형태로 전달
-            List<Map<String, Object>> payload = List.of(Map.of(
-                    "title", title,
-                    "content", content
-            ));
-            String articlesJson = om.writeValueAsString(payload);
-
-            // 4) 의도/주제 판단 기준이 되는 query 바인딩 (현재 키워드 > 첫 번째 원 쿼리)
-            String query;
-            String cur = state.getCurKeyword();
-            if (cur != null && !cur.isBlank()) {
-                query = cur;
-            } else {
-                var qs = state.getQueries();
-                query = (qs != null && !qs.isEmpty()) ? qs.get(0) : "";
-            }
+            Map<String, Object> vars = Map.of(
+                    "title_str", title,
+                    "content_str", content,
+                    "query", query
+            );
 
             // 5) 프롬프트 생성
             Prompt sys = catalog.createSystemPrompt("web_validator_sys", Map.of());
-            Prompt usr = catalog.createPrompt("web_validator_user", Map.of(
-                    "query", query,
-                    "articles_json", articlesJson
-            ));
+            Prompt usr = catalog.createPrompt("web_validator_user", vars);
 
 //            // 6) JSON 객체만 받도록 강제
 //            var options = OpenAiChatOptions.builder()
@@ -79,25 +69,36 @@ public class ValidationNode implements AsyncNodeAction<WebState> {
             // 7) 호출
             List<Message> msgs = new ArrayList<>(sys.getInstructions());
             msgs.addAll(usr.getInstructions());
-            
-            ChatOptions options = null;
-            String raw = chatClient.prompt(new Prompt(msgs)).options(options).call().content();
-            String json = raw.replaceAll("```json\\s*", "").replaceAll("```", "").trim();
+//            String promptLog = msgs.stream()
+//                    .map(m -> "[" + m.getMessageType() + "] " + m.getText())
+//                    .collect(Collectors.joining("\n---\n"));
+//            log.info("\n===== finalPrompt =====\n{}\n=======================", promptLog);
 
-            // 8) 응답에서 final.validated만 추출
-            @SuppressWarnings("unchecked")
-            Map<String, Object> root = om.readValue(json, Map.class);
+            // (3) JSON Schema 강제 (strict) 옵션 설정
+            ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
+                    .name("ValidationResultDto")
+                    .schema(WebConstants.VALIDATION_JSON_SCHEMA)
+                    .strict(true)
+                    .build();
 
-            boolean validated = false;
-            Object finalObj = root.get("final"); // { "final": { "validated": true|false, ... } }
-            if (finalObj instanceof Map<?, ?> fin) {
-                Object v = ((Map<?, ?>) fin).get("validated");
-                if (v instanceof Boolean b) {
-                    validated = b;
-                } else if (v != null) {
-                    validated = Boolean.parseBoolean(String.valueOf(v));
-                }
-            }
+            ResponseFormat rf = ResponseFormat.builder()
+                    .type(ResponseFormat.Type.JSON_SCHEMA)
+                    .jsonSchema(jsonSchema)
+                    .build();
+
+            OpenAiChatOptions options = OpenAiChatOptions.builder()
+                    .responseFormat(rf)
+                    .build();
+
+            Prompt finalPrompt = new Prompt(msgs, options);
+
+            ValidationResultDto results = chatClient
+                    .prompt(finalPrompt)
+                    .call()
+                    .entity(ValidationResultDto.class);
+            log.info("[ValidationNode] results: \n{}", results); //log로 바꾸면 터미널
+
+            Boolean validated = results.getFinalResult().isValidated();
 
             return CompletableFuture.completedFuture(Map.of(WebState.VALIDATED, validated));
 

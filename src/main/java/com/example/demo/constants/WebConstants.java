@@ -75,6 +75,75 @@ public final class WebConstants {
             }
             """;
 
+    public static final String VALIDATION_JSON_SCHEMA = """
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reviews": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "title": { "type": "string", "minLength": 1 },
+                      "gate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "lengthOk": { "type": "boolean" },
+                          "passed":   { "type": "boolean" }
+                        },
+                        "required": ["lengthOk", "passed"]
+                      },
+                      "scores": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "topicFit70": { "type": "integer", "minimum": 0, "maximum": 70 },
+                          "source20":   { "type": "integer", "enum": [10, 14, 20] },
+                          "adSpam10":   { "type": "integer", "enum": [0, 4, 10] }
+                        },
+                        "required": ["topicFit70", "source20", "adSpam10"]
+                      },
+                      "adSpamLevel": { "type": "string", "enum": ["none","soft","strong"] },
+                      "sourceTier":  { "type": "string", "enum": ["trustedTextHint","semiTextHint","unknownText"] },
+                      "total100":    { "type": "number", "minimum": 0, "maximum": 100 },
+                      "decision":    { "type": "string", "enum": ["YES","NO"] },
+                      "reasons": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": { "type": "string", "minLength": 1 }
+                      }
+                    },
+                    "required": ["title","gate","scores","adSpamLevel","sourceTier","total100","decision","reasons"]
+                  }
+                },
+                "best": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "index":    { "type": "integer", "minimum": 0 },
+                    "total100": { "type": "number", "minimum": 0, "maximum": 100 },
+                    "decision": { "type": "string", "enum": ["YES","NO"] }
+                  },
+                  "required": ["index","total100","decision"]
+                },
+                "finalResult": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "validated":   { "type": "boolean" },
+                    "contextHint": { "type": "string" }
+                  },
+                  "required": ["validated","contextHint"]
+                }
+              },
+              "required": ["reviews","best","finalResult"]
+            }
+            """;
+
     private WebConstants() {
     }
 }

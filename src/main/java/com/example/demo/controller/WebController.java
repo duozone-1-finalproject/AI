@@ -1,13 +1,16 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.dto.WebDocs;
 import com.example.demo.dto.WebRequestDto;
 import com.example.demo.dto.WebResponseDto;
 import com.example.demo.graphweb.WebState;
 import com.example.demo.graphweb.service.WebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bsc.async.AsyncGenerator;
 import org.bsc.langgraph4j.CompiledGraph;
+import org.bsc.langgraph4j.NodeOutput;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RestController
@@ -39,6 +43,20 @@ public class WebController {
         return chatClient.prompt(q).call().content();
     }
 
+    @PostMapping("/fetch")
+    public String fetch(@RequestBody WebRequestDto req) {
+        // 초기 상태 데이터 준비
+        Map<String, Object> initData = new HashMap<>();
+        initData.put(WebState.CORP_NAME, req.getCorpName());
+        initData.put(WebState.IND_NAME, req.getIndutyName());
+        initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
+
+        // 그래프 실행
+        WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));
+
+        return resultState.getFetchedArticles(); // 완성된 응답 객체를 반환합니다.
+    }
+
     @PostMapping("/tt")
     public List<SearchLLMDto> tt(@RequestBody WebRequestDto req) {
         // 초기 상태 데이터 준비
@@ -51,6 +69,53 @@ public class WebController {
         WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));
 
         return resultState.getArticles(); // 완성된 응답 객체를 반환합니다.
+    }
+
+    @PostMapping("/val")
+    public Boolean val(@RequestBody WebRequestDto req) {
+        // 초기 상태 데이터 준비
+        Map<String, Object> initData = new HashMap<>();
+        initData.put(WebState.CORP_NAME, req.getCorpName());
+        initData.put(WebState.IND_NAME, req.getIndutyName());
+        initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
+
+        // 그래프 실행
+        WebState resultState = webGraph.invoke(initData).orElse(new WebState(Map.of()));
+
+        return resultState.getValidated(); // 완성된 응답 객체를 반환합니다.
+    }
+
+    @PostMapping("/res")
+    public List<WebDocs> res(@RequestBody WebRequestDto req) {
+        // 초기 상태 데이터 준비
+        Map<String, Object> initData = new HashMap<>();
+        initData.put(WebState.CORP_NAME, req.getCorpName());
+        initData.put(WebState.IND_NAME, req.getIndutyName());
+        initData.put(WebState.SECTION_LABEL, req.getSectionLabel());
+        webGraph.setMaxIterations(100);
+
+        log.info("################################ WEB GRAPH START ##########################################");
+
+        AsyncGenerator<NodeOutput<WebState>> stream = webGraph.stream(initData);
+
+        final AtomicReference<WebState> finalStateRef = new AtomicReference<>();
+
+        stream.forEach(nodeOutput -> {
+            WebState currentState = nodeOutput.state();
+            log.info("Web Graph node processed. Current node: {}", nodeOutput.node());
+            log.info("{}", currentState);
+            log.info("WebState WebDocs(size={}): {}",
+                    currentState.getWebDocs().size() ,currentState.getWebDocs());
+            finalStateRef.set(currentState);
+        });
+
+        WebState finalState = finalStateRef.get();
+        if (finalState == null) {
+            // 스트림이 비어있는 경우에 대한 처리
+            finalState = new WebState(Map.of());
+        }
+        log.info("################################ WEB GRAPH END ##########################################");
+        return finalState.getWebDocs();
     }
 }
 
