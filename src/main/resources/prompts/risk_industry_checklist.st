@@ -1,4 +1,4 @@
-[BUSINESS RISK — MINIMAL CHECK & FIX (4 rules)]
+[BUSINESS RISK — MINIMAL CHECK & FIX (5 rules)]
 
 LANGUAGE
 - Write ALL output in Korean.
