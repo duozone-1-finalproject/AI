@@ -45,25 +45,25 @@ public class WebConfig {
         graph.addNode("validation", validationNode);
         graph.addNode("afterValidation", afterValidationNode);
 
-        // ✅ 엣지 연결 (실행 순서: query → search → fehch -> validation -> END)
-        graph.addEdge(START, "query");
-//        graph.addEdge("query", "search");
-//        graph.addEdge("search", "fetch");
-        graph.addEdge("query", "fetch"); // test용. 추후 삭제 예정
-        graph.addEdge("fetch", "validation"); // test용. 추후 삭제 예정
-        graph.addEdge("validation",END); // test용. 추후 삭제 예정
+//        // ✅ 엣지 연결 (실행 순서: query → search → fehch -> validation -> END)
+//        graph.addEdge(START, "query");
+////        graph.addEdge("query", "search");
+////        graph.addEdge("search", "fetch");
+//        graph.addEdge("query", "fetch"); // test용. 추후 삭제 예정
+//        graph.addEdge("fetch", "validation"); // test용. 추후 삭제 예정
+//        graph.addEdge("validation",END); // test용. 추후 삭제 예정
 
         // 엣지 설정
-//        graph.addEdge(START, "query");
-//        graph.addEdge("query", "search");
-//        graph.addEdge("search", "picked");
-//        graph.addEdge("picked", "fetch");
-//        graph.addEdge("fetch", "validation");
-//        graph.addEdge("validation","afterValidation");
-//        graph.addConditionalEdges("afterValidation",
-//                edge_async(s -> "end".equals(s.value(WebState.DECISION).orElse("")) ? END : "picked"),
-//                Map.of(END, END, "picked", "picked")
-//        );
+        graph.addEdge(START, "query");
+        graph.addEdge("query", "search");
+        graph.addEdge("search", "picked");
+        graph.addEdge("picked", "fetch");
+        graph.addEdge("fetch", "validation");
+        graph.addEdge("validation","afterValidation");
+        graph.addConditionalEdges("afterValidation",
+                edge_async(s -> "end".equals(s.value(WebState.DECISION).orElse("")) ? END : "picked"),
+                Map.of(END, END, "picked", "picked")
+        );
 
         return graph.compile();
     }

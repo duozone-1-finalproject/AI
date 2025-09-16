@@ -41,18 +41,16 @@ public class FetchNode implements AsyncNodeAction<WebState> {
         List<SearchLLMDto> articles = state.getArticles();
 
         // 추후 적용(날리지 말 것!) - 실제 pickedAticle 적용 코드
-//        SearchLLMDto.Item pickedAticle = state.getPickedArticle();
-
-        //SearchLLMDto.Item pickedAticle = articles.get(0).getCandidates().get(0);
+        SearchLLMDto.Item pickedAticle = state.getPickedArticle();
+        pickedAticle = articles.get(0).getCandidates().get(0);
 
         // 2) 템플릿 변수 바인딩
-//        Map<String, Object> vars = new HashMap<>();
-//        vars.put("title",   pickedAticle.getTitle());
-//        vars.put("url",     pickedAticle.getUrl());
-        Map<String, Object> vars = Map.of(
-                "title", "삼성전자 반도체",
-                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042"
-        );
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("title",   pickedAticle.getTitle());
+        vars.put("url",     pickedAticle.getUrl());
+//        Map<String, Object> vars = Map.of(
+//                "url", "https://www.businesspost.co.kr/BP?command=article_view&num=396042"
+//        );
 
         // 3) 프롬프트 만들기(시스템/유저). 템플릿 없으면 간단 문자열로 대체
             Prompt sys = catalog.createSystemPrompt("fetch_sys", vars);
