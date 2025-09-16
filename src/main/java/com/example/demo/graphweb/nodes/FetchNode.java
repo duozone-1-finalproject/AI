@@ -1,13 +1,8 @@
 package com.example.demo.graphweb.nodes;
 
-import com.example.demo.constants.KeywordContants;
-import com.example.demo.dto.WebResponseDto;
-import com.example.demo.dto.FetchLLMDto;
 import com.example.demo.dto.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.jsonschema.SearchSchemas;
 import com.example.demo.service.PromptCatalogService;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +11,10 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 @Component
 @Slf4j
