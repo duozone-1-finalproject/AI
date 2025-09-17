@@ -5,7 +5,7 @@ import com.example.demo.dto.WebDocs;
 import com.example.demo.dto.WebRequestDto;
 import com.example.demo.dto.WebResponseDto;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.graphweb.service.WebService;
+import com.example.demo.service.graphweb.WebService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bsc.async.AsyncGenerator;

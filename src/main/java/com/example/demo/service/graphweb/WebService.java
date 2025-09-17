@@ -1,4 +1,4 @@
-package com.example.demo.graphweb.service;
+package com.example.demo.service.graphweb;
 
 import com.example.demo.dto.WebRequestDto;
 import com.example.demo.dto.WebResponseDto;
