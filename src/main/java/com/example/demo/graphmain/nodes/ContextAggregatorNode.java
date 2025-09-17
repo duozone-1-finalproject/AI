@@ -18,16 +18,14 @@ public class ContextAggregatorNode implements AsyncNodeAction<DraftState> {
     @Override
     public CompletableFuture<Map<String, Object>> apply(DraftState state) {
         boolean dbReady = !state.getDbDocs().isEmpty();
-//        boolean webReady  = !state.getWebDocs().isEmpty();
-//        boolean newsReady = !state.getNewsDocs().isEmpty();
+        boolean webReady  = !state.getWebDocs().isEmpty();
 
         Map<String, Object> updates = Map.of(
-                DraftState.DB_READY, dbReady
-//                DraftState.WEB_READY, webReady,
-//                DraftState.NEWS_READY, newsReady
+                DraftState.DB_READY, dbReady,
+                DraftState.WEB_READY, webReady
         );
         log.debug("[ContextAggregatorNode] DB_READY: {}", dbReady);
-//        log.debug("[ContextAggregatorNode] WEB_READY: {}", webReady);
+        log.debug("[ContextAggregatorNode] WEB_READY: {}", webReady);
 
 
         return CompletableFuture.completedFuture(updates);

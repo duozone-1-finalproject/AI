@@ -1,9 +1,8 @@
 package com.example.demo.graphweb.nodes;
 
-import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.dto.graphweb.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.service.PromptCatalogService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.service.graphmain.impl.PromptCatalogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.action.AsyncNodeAction;

@@ -62,6 +62,7 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.SECTION_LABEL, sectionLabel);
         init.put(DraftState.MAX_ITEMS, MAX_ITEMS_LIMIT);
         log.debug("################################ MAIN GRAPH START ({}) ##########################################", sectionLabel);
+        graph.setMaxIterations(100);
 
         AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
 

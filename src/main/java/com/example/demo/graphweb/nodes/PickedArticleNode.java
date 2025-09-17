@@ -1,6 +1,6 @@
 package com.example.demo.graphweb.nodes;
 
-import com.example.demo.dto.SearchLLMDto;
+import com.example.demo.dto.graphweb.SearchLLMDto;
 import com.example.demo.graphweb.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.action.AsyncNodeAction;

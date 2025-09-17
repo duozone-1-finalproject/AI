@@ -47,12 +47,6 @@ public class WebConfig {
         graph.addNode("validation", validationNode);
         graph.addNode("afterValidation", afterValidationNode);
 
-        // ✅ 엣지 연결 (실행 순서: query → search → fehch -> validation -> END)
-//        graph.addEdge(START, "fetch");
-//        graph.addEdge("fetch","process");
-//        graph.addEdge("process","validation");
-//        graph.addEdge("validation",END);
-
         // 엣지 설정
         graph.addEdge(START, "query");
         graph.addEdge("query", "search");

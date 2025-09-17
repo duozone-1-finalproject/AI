@@ -3,12 +3,16 @@
 
 package com.example.demo.graphmain;
 
+import com.example.demo.dto.graphweb.WebDocs;
 import com.example.demo.dto.graphdb.DbDocDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 //LangGraph4j에서 제공하는 기본 State 관리 기능을 확장한 클래스
 
@@ -25,10 +29,8 @@ public class DraftState extends AgentState {
     public static final String SOURCES = "sources"; // ex) ["web","news","db"]
     public static final String FINANCIALS = "financials";
 
-
     // 소스별 컨텍스트 (병렬 수집 → 반드시 appender)
-    public static final String WEB_DOCS = "webDocs";   // List<Doc>
-    public static final String NEWS_DOCS = "newsDocs";  // List<Doc>
+    public static final String WEB_DOCS = "webDocs";   // List<Doc>// List<Doc>
     public static final String DB_DOCS = "dbDocs";    // List<Doc>
 
     // 소스별 실행 완료 여부
@@ -39,7 +41,7 @@ public class DraftState extends AgentState {
     // 생성/검증/루프
     public static final String MAX_ITEMS = "maxItems";
     public static final String DRAFT = "draft";
-    public static final String ERRORS = "errors"; // List<String>
+    public static final String ERRORS = "errors";// List<String>
 
     // 공통 변수
     public static final String BASEVARS = "baseVars";
@@ -61,8 +63,7 @@ public class DraftState extends AgentState {
             Map.entry(FINANCIALS, Channels.base(() -> "")),
 
             // 병렬 수집용 리스트 채널 (appender)
-            Map.entry(WEB_DOCS, Channels.appender(ArrayList::new)),
-            Map.entry(NEWS_DOCS, Channels.appender(ArrayList::new)),
+            Map.entry(WEB_DOCS, Channels.appender(ArrayList<WebDocs>::new)),
             Map.entry(DB_DOCS, Channels.appender(ArrayList<DbDocDto>::new)),
 
             // 소스별 실행 완료 여부
@@ -97,8 +98,7 @@ public class DraftState extends AgentState {
     public List<String> getSources() { return this.<List<String>>value(SOURCES).orElse(Collections.emptyList()); }
     public String getFinancials() { return this.<String>value(FINANCIALS).orElse(""); }
 
-    public List<String> getWebDocs() { return this.<List<String>>value(WEB_DOCS).orElse(new ArrayList<>()); }
-    public List<String> getNewsDocs() { return this.<List<String>>value(NEWS_DOCS).orElse(new ArrayList<>()); }
+    public List<WebDocs> getWebDocs() { return this.<List<WebDocs>>value(WEB_DOCS).orElse(new ArrayList<>()); }
     public List<DbDocDto> getDbDocs() { return this.<List<DbDocDto>>value(DB_DOCS).orElse(new ArrayList<>()); }
 
     public boolean isDbReady() { return this.<Boolean>value(DB_READY).orElse(false); }

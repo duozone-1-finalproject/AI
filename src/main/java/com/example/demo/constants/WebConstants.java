@@ -8,8 +8,7 @@ public final class WebConstants {
             "yna.co.kr",
             "chosun.com",
             "donga.com",
-            "joongang.co.kr",
-            "zdnet.co.kr"
+            "joongang.co.kr"
     );
     public static final String SEARCH_JSON_SCHEMA = """
             {

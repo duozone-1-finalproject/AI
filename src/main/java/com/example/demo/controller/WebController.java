@@ -1,10 +1,10 @@
 
 package com.example.demo.controller;
 
-import com.example.demo.dto.SearchLLMDto;
-import com.example.demo.dto.WebDocs;
-import com.example.demo.dto.WebRequestDto;
-import com.example.demo.dto.WebResponseDto;
+import com.example.demo.dto.graphweb.SearchLLMDto;
+import com.example.demo.dto.graphweb.WebDocs;
+import com.example.demo.dto.graphweb.WebRequestDto;
+import com.example.demo.dto.graphweb.WebResponseDto;
 import com.example.demo.graphweb.WebState;
 import com.example.demo.service.graphweb.WebService;
 import lombok.RequiredArgsConstructor;
