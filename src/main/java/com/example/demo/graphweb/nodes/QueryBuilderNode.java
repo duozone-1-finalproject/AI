@@ -29,8 +29,8 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class QueryBuilderNode implements AsyncNodeAction<WebState> {
 
-    private static final List<String> BUSINESS_KEYWORDS = List.of("시장 전망", "산업 동향", "경쟁 심화", "시장 점유율");
-    private static final List<String> COMPANY_KEYWORDS  = List.of("재무 상태", "유동성 위기", "차입금 증가", "채무 상환능력");
+    private static final List<String> BUSINESS_KEYWORDS = List.of("시장 전망", "산업 동향");
+    private static final List<String> COMPANY_KEYWORDS  = List.of("재무 상태", "지배 구조");
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {

@@ -4,8 +4,6 @@
 [평가 대상 기사(단건 문자열)]
 title_str: <title_str>
 content_str: """<content_str>"""
-biz_key: <biz_key>
-com_key: <com_key>
 
 [지시]
 - “시스템 프롬프트”의 원칙·루브릭·결정 규칙을 내부적으로 적용하라.
