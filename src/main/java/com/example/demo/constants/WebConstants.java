@@ -82,7 +82,7 @@ public final class WebConstants {
               "properties": {
                 "reviews": {
                   "type": "array",
-                  "minItems": 1,
+                  "minItems": 4,
                   "items": {
                     "type": "object",
                     "additionalProperties": false,

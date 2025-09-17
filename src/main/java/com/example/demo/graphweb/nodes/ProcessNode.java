@@ -24,10 +24,7 @@ import java.util.concurrent.CompletableFuture;
 public class ProcessNode implements AsyncNodeAction<WebState> {
     @Qualifier("chatWithMcp")
     private final ChatClient chatClient;
-
     private final PromptCatalogService catalog;
-
-    private final ObjectMapper om;
 
     @Override
     public CompletableFuture<Map<String, Object>> apply(WebState state) {
@@ -36,7 +33,6 @@ public class ProcessNode implements AsyncNodeAction<WebState> {
         // 2) 템플릿 변수 바인딩
         Map<String, Object> vars = new HashMap<>();
         vars.put("fetched", fetched);
-
 
         // 3) 프롬프트 만들기(시스템/유저). 템플릿 없으면 간단 문자열로 대체
         Prompt sys = catalog.createSystemPrompt("preprocess_sys", vars);

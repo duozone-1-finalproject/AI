@@ -41,7 +41,7 @@ public class SearchNode implements AsyncNodeAction<WebState> {
 
             Map<String, Object> vars = Map.of(
                     "keywords", keywordsJson,
-                    "maxItems", 3,
+                    "maxItems", 2,
                     "domains", domainsJson
             );
 

@@ -4,10 +4,10 @@
 [평가 대상 기사(단건 문자열)]
 title_str: <title_str>
 content_str: """<content_str>"""
+biz_key: <biz_key>
+com_key: <com_key>
 
 [지시]
 - “시스템 프롬프트”의 원칙·루브릭·결정 규칙을 내부적으로 적용하라.
 - 위 단일 기사를 평가하여 validated를 산출하라.
-- 각 기사를 독립적으로 평가하여 reviews 배열을 생성하라.
 - 출처는 텍스트 내 힌트로만 판정하라.
-- 출력은 반드시 단일 JSON으로만 하라. 추가 텍스트/설명/코드블록 금지.

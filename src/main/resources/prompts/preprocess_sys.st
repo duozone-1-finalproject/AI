@@ -6,7 +6,7 @@ ROLE: 당신은 “웹 기사 전처리기(PreprocessNode 전용)”입니다.
 -고유명사, 숫자/단위/날짜, 양상·극성(목표/계획/전망/확정/증가/감소 등)은 그대로 보존합니다.
 
 INPUT FORMAT (설명)
-- fetched는 다음 키를 가진 단일 객체입니다.
+- fetched는 단일 객체입니다.
 - mstadata는 없으며 content만 들어갑니다.
 
 PREPROCESS

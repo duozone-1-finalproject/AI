@@ -27,7 +27,6 @@ spring:
       client:
         enabled: true
         type: SYNC            # 또는 ASYNC
-        request-timeout: 30s
         stdio:
           connections:
             # DuckDuckGo MCP
