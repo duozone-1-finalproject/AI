@@ -28,7 +28,7 @@ public class DbSubgraphInvoker implements AsyncNodeAction<DraftState> {
         List<String> sources = state.getSources();
         if (sources == null || !sources.contains("db")) {
             // 선택되지 않았으면 아무 것도 안 함 (no-op)
-            return CompletableFuture.completedFuture(Map.of());
+            return CompletableFuture.completedFuture(Map.of(DraftState.DB_READY, true));
         }
         // DraftState -> DbSubGraphState로 매핑
         Map<String, Object> subStateInit = new HashMap<>();

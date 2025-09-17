@@ -26,7 +26,7 @@ public class WebSubgraphInvoker implements AsyncNodeAction<DraftState> {
         List<String> sources = state.getSources();
         if (sources == null || !sources.contains("web")) {
             // 선택되지 않았으면 아무 것도 안 함 (no-op)
-            return CompletableFuture.completedFuture(Map.of());
+            return CompletableFuture.completedFuture(Map.of(DraftState.WEB_READY, true));
         }
         // 1. DraftState -> WebState로 매핑 (웹 서브그래프에 필요한 초기값 전달)
         // WebState의 정의에 따라 corpName, indutyName, sectionLabel을 전달합니다.
