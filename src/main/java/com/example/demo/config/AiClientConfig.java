@@ -4,6 +4,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 class AiClientConfig {
@@ -20,6 +21,6 @@ class AiClientConfig {
     @Bean("chatWithMcp")
     ChatClient chatWithMcp(ChatClient.Builder b,
                            SyncMcpToolCallbackProvider mcpTools) {
-        return b.defaultToolCallbacks(mcpTools).build(); // MCP 툴(search/fetch) 사용
+        return b.defaultToolCallbacks(mcpTools).build(); // MCP 툴(search/crawl) 사용
     }
 }
