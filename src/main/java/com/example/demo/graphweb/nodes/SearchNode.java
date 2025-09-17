@@ -1,9 +1,9 @@
 package com.example.demo.graphweb.nodes;
 
 import com.example.demo.constants.WebConstants;
-import com.example.demo.dto.SearchEnvelope;
+import com.example.demo.dto.graphweb.SearchEnvelope;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.service.PromptCatalogService;
+import com.example.demo.service.graphmain.impl.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

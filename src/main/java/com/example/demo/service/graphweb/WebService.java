@@ -1,7 +1,7 @@
 package com.example.demo.service.graphweb;
 
-import com.example.demo.dto.WebRequestDto;
-import com.example.demo.dto.WebResponseDto;
+import com.example.demo.dto.graphweb.WebRequestDto;
+import com.example.demo.dto.graphweb.WebResponseDto;
 import com.example.demo.graphweb.WebState;
 import lombok.RequiredArgsConstructor;
 import org.bsc.langgraph4j.CompiledGraph;

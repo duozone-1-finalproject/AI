@@ -1,18 +1,16 @@
 package com.example.demo.graphweb.nodes;
 
 import com.example.demo.constants.WebConstants;
-import com.example.demo.dto.SearchEnvelope;
-import com.example.demo.dto.SearchLLMDto;
-import com.example.demo.dto.ValidationResultDto;
+import com.example.demo.dto.graphweb.SearchLLMDto;
+import com.example.demo.dto.graphweb.ValidationResultDto;
 import com.example.demo.graphweb.WebState;
-import com.example.demo.service.PromptCatalogService;
+import com.example.demo.service.graphmain.impl.PromptCatalogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.ResponseFormat;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j

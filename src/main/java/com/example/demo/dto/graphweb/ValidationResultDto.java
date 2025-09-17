@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.graphweb;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

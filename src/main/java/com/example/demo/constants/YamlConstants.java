@@ -66,8 +66,8 @@ public class YamlConstants {
 
     public static final Map<String, List<String>> SOURCES_MAP = Map.of(
             "risk_industry", List.of("web", "db"),
-            "risk_company", List.of("news", "db"),
-            "risk_etc", List.of("web", "db")
+            "risk_company", List.of("web", "db"),
+            "risk_etc", List.of("db")
     );
 
 
@@ -101,7 +101,16 @@ public class YamlConstants {
             Map.entry("adjust_sys", "classpath:prompts/adjust_sys.st"),
             Map.entry("adjust_user", "classpath:prompts/adjust_user.st"),
             Map.entry("check_revise_sys", "classpath:prompts/check_revise_sys.st"),
-            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st")
+            Map.entry("check_revise_user", "classpath:prompts/check_revise_user.st"),
+            Map.entry("search_sys", "classpath:prompts/search_sys.st"),
+            Map.entry("search_user", "classpath:prompts/search_user.st"),
+            Map.entry("fetch_sys", "classpath:prompts/fetch_sys.st"),
+            Map.entry("fetch_user", "classpath:prompts/fetch_user.st"),
+            Map.entry("preprocess_sys", "classpath:prompts/preprocess_sys.st"),
+            Map.entry("preprocess_user", "classpath:prompts/preprocess_user.st"),
+            Map.entry("web_validator_sys", "classpath:prompts/web_validator_sys.st"),
+            Map.entry("web_validator_user", "classpath:prompts/web_validator_user.st")
+
     );
 
 }

@@ -2,9 +2,9 @@
 
 package com.example.demo.graphweb;
 
-import com.example.demo.dto.SearchLLMDto;
-import com.example.demo.dto.WebDocs;
-import com.example.demo.dto.WebResponseDto;
+import com.example.demo.dto.graphweb.SearchLLMDto;
+import com.example.demo.dto.graphweb.WebDocs;
+import com.example.demo.dto. graphweb.WebResponseDto;
 import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
@@ -103,7 +103,7 @@ public class WebState extends AgentState {
         return this.<Boolean>value(VALIDATED).orElse(false);
     }
 
-    public List<WebResponseDto.Article> getFinalResult() {
+    public List<com.example.demo.dto.graphweb.WebResponseDto.Article> getFinalResult() {
         return this.<List<WebResponseDto.Article>>value(FINAL_RESULT).orElse(List.of());
     }
 

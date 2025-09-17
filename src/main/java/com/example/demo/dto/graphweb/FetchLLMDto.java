@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.graphweb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
