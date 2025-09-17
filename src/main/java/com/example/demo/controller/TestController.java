@@ -1,16 +1,17 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.NoriTokenService;
+import com.example.demo.service.graphvalidator.NoriTokenService;
 import com.example.demo.util.StandardSearchHelper;
-import com.example.demo.validatorgraph.nodes.StandardRetrieverNode;
+import com.example.demo.graphvalidator.nodes.StandardRetrieverNode;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.RequiredArgsConstructor;
 import lombok.Data;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class TestController {
     private final StandardRetrieverNode standardRetrieverNode;
     private final OpenSearchClient client;
     private final StandardSearchHelper standardSearchHelper;
+
+    @Qualifier("chatWithMcp")
+    private final ChatClient chatWithMcp;
 
     /**
      * Nori 형태소 분석기 토큰화 요청 DTO
@@ -49,6 +53,12 @@ public class TestController {
     @PostMapping("/analyze")
     public String analyze(@RequestBody AnalyzeRequestDto request) {
         return noriTokenService.join(request.getIndex(), request.getAnalyzer(), request.getText());
+    }
+
+    @PostMapping("/mcp")
+    public Mono<String> mcp_chat(@RequestParam String q) {
+        return Mono.fromCallable(() -> chatWithMcp.prompt(q).call().content())
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
 //    ------------------------------------------------

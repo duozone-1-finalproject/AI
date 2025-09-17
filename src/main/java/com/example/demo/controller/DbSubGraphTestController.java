@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dbsubgraph.nodes.TestDbSubgraphinvoker;
-import com.example.demo.dto.DraftRequestDto;
-import com.example.demo.dto.dbsubgraph.DbDocDto;
+import com.example.demo.graphdb.nodes.TestDbSubgraphinvoker;
+import com.example.demo.dto.graphmain.DraftRequestDto;
+import com.example.demo.dto.graphdb.DbDocDto;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,16 @@ public class DbSubGraphTestController {
     private final TestDbSubgraphinvoker graphService;
 
     @PostMapping
-    public List<DbDocDto> draft(@Valid @RequestBody DraftRequestDto req) {
+    public List<DbDocDto> dbContent(@Valid @RequestBody DraftRequestDto req) {
         // 디버그 출력
         log.debug("DraftRequestDto: {}", req);
-        return graphService.runOne("risk_industry", req);
+        return graphService.runOne("risk_etc", req);
+    }
+
+    @PostMapping("/financials")
+    public String draftFinancials(@Valid @RequestBody DraftRequestDto req) {
+        // 디버그 출력
+        log.debug("DraftRequestDto: {}", req);
+        return graphService.runTest("risk_company", req);
     }
 }

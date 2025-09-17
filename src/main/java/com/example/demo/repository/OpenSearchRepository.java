@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
-import com.example.demo.constants.FinancialAccountConstants;
-import com.example.demo.dto.dbsubgraph.RawDocDto;
-import com.example.demo.dto.dbsubgraph.TotalDocDto;
+import com.example.demo.constants.DbSubGraphConstants;
+import com.example.demo.dto.graphdb.RawDocDto;
+import com.example.demo.dto.graphdb.TotalDocDto;
 import lombok.RequiredArgsConstructor;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.example.demo.util.graphdb.FinancialUtils.toDouble;
+
 @Repository
 @RequiredArgsConstructor
 public class OpenSearchRepository {
@@ -26,7 +28,7 @@ public class OpenSearchRepository {
     private final OpenSearchClient client;
 
     // query를 통해 해당 회사의 corp_code 얻어오기 -> ex) 재무정보 비슷한 회사 가져오기
-    public List<String> findPeerCorpCodes(Query query, String indexName) throws IOException {
+    public List<String> fetchPeerCorpCodes(Query query, String indexName) throws IOException {
 
         SearchResponse<Map> response = client.search(s -> s
                         .index(indexName)
@@ -89,7 +91,7 @@ public class OpenSearchRepository {
                                 .terms(t -> t
                                         .field("account_nm")
                                         .terms(tt -> tt.value(
-                                                FinancialAccountConstants.STANDARD_ACCOUNTS.stream()
+                                                DbSubGraphConstants.STANDARD_ACCOUNTS.stream()
                                                         .map(FieldValue::of)
                                                         .toList()
                                         ))
@@ -106,6 +108,35 @@ public class OpenSearchRepository {
                 .filter(Objects::nonNull)
                 .map(source -> (Map<String, Object>) source)
                 .toList();
+    }
+
+
+
+    public Map<String, Map<String, Double>> fetchAllAccount(String corpCode) throws IOException {
+        String indexName = "fin_" + corpCode;
+
+        SearchResponse<Map> response = client.search(s -> s
+                        .index(indexName)
+                        .size(10000) // 충분히 크게 설정
+                        .query(q -> q.matchAll(m -> m)) // match_all 쿼리
+                        .source(src -> src.filter(f -> f.includes(
+                                "corp_code", "account_nm", "thstrm_amount", "frmtrm_amount", "bfefrmtrm_amount"
+                        ))),
+                Map.class
+        );
+
+        return response.hits().hits().stream()
+                .map(Hit::source)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(
+                        src -> (String) src.get("account_nm"),
+                        src -> Map.of(
+                                "thstrm", toDouble(src.get("thstrm_amount")),
+                                "frmtrm", toDouble(src.get("frmtrm_amount")),
+                                "bfefrmtrm", toDouble(src.get("bfefrmtrm_amount"))
+                        ),
+                        (oldVal, newVal) -> newVal
+                ));
     }
 
 

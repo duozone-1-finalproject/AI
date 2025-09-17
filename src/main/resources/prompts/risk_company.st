@@ -6,7 +6,7 @@ LANGUAGE
 INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
 - CORP_NAME := <corpName>                // issuer name
 - IND_NAME  := <indutyName>              // industry / sector
-- FIN_DATA  := <financialData>           // JSON object with issuer-level signals (do not echo)
+- FIN_DATA  := <financialData>           // Markdown Table of Financial Data
 - WEB_RAG   := <webRagItems>             // OPTIONAL JSON[] of {source, title, url, pubDate(YYYY-MM-DD), content} (de-noised claims)
 - DART_RAG  := <dartRagItems>            // OPTIONAL JSON[] of {issuer, filingType, filedDate, section, snippet, url}
 - MAX_ITEMS := <maxItems>                // number of risk items to produce (default: 5)
@@ -28,6 +28,7 @@ WRITING (paragraphs only; no lists/tables/headings)
 - Each risk item MUST follow:
   a) One-sentence TOPIC LINE: “cause/condition → specific impact on CORP_NAME”.
   b) 1–2 follow-up paragraphs: evidence (figures/dates/contracts/governance changes/liquidity & debt/litigation, etc.), impact pathway, and current mitigation (if any).
+  c) Each risk item MUST start with a Korean sequential marker such as "가.", "나.", "다.", ... at the beginning of the paragraph.
 - Evidence-based, precise, neutral. No hype, vagueness, or unfounded certainty.
 - Citations:
   • Do NOT add `출처:` for facts derived from FIN_DATA.

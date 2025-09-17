@@ -29,7 +29,7 @@ public class IndexBootstrap {
             String index = e.getKey();
             String resource = e.getValue();
 
-            boolean exists = client.indices().exists(ExistsRequest.of(b -> b.index(index))).value();
+            boolean exists = client.indices().exists(b -> b.index(index)).value();
             if (exists) continue;
 
             // JSON 로드
@@ -37,18 +37,14 @@ public class IndexBootstrap {
             String body = new String(res.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
             // 로우레벨 RestClient로 PUT /{index} (raw JSON)
-            List<HttpHost> hosts4 = props.getUris().stream().map(u -> {
-                var uri = java.net.URI.create(u);
-                String scheme = (uri.getScheme() == null) ? "http" : uri.getScheme();
-                int port = (uri.getPort() == -1) ? 9200 : uri.getPort();
-                return new HttpHost(uri.getHost(), port, scheme);
-            }).toList();
+            List<HttpHost> hosts4 = props.getUris().stream()
+                    .map(HttpHost::create)  // 포트 없이 안전하게 처리
+                    .toList();
 
             try (RestClient low = RestClient.builder(hosts4.toArray(new HttpHost[0])).build()) {
                 Request req = new Request("PUT", "/" + index);
                 req.setJsonEntity(body);
-                Response resp = low.performRequest(req);
-                // 필요하면 resp.getStatusLine() 로깅
+                low.performRequest(req);
             }
         }
     }

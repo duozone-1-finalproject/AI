@@ -40,6 +40,7 @@ dependencies {
     //KAFKA
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    implementation 'software.amazon.msk:aws-msk-iam-auth:1.1.1'
 
     // LangGraph4j
     implementation "org.bsc.langgraph4j:langgraph4j-core:${langgraph4jVersion}"

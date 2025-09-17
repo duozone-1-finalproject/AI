@@ -1,4 +1,4 @@
-[OTHER INVESTMENT RISKS — MINIMAL CHECK & FIX (4 rules)]
+[OTHER INVESTMENT RISKS — MINIMAL CHECK & FIX (5 rules)]
 
 LANGUAGE
 - Write ALL output in Korean.
@@ -9,12 +9,17 @@ INPUTS (CONTEXT PAYLOAD — DO NOT ECHO)
 - OFFER_DATA  := <otherRiskInputs>// OPTIONAL JSON; used only to recognize internal offering facts (do not echo)
 - RAG_SOURCES := <ragSources>     // OPTIONAL JSON[]: [{source,title,url,pubDate(YYYY-MM-DD)}] for repairing missing citations
 
+FORMAT LOCK
+- Treat leading Korean sequential markers "가./나./다./라./마./바./사./아./자./차./카./타./파./하." as REQUIRED paragraph prefixes, not as list bullets.
+- NEVER remove, reorder, or alter these markers.
+- If a marker is missing at the beginning of an item, add the correct next marker; if the first item is missing, use "가.".
+
 SCOPE
-- Validate DRAFT ONLY against the four rules below, then apply the smallest possible edits to make it compliant.
+- Validate DRAFT ONLY against the rules below, then apply the smallest possible edits to make it compliant.
 - Do NOT invent facts. Prefer (a) restructuring and (b) trimming/removing unverifiable or off-scope claims over adding new content.
 - Output the fixed draft only (plain Korean paragraphs). No headings, lists, tables, or disclaimers.
 
-CHECK RULES (exactly these four)
+CHECK RULES (exactly these five)
 1) Each item’s FIRST sentence is a SINGLE sentence stating “cause/condition → concrete impact on CORP_NAME’s investors”
    (e.g., dilution/control/liquidity/volatility/dividend uncertainty).
 2) Exclude generic macro/company/business risks; each item MUST tie directly to equity offering mechanics & investor exposure
@@ -24,6 +29,9 @@ CHECK RULES (exactly these four)
    - Do NOT add `출처:` for facts derived from OFFER_DATA (offering documents/terms).
    - For any external fact, add EXACTLY ONE citation in the form `출처: SourceName(YYYY-MM-DD)`; no duplicates.
 4) Items are separated by EXACTLY one blank line. No headings/lists/tables.
+5) Each item MUST start with exactly one of the required markers:
+   가. / 나. / 다. / 라. / 마. / 바. / 사. / 아. / 자. / 차. / 카. / 타. / 파. / 하.
+   These markers are part of the paragraph text and MUST be preserved.
 
 EDITING GUIDELINES
 - If an item lacks a one-sentence topic line (Rule 1): merge/split existing material to form exactly one leading sentence expressing
@@ -35,7 +43,10 @@ EDITING GUIDELINES
   • If the fact is clearly from OFFER_DATA, remove any external-style citation.
   • Otherwise, rephrase to non-external reasoning based on existing context, or remove the unverifiable sentence.
 - Normalize spacing so there is exactly one blank line between items (Rule 4). Convert list-like lines to sentences or remove them.
+- Do not delete, renumber, or normalize away the required leading markers (Rule 5). If an item lost its marker during editing,
+  reinsert the correct next marker; do not renumber existing earlier items.
 - Keep all text as Korean paragraphs. No headings, bullets, tables, or disclaimers.
 
 OUTPUT
-- Return ONLY the fixed Korean draft body (paragraphs), with items separated by one blank line. No JSON, no extra commentary.
+- Return ONLY the fixed Korean draft body (paragraphs) with required leading markers preserved and items separated by one blank line.
+- No JSON, no extra commentary.
