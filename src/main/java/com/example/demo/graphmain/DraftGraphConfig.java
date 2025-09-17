@@ -23,7 +23,7 @@ import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 public class DraftGraphConfig {
 
     private final SourceSelectorNode sourceSelector;
-    //    private final WebSubgraphInvoker webSubgraphInvoker; // 웹검색 RAG 서브 랭그래프
+    private final WebSubgraphInvoker webSubgraphInvoker; // 웹검색 RAG 서브 랭그래프
     private final DbSubgraphInvoker dbSubgraphInvoker; // DB검색 RAG 서브 랭그래프
     private final ContextAggregatorNode contextAggregator; // RAG Context 병합 노드
     private final BaseVarsInitializerNode baseVarsInitializerNode;
@@ -42,7 +42,7 @@ public class DraftGraphConfig {
         graph.addNode("source_select", sourceSelector);
         // fan-out 진입 전, 빈/비빈만 판별하는 NOOP 게이트
         graph.addNode("fanout_gate", node_async(st -> Map.of())); // 불변 빈 Map (null 없음)
-//        graph.addNode("web_branch",    node_async(webSubgraphInvoker));
+        graph.addNode("web_branch", webSubgraphInvoker);
         graph.addNode("db_branch", dbSubgraphInvoker);
         graph.addNode("aggregate", contextAggregator);
         graph.addNode("base_vars_init", baseVarsInitializerNode);
@@ -67,50 +67,27 @@ public class DraftGraphConfig {
                 )
         );
 
-        // source_select -> fan-out (db)
-        // 2) fan-out: 현재는 db만. (web/news 재도입 시 동일 패턴으로 fanout_gate에서만 분기)
-        graph.addConditionalEdges(
-                "fanout_gate",
-                edge_async(s -> {
-                    List<String> selected = s.getSources();
-                    return selected.contains("db") ? "db" : "skip_db";
-                }),
-                Map.of(
-                        "db", "db_branch",
-                        "skip_db", "aggregate"
-                )
-        );
-
-//        // source_select -> fan-out (web)
-//        graph.addConditionalEdges("source_select",
-//                edge_async(s -> {
-//                    List<String> selected = s.getSources();
-//                    return selected.contains("web") ? "web" : "skip_web";
-//                }),
-//                Map.of("web", "web_branch", "skip_web", "aggregate")
-//        );
+        graph.addEdge("fanout_gate", "db_branch");
+        graph.addEdge("fanout_gate", "web_branch");
 
         // 3) 각 브랜치 → fan-in
         graph.addEdge("db_branch", "aggregate");
-        // graph.addEdge("web_branch", "aggregate");
-        // graph.addEdge("news_branch", "aggregate");
+         graph.addEdge("web_branch", "aggregate");
 
         // aggregate → 조건부 엣지
         graph.addConditionalEdges("aggregate",
                 edge_async(state -> {
                     boolean dbOk = state.isDbReady();
-//                    boolean webOk  = state.<Boolean>value(DraftState.WEB_READY).orElse(false);
-//                    boolean newsOk = state.<Boolean>value(DraftState.NEWS_READY).orElse(false);
+                    boolean webOk  = state.isWebReady();
 
                     if (!dbOk) return "db";    // DB 실패 → 다시 DB 브랜치
-//                    if (!webOk)  return "web";   // Web 실패 → 다시 Web 브랜치
-//                    if (!newsOk) return "news";  // News 실패 → 다시 News 브랜치
+                    if (!webOk)  return "web";   // Web 실패 → 다시 Web 브랜치
 
                     return "base_init"; // 모두 성공 → base_vars_init 노드로
                 }),
                 Map.of(
                         "db", "db_branch",
-//                        "web", "web_branch",
+                        "web", "web_branch",
                         "base_init", "base_vars_init"
                 )
         );

@@ -71,7 +71,7 @@ public class CheckServiceImpl implements CheckService {
         init.put(ValidatorState.IND_NAME, req.getIndutyName());
         init.put(ValidatorState.SECTION, req.getSection());
         init.put(ValidatorState.SECTION_LABEL, SECTION_MAP.get(req.getSection()));
-        init.put(ValidatorState.DRAFT, req.getDraft());
+        init.put(ValidatorState.DRAFT, List.of(req.getDraft()));
 
         ValidatorState state = runGraph(init);
         return state.getDraft();

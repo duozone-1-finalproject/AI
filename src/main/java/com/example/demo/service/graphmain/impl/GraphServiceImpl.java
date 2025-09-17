@@ -26,7 +26,7 @@ import static com.example.demo.constants.YamlConstants.SECTION_MAP;
 @RequiredArgsConstructor
 public class GraphServiceImpl implements GraphService {
     private static final String MAX_ITEMS_LIMIT = "5";
-    private static final long TIMEOUT_SEC = 600; // 섹션별 타임아웃
+    private static final long TIMEOUT_SEC = 1200; // 섹션별 타임아웃
 
     private final CompiledGraph<DraftState> graph;
 
@@ -62,6 +62,7 @@ public class GraphServiceImpl implements GraphService {
         init.put(DraftState.SECTION_LABEL, sectionLabel);
         init.put(DraftState.MAX_ITEMS, MAX_ITEMS_LIMIT);
         log.debug("################################ MAIN GRAPH START ({}) ##########################################", sectionLabel);
+        graph.setMaxIterations(100);
 
         AsyncGenerator<NodeOutput<DraftState>> stream = graph.stream(init);
 
